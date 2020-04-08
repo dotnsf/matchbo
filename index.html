@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+<meta charset="utf8"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="./matchbo.js"></script>
+
+<link rel="shortcut icon" href="./imgs/logo.png" type="image/png"/>
+<link rel="icon" href="./imgs/logo.png" type="image/png"/>
+<link rel="apple-touch-icon" href="./imgs/logo.png"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Match Bo"/>
+
+<title>Match Bo</title>
+<style>
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+.mybox{
+  position: relative;
+  width: 656px;
+}
+.hide{
+  display: none;
+}
+#arm1{
+  position: absolute;
+  top: 370px;
+  left: 40px;
+}
+#arm2{
+  position: absolute;
+  top: 205px;
+  left: 490px;
+}
+#arm3{
+  position: absolute;
+  top: 210px;
+  left: 35px;
+}
+#arm4{
+  position: absolute;
+  top: 375px;
+  left: 490px;
+}
+#input{
+  position: absolute;
+  top: 300px;
+  left: 210px;
+}
+#input_formula{
+  color: #ff0000;
+  text-align: center;
+}
+#input_formula:focus{
+  border: 2px solid #ff0000;
+  outline: 0;
+}
+#output{
+  position: absolute;
+  top: 510px;
+  left: 210px;
+}
+#output_formula{
+  height: 40px;
+  color: #0000ff;
+  border: 2px solid #0000ff;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="container" style="position: relative; top: 20px;">
+  <div class="mybox">
+    <img id="bg_img" src="./imgs/robot_body.png"/>
+    <div id="input">
+      <form id="input_form" action="" method="post">
+      <input type="text" id="input_formula"/>
+      <button type="submit" style="display:none;">button</button>
+      </form>
+    </div>
+    <div id="output">
+      <input type="text" id="output_formula" readonly/>
+    </div>
+    <div id="arm1">
+      <img src="./imgs/robot_arm1.png"/>
+    </div>
+    <div id="arm2">
+      <img src="./imgs/robot_arm2.png"/>
+    </div>
+    <div id="arm3" class="hide">
+      <img src="./imgs/robot_arm3.png"/>
+    </div>
+    <div id="arm4" class="hide">
+      <img src="./imgs/robot_arm4.png"/>
+    </div>
+  </div>
+</div>
+</body>
+</html>
