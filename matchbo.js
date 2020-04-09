@@ -52,7 +52,6 @@ $(function(){
     $('#output_formula').val( '' );
     var formula = $('#input_formula').val();
     formula = formula.split(' ').join('');
-    //alert( formula );
 
     var new_formula = checkFormula( formula, false );
     if( new_formula ){
@@ -113,10 +112,10 @@ function checkFormula( formula, eleven ){
     //. 最初の１文字目から調べる
     var found = false;
     for( var i = 0; i < matches.length && !found; i ++ ){
+      console.log( 'checkFormula: i = ' + i );
       var m = matches[i];
       if( m.type == 'num' || m.type == 'calc' ){
         var transition = transitions[m.idx];
-        //console.log( transition );
 
         //. 足してできる数
         for( var j = 0; j < transition[0].length && !found; j ++ ){
@@ -126,7 +125,7 @@ function checkFormula( formula, eleven ){
               var t = transitions[matches[k].idx];
               for( var l = 0; l < t[1].length && !found; l ++ ){
                 //. 代わりに式の k 文字目を t[1][l] に置き換える
-                var new_formula = subString( formula, 0, i ) + transition[0][j] + subString( formula, i + 1, k ) + t[1][l] + subString( formula, k + 1 );
+                var new_formula = subString( matches, 0, i ) + transition[0][j] + subString( matches, i + 1, k ) + t[1][l] + subString( matches, k + 1 );
                 found = isValidFormula( new_formula );
                 if( found ){ r = new_formula; }
               }
@@ -138,11 +137,11 @@ function checkFormula( formula, eleven ){
         for( var j = 0; j < transition[1].length && !found; j ++ ){
           //. 式の i 文字目を translation[1][j] に置き換える
           for( var k = i + 1; k < matches.length && !found; k ++ ){
-            if( i != k && matches[k].type == 'num' ){
-              var t = transitions[matches[k].kind];
+            if( i != k && matches[k].type == 'num' || matches[k].type == 'calc' ){
+              var t = transitions[matches[k].idx];
               for( var l = 0; l < t[0].length && !found; l ++ ){
                 //. 代わりに式の k 文字目を t[0][l] に置き換える
-                var new_formula = subString( formula, 0, i ) + transition[1][j] + subString( formula, i + 1, k ) + t[0][l] + subString( formula, k + 1 );
+                var new_formula = subString( matches, 0, i ) + transition[1][j] + subString( matches, i + 1, k ) + t[0][l] + subString( matches, k + 1 );
                 found = isValidFormula( new_formula );
                 if( found ){ r = new_formula; }
               }
@@ -154,10 +153,10 @@ function checkFormula( formula, eleven ){
           //. 各辺の頭に '-' をつける
           var tmp = new_formula_.split( '=' );
           if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
-            for( var i = 0; i < tmp.length && !found; i ++ ){
+            for( var k = 0; k < tmp.length && !found; k ++ ){
               var f = JSON.parse( JSON.stringify( tmp ) );
-              if( f[i].indexOf( '-' ) != 0 ){
-                f[i] = '-' + f[i];
+              if( f[k].indexOf( '-' ) != 0 ){
+                f[k] = '-' + f[k];
                 var new_formula = f.join( '=' );
                 found = isValidFormula( new_formula );
                 if( found ){ r = new_formula; }
@@ -194,7 +193,6 @@ function isValidFormula( f ){
       }
 
       r = b;
-      //console.log( f + ' -> ' + r );
     }
   }
 
@@ -242,10 +240,8 @@ function showAnswer( answer ){
   setTimeout( function(){
     clearTimeout( ii );
     if( answer ){
-      //alert( answer );
       $('#output_formula').val( answer );
     }else{
-      //alert( '無理っす' );
       $('#output_formula').val( '無理っす' );
     }
   }, 2000 );  //. ここが実行されてから中が実行されるまでの間に output_formula が消える！？
