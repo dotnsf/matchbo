@@ -6,37 +6,20 @@ html, body {
 }
 .mybox{
   position: relative;
-  width: 656px;
+}
+.red{
+  color: red;
+}
+.blue{
+  color: blue;
 }
 .hide{
   display: none;
 }
-#arm1{
-  position: absolute;
-  top: 370px;
-  left: 40px;
-}
-#arm2{
-  position: absolute;
-  top: 205px;
-  left: 490px;
-}
-#arm3{
-  position: absolute;
-  top: 210px;
-  left: 35px;
-}
-#arm4{
-  position: absolute;
-  top: 375px;
-  left: 490px;
-}
 #input{
-  position: absolute;
-  top: 300px;
-  left: 210px;
 }
 #input_formula{
+  height: 40px;
   color: #ff0000;
   text-align: center;
 }
@@ -45,9 +28,6 @@ html, body {
   outline: 0;
 }
 #output{
-  position: absolute;
-  top: 510px;
-  left: 210px;
 }
 #output_formula{
   height: 40px;

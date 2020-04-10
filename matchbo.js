@@ -54,9 +54,8 @@ $(function(){
     formula = formula.split(' ').join('');
 
     var new_formula = checkFormula( formula, false );
-    if( new_formula ){
-      showAnswer( new_formula );
-    }else{
+    showAnswer( new_formula );
+    if( !new_formula ){
       //. '1', '1' を '11' とみなせないか？
       if( formula.indexOf( '11' ) > -1 ){
         var new_formula = checkFormula( formula, true );
@@ -66,7 +65,67 @@ $(function(){
       }
     }
   });
+
+  $('#input_formula').on( 'keyup', function(){
+    onKeyup( 'input' );
+  });
+  onKeyup( 'input' );
+
+  $('#input_formula').focus();
 });
+
+function onKeyup( x ){
+  var formula = $('#' + x + '_formula').val();
+  formula = formula.split(' ').join('');
+  if( formula ){
+    var imgs = formula2imgs( formula );
+    if( imgs ){
+      $('#' + x + '_imgs').html( imgs );
+    }
+  }
+}
+
+function formula2imgs( formula ){
+  var imgs = '';
+
+  if( formula ){
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      var idx = -1;
+      if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        }
+      }else{
+        try{
+          idx = parseInt( c );
+        }catch( e ){
+        }
+      }
+
+      if( idx > -1 ){
+        var img = '<img src="./imgs/' + idx + '.png"/>';
+        imgs += img;
+      }
+    }
+  }
+
+  return imgs;
+}
 
 function checkFormula( formula, eleven ){
   var r = null;
@@ -112,7 +171,6 @@ function checkFormula( formula, eleven ){
     //. 最初の１文字目から調べる
     var found = false;
     for( var i = 0; i < matches.length && !found; i ++ ){
-      console.log( 'checkFormula: i = ' + i );
       var m = matches[i];
       if( m.type == 'num' || m.type == 'calc' ){
         var transition = transitions[m.idx];
@@ -219,30 +277,12 @@ function subString( arr, s, e ){
   return r;
 }
 
-var b = true;
-function moveArms(){
-  b = !b;
-  if( b ){
-    $('#arm1').removeClass( 'hide' );
-    $('#arm2').removeClass( 'hide' );
-    $('#arm3').addClass( 'hide' );
-    $('#arm4').addClass( 'hide' );
-  }else{
-    $('#arm1').addClass( 'hide' );
-    $('#arm2').addClass( 'hide' );
-    $('#arm3').removeClass( 'hide' );
-    $('#arm4').removeClass( 'hide' );
-  }
-}
-
 function showAnswer( answer ){
-  var ii = setInterval( moveArms, 500 );
-  setTimeout( function(){
-    clearTimeout( ii );
-    if( answer ){
-      $('#output_formula').val( answer );
-    }else{
-      $('#output_formula').val( '無理っす' );
-    }
-  }, 2000 );  //. ここが実行されてから中が実行されるまでの間に output_formula が消える！？
+  if( answer ){
+    $('#output_formula').val( answer );
+    onKeyup( 'output' );
+  }else{
+    $('#output_formula').val( '無理っす' );
+    $('#output_imgs').html( '' );
+  }
 }
