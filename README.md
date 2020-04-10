@@ -28,24 +28,24 @@ Based on [BS8 **クイズ!脳ベル SHOW**](https://www.bsfuji.tv/noubellshow/)
 
 ### Numbers
 
-!(./imgs/0.png)
-!(./imgs/1.png)
-!(./imgs/2.png)
-!(./imgs/3.png)
-!(./imgs/4.png)
-!(./imgs/5.png)
-!(./imgs/6.png)
-!(./imgs/7.png)
-!(./imgs/8.png)
-!(./imgs/9.png)
+![0](./imgs/0.png)
+![1](./imgs/1.png)
+![2](./imgs/2.png)
+![3](./imgs/3.png)
+![4](./imgs/4.png)
+![5](./imgs/5.png)
+![6](./imgs/6.png)
+![7](./imgs/7.png)
+![8](./imgs/8.png)
+![9](./imgs/9.png)
 
 ### Symbols
 
-!(./imgs/12.png)
-!(./imgs/13.png)
-!(./imgs/14.png)
-!(./imgs/15.png)
-!(./imgs/16.png)
+![+](./imgs/12.png)
+![-](./imgs/13.png)
+![*](./imgs/14.png)
+![/](./imgs/15.png)
+![=](./imgs/16.png)
 
 
 ## Licensing
