@@ -24,7 +24,9 @@ Auto solver for **「マッチ一本だけ動かして、正しい式にして�
 
 ## Rule
 
-Based on [BS8 **クイズ!脳ベル SHOW**](https://www.bsfuji.tv/noubellshow/)
+Based on [BS8 **クイズ!脳ベル SHOW**](https://www.bsfuji.tv/noubellshow/), you need to alter **valid** formula after you move **single** match.
+
+You can **NOT** use &#x2260;("not-equal") symbol. You can use only following numbers and symbols in your answer.
 
 ### Numbers
 
