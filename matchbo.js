@@ -38,6 +38,21 @@ $(function(){
           showAnswer( new_formula );
         }
       }
+
+      //. #2 対応
+      if( formula.indexOf( '-' ) > -1 ){
+        var new_formula = checkFormulaFor2( formula, false );
+        if( new_formula ){
+          showAnswer( new_formula );
+        }
+
+        if( formula.indexOf( '11' ) > -1 ){
+          var new_formula = checkFormulaFor2( formula, true );
+          if( new_formula ){
+            showAnswer( new_formula );
+          }
+        }
+      }
     }
   });
 
@@ -100,6 +115,75 @@ function formula2imgs( formula ){
   }
 
   return imgs;
+}
+
+function checkFormulaFor2( formula, eleven ){
+  var r = null;
+
+  if( formula ){
+    //. 式を一文字ずつ、種類に分けて分解
+    var matches = [];
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      if( c == '-' ){
+        //. この i 番目の '-' を抜いて、どこかに一本足して成立するか？
+        var formula2 = formula.substr( 0, i ) + formula.substr( i + 1 );
+        var matches = [];
+        for( var j = 0; j < formula2.length; j ++ ){
+          var d = formula2.charAt( j );
+          if( ['+','-','*','/','='].indexOf( d ) > -1 ){
+            var idx = 0;
+            switch( d ){
+            case '+':
+              idx = 12;
+              break;
+            case '-':
+              idx = 13;
+              break;
+            case '*':
+              idx = 14;
+              break;
+            case '/':
+              idx = 15;
+              break;
+            case '=':
+              idx = 16;
+              break;
+            }
+            matches.push( { type: "calc", kind: d, idx: idx } );
+          }else if( '0' <= d && d <= '9' ){
+            if( eleven && d == '1' && j - 1 < formula2.length && formula2.charAt( j + 1 ) == '1' ){
+              matches.push( { type: "num", kind: 11, idx: 11 } );
+              j ++;
+            }else{
+              matches.push( { type: "num", kind: parseInt( d ), idx: parseInt( d ) } );
+            }
+          }else{
+            matches.push( { type: "else", kind: d, idx: -1 } );
+          }
+        }
+
+        //. 最初の１文字目から調べる
+        var found = false;
+        for( var ii = 0; ii < matches.length && !found; ii ++ ){
+          var m = matches[ii];
+          if( m.type == 'num' || m.type == 'calc' ){
+            var transition = transitions[m.idx];
+
+            //. 足してできる数
+            for( var j = 0; j < transition[0].length && !found; j ++ ){
+              //. 式の ii 文字目を transitions[0][j] に置き換える
+              var new_formula = subString( matches, 0, ii ) + transition[0][j] + subString( matches, ii + 1 );
+              found = isValidFormula( new_formula );
+              if( found ){ r = new_formula; }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return r;
 }
 
 function checkFormula( formula, eleven ){
