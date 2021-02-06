@@ -33,48 +33,52 @@ $(function(){
     if( !new_formula ){
       //. '1', '1' を '11' とみなせないか？
       if( formula.indexOf( '11' ) > -1 ){
-        var new_formula = checkFormula( formula, true );
+        new_formula = checkFormula( formula, true );
         if( new_formula ){
           showAnswer( new_formula );
         }
       }
 
-      //. #2 対応
-      if( formula.indexOf( '-' ) > -1 ){
-        var new_formula2 = checkFormulaFor2( formula, false );
-        if( new_formula2 ){
-          showAnswer( new_formula2 );
-        }
-
-        if( formula.indexOf( '11' ) > -1 ){
-          var new_formula2 = checkFormulaFor2( formula, true );
-          if( new_formula2 ){
-            showAnswer( new_formula2 );
-          }
-        }
-      }
-
-      //. #3 対応
-      if( has2DigitNumber( formula ) >= 0 ){
-        var new_formula31 = checkFormulaFor31( formula, false );
-        if( new_formula31 ){
-          showAnswer( new_formula31 );
-        }
-        if( formula.indexOf( '11' ) > -1 ){
-          var new_formula31 = checkFormulaFor31( formula, true );
-          if( new_formula31 ){
-            showAnswer( new_formula31 );
+      if( !new_formula ){
+        //. #2 対応
+        if( formula.indexOf( '-' ) > -1 ){
+          new_formula = checkFormulaFor2( formula, false );
+          if( new_formula ){
+            showAnswer( new_formula );
+          }else{
+            if( formula.indexOf( '11' ) > -1 ){
+              new_formula = checkFormulaFor2( formula, true );
+              if( new_formula ){
+                showAnswer( new_formula );
+              }
+            }
           }
         }
 
-        var new_formula32 = checkFormulaFor32( formula );
-        if( new_formula32 ){
-          showAnswer( new_formula32 );
-        }
-        if( formula.indexOf( '11' ) > -1 ){
-          var new_formula32 = checkFormulaFor32( formula, true );
-          if( new_formula32 ){
-            showAnswer( new_formula32 );
+        //. #3 対応
+        if( has2DigitNumber( formula ) >= 0 ){
+          new_formula = checkFormulaFor31( formula, false );
+          if( new_formula ){
+            showAnswer( new_formula );
+          }else{
+            if( formula.indexOf( '11' ) > -1 ){
+              new_formula = checkFormulaFor31( formula, true );
+              if( new_formula ){
+                showAnswer( new_formula );
+              }
+            }
+
+            new_formula = checkFormulaFor32( formula );
+            if( new_formula ){
+              showAnswer( new_formula );
+            }else{
+              if( formula.indexOf( '11' ) > -1 ){
+                new_formula = checkFormulaFor32( formula, true );
+                if( new_formula ){
+                  showAnswer( new_formula );
+                }
+              }
+            }
           }
         }
       }
