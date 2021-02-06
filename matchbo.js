@@ -41,15 +41,40 @@ $(function(){
 
       //. #2 対応
       if( formula.indexOf( '-' ) > -1 ){
-        var new_formula = checkFormulaFor2( formula, false );
-        if( new_formula ){
-          showAnswer( new_formula );
+        var new_formula2 = checkFormulaFor2( formula, false );
+        if( new_formula2 ){
+          showAnswer( new_formula2 );
         }
 
         if( formula.indexOf( '11' ) > -1 ){
-          var new_formula = checkFormulaFor2( formula, true );
-          if( new_formula ){
-            showAnswer( new_formula );
+          var new_formula2 = checkFormulaFor2( formula, true );
+          if( new_formula2 ){
+            showAnswer( new_formula2 );
+          }
+        }
+      }
+
+      //. #3 対応
+      if( has2DigitNumber( formula ) >= 0 ){
+        var new_formula31 = checkFormulaFor31( formula, false );
+        if( new_formula31 ){
+          showAnswer( new_formula31 );
+        }
+        if( formula.indexOf( '11' ) > -1 ){
+          var new_formula31 = checkFormulaFor31( formula, true );
+          if( new_formula31 ){
+            showAnswer( new_formula31 );
+          }
+        }
+
+        var new_formula32 = checkFormulaFor32( formula );
+        if( new_formula32 ){
+          showAnswer( new_formula32 );
+        }
+        if( formula.indexOf( '11' ) > -1 ){
+          var new_formula32 = checkFormulaFor32( formula, true );
+          if( new_formula32 ){
+            showAnswer( new_formula32 );
           }
         }
       }
@@ -115,6 +140,87 @@ function formula2imgs( formula ){
   }
 
   return imgs;
+}
+
+//. #3
+function checkFormulaFor31( formula, eleven ){
+  //. （数字から）１本とって別の数字になるか、（プラスから）１本とってマイナスにしてから、２桁以上の数字の間に入れて引き算
+  var r = null;
+
+  if( formula ){
+    //. 式を一文字ずつ、種類に分けて分解
+    var matches = [];
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      if( c == '+' ){
+        var idx = 12;
+        matches.push( { type: "calc", kind: c, idx: idx } );
+      }else if( '0' <= c && c <= '9' ){
+        if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
+          matches.push( { type: "num", kind: 11, idx: 11 } );
+          i ++;
+        }else{
+          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        }
+      }else{
+        matches.push( { type: "else", kind: c, idx: -1 } );
+      }
+    }
+
+    //. 最初の１文字目から調べる
+    var found = false;
+    for( var i = 0; i < matches.length && !found; i ++ ){
+      var m = matches[i];
+      if( m.type == 'num' || m.type == 'calc' ){
+        var transition = transitions[m.idx];
+
+        //. 引いてできる数
+        for( var j = 0; j < transition[1].length && !found; j ++ ){
+          //. 式の i 文字目を translation[1][j] に置き換える
+          var formula2 = subString( matches, 0, i ) + transition[1][j] + subString( matches, i + 1 );
+
+          //. ２桁以上の数字の間に一本足して（引き算にして）成立するか？
+          var idx = has2DigitNumber( formula2, 0 );
+          while( idx >= 0 && !found ){
+            var new_formula = formula2.substr( 0, idx + 1 ) + '-' +  formula2.substr( idx + 1 );
+            found = isValidFormula( new_formula );
+            if( found ){ r = new_formula; }
+  
+            idx = has2DigitNumber( formula2, idx + 1 );
+          }
+        }
+      }
+    }
+  }
+
+  return r;
+}
+
+function checkFormulaFor32( formula, eleven ){
+  //. （マイナスから）１本とって前後の数字を連結してから、２桁以上の数字の間に入れて引き算
+  var r = null;
+
+  if( formula ){
+    //. 式を一文字ずつ、種類に分けて分解
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      if( c == '-' ){
+        //. この i 番目の '-' を抜いて、２桁以上の数字の間に一本足して（引き算にして）成立するか？
+        var formula2 = formula.substr( 0, i ) + formula.substr( i + 1 );
+        var idx = has2DigitNumber( formula2, 0 );
+        var found = false;
+        while( idx >= 0 && !found ){
+          var new_formula = formula2.substr( 0, idx + 1 ) + '-' +  formula2.substr( idx + 1 );
+          found = isValidFormula( new_formula );
+          if( found ){ r = new_formula; }
+
+          idx = has2DigitNumber( formula2, idx + 1 );
+        }
+      }
+    }
+  }
+
+  return r;
 }
 
 function checkFormulaFor2( formula, eleven ){
@@ -333,6 +439,22 @@ function subString( arr, s, e ){
     }
   }
 
+  return r;
+}
+
+//. #3 対応
+function has2DigitNumber( f, start ){
+  var r = -1;
+  if( !start || start < 0 ){ start = 0; }
+  for( var i = start; i < f.length - 1 && r == -1; i ++ ){
+    var c1 = f.charAt( i );
+    var c2 = f.charAt( i + 1 );
+
+    if( '0' <= c1 && c1 <= '9' && '0' <= c2 && c2 <= '9' ){
+      r = i;
+    }
+  }
+  
   return r;
 }
 
