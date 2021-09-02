@@ -289,6 +289,34 @@ function checkFormulaFor2( formula, eleven ){
             }
           }
         }
+
+        //. #4
+        if( !found ){
+          //. 左辺および右辺の最初の数字をマイナスにする
+
+          //. 左辺
+          var matches4 = [ { type: "calc", kind: '-', idx: 13 } ];
+          for( var ii = 0; ii < matches.length; ii ++ ){
+            matches4.push( matches[ii] );
+          }
+          var new_formula = subString( matches4, 0 );
+          found = isValidFormula( new_formula );
+          if( found ){ r = new_formula; }
+
+          if( !found ){
+            //. 右辺
+            matches4 = [];
+            for( var ii = 0; ii < matches.length; ii ++ ){
+              matches4.push( matches[ii] );
+              if( matches[ii].type == 'calc' && matches[ii].idx == 16 ){
+                matches4.push( { type: "calc", kind: '-', idx: 13 } );
+              }
+            }
+            new_formula = subString( matches4, 0 );
+            found = isValidFormula( new_formula );
+            if( found ){ r = new_formula; }
+          }
+        }
       }
     }
   }
