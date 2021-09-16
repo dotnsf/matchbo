@@ -19,70 +19,49 @@ var transitions = [
   [ [], [], [] ],                   //. /
   [ [], [ '-' ], [ '+' ] ]          //. =
 ];
+var answers = [];
 
 $(function(){
   $('#input_form').submit( function( e ){
     e.preventDefault();
 
+    answers = [];
+    $('#answers_list').html( '' );
+
     $('#output_formula').val( '' );
     var formula = $('#input_formula').val();
     formula = formula.split(' ').join('');
 
-    var new_formula = checkFormula( formula, false );
-    showAnswer( new_formula );
-    if( !new_formula ){
-      //. '1', '1' を '11' とみなせないか？
+    checkFormula( formula, false );
+    //. '1', '1' を '11' とみなせないか？
+    if( formula.indexOf( '11' ) > -1 ){
+      checkFormula( formula, true );
+    }
+
+    //. #2 対応
+    if( formula.indexOf( '-' ) > -1 ){
+      checkFormulaFor2( formula, false );
       if( formula.indexOf( '11' ) > -1 ){
-        new_formula = checkFormula( formula, true );
-        if( new_formula ){
-          showAnswer( new_formula );
-        }
-      }
-
-      if( !new_formula ){
-        //. #2 対応
-        if( formula.indexOf( '-' ) > -1 ){
-          new_formula = checkFormulaFor2( formula, false );
-          if( new_formula ){
-            showAnswer( new_formula );
-          }else{
-            if( formula.indexOf( '11' ) > -1 ){
-              new_formula = checkFormulaFor2( formula, true );
-              if( new_formula ){
-                showAnswer( new_formula );
-              }
-            }
-          }
-        }
-
-        //. #3 対応
-        if( has2DigitNumber( formula ) >= 0 ){
-          new_formula = checkFormulaFor31( formula, false );
-          if( new_formula ){
-            showAnswer( new_formula );
-          }else{
-            if( formula.indexOf( '11' ) > -1 ){
-              new_formula = checkFormulaFor31( formula, true );
-              if( new_formula ){
-                showAnswer( new_formula );
-              }
-            }
-
-            new_formula = checkFormulaFor32( formula );
-            if( new_formula ){
-              showAnswer( new_formula );
-            }else{
-              if( formula.indexOf( '11' ) > -1 ){
-                new_formula = checkFormulaFor32( formula, true );
-                if( new_formula ){
-                  showAnswer( new_formula );
-                }
-              }
-            }
-          }
-        }
+        checkFormulaFor2( formula, true );
       }
     }
+
+    //. #3 対応
+    if( has2DigitNumber( formula ) >= 0 ){
+      checkFormulaFor31( formula, false );
+      if( formula.indexOf( '11' ) > -1 ){
+        checkFormulaFor31( formula, true );
+      }
+
+      checkFormulaFor32( formula );
+      if( formula.indexOf( '11' ) > -1 ){
+        checkFormulaFor32( formula, true );
+      }
+    }
+
+    showAnswers( answers );
+
+    return false;
   });
 
   $('#input_formula').on( 'keyup', function(){
@@ -172,23 +151,22 @@ function checkFormulaFor31( formula, eleven ){
     }
 
     //. 最初の１文字目から調べる
-    var found = false;
-    for( var i = 0; i < matches.length && !found; i ++ ){
+    for( var i = 0; i < matches.length; i ++ ){
       var m = matches[i];
       if( m.type == 'num' || m.type == 'calc' ){
         var transition = transitions[m.idx];
 
         //. 引いてできる数
-        for( var j = 0; j < transition[1].length && !found; j ++ ){
+        for( var j = 0; j < transition[1].length; j ++ ){
           //. 式の i 文字目を translation[1][j] に置き換える
           var formula2 = subString( matches, 0, i ) + transition[1][j] + subString( matches, i + 1 );
 
           //. ２桁以上の数字の間に一本足して（引き算にして）成立するか？
           var idx = has2DigitNumber( formula2, 0 );
-          while( idx >= 0 && !found ){
+          while( idx >= 0 ){
             var new_formula = formula2.substr( 0, idx + 1 ) + '-' +  formula2.substr( idx + 1 );
-            found = isValidFormula( new_formula );
-            if( found ){ r = new_formula; }
+            var found = isValidFormula( new_formula );
+            if( found ){ answers.push( new_formula ); }
   
             idx = has2DigitNumber( formula2, idx + 1 );
           }
@@ -212,11 +190,10 @@ function checkFormulaFor32( formula, eleven ){
         //. この i 番目の '-' を抜いて、２桁以上の数字の間に一本足して（引き算にして）成立するか？
         var formula2 = formula.substr( 0, i ) + formula.substr( i + 1 );
         var idx = has2DigitNumber( formula2, 0 );
-        var found = false;
-        while( idx >= 0 && !found ){
+        while( idx >= 0 ){
           var new_formula = formula2.substr( 0, idx + 1 ) + '-' +  formula2.substr( idx + 1 );
-          found = isValidFormula( new_formula );
-          if( found ){ r = new_formula; }
+          var found = isValidFormula( new_formula );
+          if( found ){ answers.push( new_formula ); }
 
           idx = has2DigitNumber( formula2, idx + 1 );
         }
@@ -274,49 +251,43 @@ function checkFormulaFor2( formula, eleven ){
         }
 
         //. 最初の１文字目から調べる
-        var found = false;
-        for( var ii = 0; ii < matches.length && !found; ii ++ ){
+        for( var ii = 0; ii < matches.length; ii ++ ){
           var m = matches[ii];
           if( m.type == 'num' || m.type == 'calc' ){
             var transition = transitions[m.idx];
 
             //. 足してできる数
-            for( var j = 0; j < transition[0].length && !found; j ++ ){
+            for( var j = 0; j < transition[0].length; j ++ ){
               //. 式の ii 文字目を transitions[0][j] に置き換える
               var new_formula = subString( matches, 0, ii ) + transition[0][j] + subString( matches, ii + 1 );
-              found = isValidFormula( new_formula );
-              if( found ){ r = new_formula; }
+              var found = isValidFormula( new_formula );
+              if( found ){ answers.push( new_formula ); }
             }
           }
         }
 
-        //. #4
-        if( !found ){
-          //. 左辺および右辺の最初の数字をマイナスにする
+        //. 左辺および右辺の最初の数字をマイナスにする
 
-          //. 左辺
-          var matches4 = [ { type: "calc", kind: '-', idx: 13 } ];
-          for( var ii = 0; ii < matches.length; ii ++ ){
-            matches4.push( matches[ii] );
-          }
-          var new_formula = subString( matches4, 0 );
-          found = isValidFormula( new_formula );
-          if( found ){ r = new_formula; }
+        //. 左辺
+        var matches4 = [ { type: "calc", kind: '-', idx: 13 } ];
+        for( var ii = 0; ii < matches.length; ii ++ ){
+          matches4.push( matches[ii] );
+        }
+        var new_formula = subString( matches4, 0 );
+        var found = isValidFormula( new_formula );
+        if( found ){ answers.push( new_formula ); }
 
-          if( !found ){
-            //. 右辺
-            matches4 = [];
-            for( var ii = 0; ii < matches.length; ii ++ ){
-              matches4.push( matches[ii] );
-              if( matches[ii].type == 'calc' && matches[ii].idx == 16 ){
-                matches4.push( { type: "calc", kind: '-', idx: 13 } );
-              }
-            }
-            new_formula = subString( matches4, 0 );
-            found = isValidFormula( new_formula );
-            if( found ){ r = new_formula; }
+        //. 右辺
+        matches4 = [];
+        for( var ii = 0; ii < matches.length; ii ++ ){
+          matches4.push( matches[ii] );
+          if( matches[ii].type == 'calc' && matches[ii].idx == 16 ){
+            matches4.push( { type: "calc", kind: '-', idx: 13 } );
           }
         }
+        new_formula = subString( matches4, 0 );
+        found = isValidFormula( new_formula );
+        if( found ){ answers.push( new_formula ); }
       }
     }
   }
@@ -366,39 +337,38 @@ function checkFormula( formula, eleven ){
     //console.log( matches );
 
     //. 最初の１文字目から調べる
-    var found = false;
-    for( var i = 0; i < matches.length && !found; i ++ ){
+    for( var i = 0; i < matches.length; i ++ ){
       var m = matches[i];
       if( m.type == 'num' || m.type == 'calc' ){
         var transition = transitions[m.idx];
 
         //. 足してできる数
-        for( var j = 0; j < transition[0].length && !found; j ++ ){
+        for( var j = 0; j < transition[0].length; j ++ ){
           //. 式の i 文字目を transitions[0][j] に置き換える
-          for( var k = i + 1; k < matches.length && !found; k ++ ){
+          for( var k = i + 1; k < matches.length; k ++ ){
             if( i != k && ( matches[k].type == 'num' || matches[k].type == 'calc' ) ){
               var t = transitions[matches[k].idx];
-              for( var l = 0; l < t[1].length && !found; l ++ ){
+              for( var l = 0; l < t[1].length; l ++ ){
                 //. 代わりに式の k 文字目を t[1][l] に置き換える
                 var new_formula = subString( matches, 0, i ) + transition[0][j] + subString( matches, i + 1, k ) + t[1][l] + subString( matches, k + 1 );
-                found = isValidFormula( new_formula );
-                if( found ){ r = new_formula; }
+                var found = isValidFormula( new_formula );
+                if( found ){ answers.push( new_formula ); }
               }
             }
           }
         }
 
         //. 引いてできる数
-        for( var j = 0; j < transition[1].length && !found; j ++ ){
+        for( var j = 0; j < transition[1].length; j ++ ){
           //. 式の i 文字目を translation[1][j] に置き換える
-          for( var k = i + 1; k < matches.length && !found; k ++ ){
+          for( var k = i + 1; k < matches.length; k ++ ){
             if( i != k && matches[k].type == 'num' || matches[k].type == 'calc' ){
               var t = transitions[matches[k].idx];
-              for( var l = 0; l < t[0].length && !found; l ++ ){
+              for( var l = 0; l < t[0].length; l ++ ){
                 //. 代わりに式の k 文字目を t[0][l] に置き換える
                 var new_formula = subString( matches, 0, i ) + transition[1][j] + subString( matches, i + 1, k ) + t[0][l] + subString( matches, k + 1 );
-                found = isValidFormula( new_formula );
-                if( found ){ r = new_formula; }
+                var found = isValidFormula( new_formula );
+                if( found ){ answers.push( new_formula ); }
               }
             }
           }
@@ -408,24 +378,24 @@ function checkFormula( formula, eleven ){
           //. 各辺の頭に '-' をつける
           var tmp = new_formula_.split( '=' );
           if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
-            for( var k = 0; k < tmp.length && !found; k ++ ){
+            for( var k = 0; k < tmp.length; k ++ ){
               var f = JSON.parse( JSON.stringify( tmp ) );
               if( f[k].indexOf( '-' ) != 0 ){
                 f[k] = '-' + f[k];
                 var new_formula = f.join( '=' );
-                found = isValidFormula( new_formula );
-                if( found ){ r = new_formula; }
+                var found = isValidFormula( new_formula );
+                if( found ){ answers.push( new_formula ); }
               }
             }
           }
         }
 
         //. 置き換えてできる数
-        for( var j = 0; j < transition[2].length && !found; j ++ ){
+        for( var j = 0; j < transition[2].length; j ++ ){
           //. 式の i 文字目を translation[2][j] に置き換える
           var new_formula = subString( matches, 0, i ) + transition[2][j] + subString( matches, i + 1 );
-          found = isValidFormula( new_formula );
-          if( found ){ r = new_formula; }
+          var found = isValidFormula( new_formula );
+          if( found ){ answers.push( new_formula ); }
         }
       }
     }
@@ -497,5 +467,41 @@ function showAnswer( answer ){
   }else{
     $('#output_formula').val( '無理っす' );
     $('#output_imgs').html( '' );
+  }
+}
+
+//. #5
+function unique( arr ){
+  var new_arr = [];
+  for( var i = 0; i < arr.length; i ++ ){
+    if( new_arr.indexOf( arr[i] ) == -1 ){
+      new_arr.push( arr[i] );
+    }
+  }
+
+  return new_arr;
+}
+
+function showAnswers( answers ){
+  answers = unique( answers );
+  //console.log( answers );
+  if( answers && answers.length > 0 ){
+    $('#answers_list').append( '<ol id="answers_list_ol"></ol>' );
+    for( var i = 0; i < answers.length; i ++ ){
+      var answer = answers[i];
+      //. 現行仕様では $('#output_formula') に答の式を１つだけ表示して、その下の $('#output_imgs') に正解画像を１つ表示することになっている。この仕様のままでは難しい。
+      //. 式0 <br/> 画像0 <hr/> 式1 <br/> 画像1 <hr/> 式2 <br/> 画像2 <hr/> ・・・ のようにしたい
+      var img = formula2imgs( answer );
+      var li = '<li>'
+        + '<form><input type="text" class="blue" id="output_formula_' + i + '" value="' + answer + '" readonly/></form>' 
+        + '<span id="output_imgs_' + i + '">' + img + '</span>'
+        + '</li>';
+      $('#answers_list_ol').append( li );
+    }
+  }else{
+    var ul = '<ul><li>無理っす</li><ul>';
+    $('#answers_list').append( ul );
+    //$('#output_formula').val( '無理っす' );
+    //$('#output_imgs').html( '' );
   }
 }
