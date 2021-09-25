@@ -409,15 +409,20 @@ function isValidFormula( f ){
 
   var tmp = f.split( '=' );
   if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
-    var v0 = eval( tmp[0] );
-    if( v0 != undefined ){
-      var b = true;
-      for( var i = 1; i < tmp.length && b; i ++ ){
-        var v1 = eval( tmp[i] );
-        b = ( v0 === v1 );
-      }
+    try{
+      var v0 = eval( tmp[0] );
+      if( v0 != undefined ){
+        var b = true;
+        for( var i = 1; i < tmp.length && b; i ++ ){
+          var v1 = eval( tmp[i] );
+          b = ( v0 === v1 );
+        }
 
-      r = b;
+        r = b;
+      }
+    }catch( e ){
+      //console.log( tmp[0] );
+      console.log( e );
     }
   }
 
