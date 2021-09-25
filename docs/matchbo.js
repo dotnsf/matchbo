@@ -422,7 +422,7 @@ function isValidFormula( f ){
       }
     }catch( e ){
       //console.log( tmp[0] );
-      console.log( e );
+      //console.log( e );
     }
   }
 
