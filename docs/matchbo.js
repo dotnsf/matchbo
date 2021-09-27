@@ -802,10 +802,14 @@ function isValidFormula( f ){
 
   var tmp = f.split( '=' );
   if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
+    var b = true;
+    for( var i = 0; i < tmp.length && b; i ++ ){
+      b = isValidRuled( tmp[i] );
+    }
+
     try{
       var v0 = eval( tmp[0] );
       if( v0 != undefined ){
-        var b = true;
         for( var i = 1; i < tmp.length && b; i ++ ){
           var v1 = eval( tmp[i] );
           b = ( v0 === v1 );
@@ -816,6 +820,43 @@ function isValidFormula( f ){
     }catch( e ){
       //console.log( tmp[0] );
       //console.log( e );
+    }
+  }
+
+  return r;
+}
+
+function isValidRuled( f ){
+  //. (1) f に 0 で始まる２桁以上の数はないこと
+  //. (2) f に符号が２つ以上繋がってないこと
+  var r = true;
+  var prev_calc = true;
+  var prev_zero = false;
+
+  for( var i = 0; i < f.length && r; i ++ ){
+    var c = f.charAt( i );
+    if( '0' == c ){
+      if( prev_zero ){
+        r = false;
+      }
+      if( prev_calc ){
+        prev_zero = true;
+      }else{
+        prev_zero = false;
+      }
+      prev_calc = false;
+    }else if( '1' <= c && c <= '9' ){
+      if( prev_zero ){
+        r = false;
+      }
+      prev_calc = false;
+      prev_zero = false;
+    }else{
+      if( prev_calc ){
+        r = false;
+      }
+      prev_calc = true;
+      prev_zero = false;
     }
   }
 
