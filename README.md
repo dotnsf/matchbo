@@ -30,24 +30,24 @@ You can **NOT** use &#x2260;("not-equal") symbol. You can use only following num
 
 ### Numbers
 
-![0](./imgs/0.png)
-![1](./imgs/1.png)
-![2](./imgs/2.png)
-![3](./imgs/3.png)
-![4](./imgs/4.png)
-![5](./imgs/5.png)
-![6](./imgs/6.png)
-![7](./imgs/7.png)
-![8](./imgs/8.png)
-![9](./imgs/9.png)
+![0](./docs/imgs/0.png)
+![1](./docs/imgs/1.png)
+![2](./docs/imgs/2.png)
+![3](./docs/imgs/3.png)
+![4](./docs/imgs/4.png)
+![5](./docs/imgs/5.png)
+![6](./docs/imgs/6.png)
+![7](./docs/imgs/7.png)
+![8](./docs/imgs/8.png)
+![9](./docs/imgs/9.png)
 
 ### Symbols
 
-![+](./imgs/12.png)
-![-](./imgs/13.png)
-![*](./imgs/14.png)
-![/](./imgs/15.png)
-![=](./imgs/16.png)
+![+](./docs/imgs/12.png)
+![-](./docs/imgs/13.png)
+![*](./docs/imgs/14.png)
+![/](./docs/imgs/15.png)
+![=](./docs/imgs/16.png)
 
 
 ## Licensing

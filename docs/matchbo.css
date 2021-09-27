@@ -35,3 +35,9 @@ html, body {
   border: 2px solid #0000ff;
   text-align: center;
 }
+.display_block{
+  display: block;
+}
+.display_none{
+  display: none;
+}
