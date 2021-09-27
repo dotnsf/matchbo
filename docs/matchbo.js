@@ -1,4 +1,15 @@
 
+function getParam( name, url ){
+  if( !url ) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if( !results ) return null;
+  if( !results[2] ) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+var beta_function = getParam( 'beta' );
+
 var transitions = [
   //. [ 足してできる数, 引いてできる数, 置き換えてできる数 ]
   [ [ 8 ], [ ], [ 6, 9 ] ],         //. 0
@@ -44,6 +55,10 @@ var rev_transitions = [
 var answers = [];
 
 $(function(){
+  if( !beta_function ){
+    $('#beta_reverse').addClass( 'display_none' );
+  }
+
   $('#input_form').submit( function( e ){
     e.preventDefault();
 
@@ -834,7 +849,7 @@ function isValidRuled( f ){
   //. (1) f に 0 で始まる２桁以上の数はないこと
   //. (2) f に符号が２つ以上繋がってないこと
   var r = true;
-  var prev_calc = true;
+  var prev_calc = false;
   var prev_zero = false;
 
   for( var i = 0; i < f.length && r; i ++ ){
