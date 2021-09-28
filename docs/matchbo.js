@@ -514,6 +514,48 @@ function formula2imgs( formula ){
   return imgs;
 }
 
+function formula2imgs_rev( formula ){
+  var imgs = '';
+
+  if( formula ){
+    for( var i = formula.length - 1; i >= 0; i -- ){
+      var c = formula.charAt( i );
+      var idx = -1;
+      if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        }
+      }else{
+        try{
+          idx = parseInt( c );
+        }catch( e ){
+        }
+      }
+
+      if( idx > -1 ){
+        var img = '<img src="./imgs/' + idx + '.png" class="rev_img"/>';
+        imgs += img;
+      }
+    }
+  }
+
+  return imgs;
+}
+
 //. #3
 function checkFormulaFor31( formula, eleven ){
   //. （数字から）１本とって別の数字になるか、（プラスから）１本とってマイナスにしてから、２桁以上の数字の間に入れて引き算
@@ -996,9 +1038,8 @@ function showAnswers( answers ){
       var answer = answers[i];
       var answer_formula = answer.formula;
       var answer_rev = answer.rev;
-      //. 現行仕様では $('#output_formula') に答の式を１つだけ表示して、その下の $('#output_imgs') に正解画像を１つ表示することになっている。この仕様のままでは難しい。
-      //. 式0 <br/> 画像0 <hr/> 式1 <br/> 画像1 <hr/> 式2 <br/> 画像2 <hr/> ・・・ のようにしたい
-      var img = formula2imgs( answer_formula );
+
+      var img = ( answer_rev ? formula2imgs_rev( answer_formula ) : formula2imgs( answer_formula ) );
       var li = '<li>'
         + ( answer_rev ? '（逆さに見る）' : '' )
         + '<form><input type="text" class="blue" id="output_formula_' + i + '" value="' + answer_formula + '" readonly/></form>' 

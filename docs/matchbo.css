@@ -41,3 +41,6 @@ html, body {
 .display_none{
   display: none;
 }
+.rev_img{
+  transform: rotate(180deg);
+}
