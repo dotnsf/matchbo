@@ -9,6 +9,11 @@ function getParam( name, url ){
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 var beta_function = getParam( 'beta' );
+var isvalid_doublezeros = true;
+var isvalid_doublecalcs = false;
+var isvalid_doubleequals = true;
+var isvalid_reverse = false;
+
 
 var transitions = [
   //. [ 足してできる数, 引いてできる数, 置き換えてできる数 ]
@@ -56,16 +61,27 @@ var answers = [];
 
 $(function(){
   if( !beta_function ){
-    $('#beta_reverse').addClass( 'display_none' );
+    $('#options_div').addClass( 'display_none' );
   }
+
+  $('#doublezeros_check').change( function(){
+    isvalid_doublezeros = $('#doublezeros_check').prop( 'checked' );
+  });
+  $('#doublecalcs_check').change( function(){
+    isvalid_doublecalcs = $('#doublecalcs_check').prop( 'checked' );
+  });
+  $('#doubleequals_check').change( function(){
+    isvalid_doubleequals = $('#doubleequals_check').prop( 'checked' );
+  });
+  $('#reverse_check').change( function(){
+    isvalid_reverse = $('#reverse_check').prop( 'checked' );
+  });
 
   $('#input_form').submit( function( e ){
     e.preventDefault();
 
     answers = [];
     $('#answers_list').html( '' );
-
-    var reverse_check = $('#reverse_check').prop( 'checked' );
 
     $('#output_formula').val( '' );
     var formula = $('#input_formula').val();
@@ -98,7 +114,7 @@ $(function(){
       }
     }
 
-    if( reverse_check ){
+    if( isvalid_reverse ){
       //. #1 事前チェック
       var nrcs = NonReversibleChars( formula );
       if( nrcs.length <= 2 ){
@@ -855,20 +871,22 @@ function isValidRuled( f ){
   for( var i = 0; i < f.length && r; i ++ ){
     var c = f.charAt( i );
     if( '0' == c ){
-      if( prev_zero ){
+      if( !isvalid_doublezeros && prev_zero ){
         r = false;
       }
-      if( prev_calc ){
-        prev_zero = true;
-      }else{
-        prev_zero = false;
-      }
+      prev_zero = true;
       prev_calc = false;
     }else if( '1' <= c && c <= '9' ){
-      if( prev_zero ){
+      if( !isvalid_doublezeros && prev_zero ){
         r = false;
       }
       prev_calc = false;
+      prev_zero = false;
+    }else if( '-' == c ){
+      if( !isvalid_doublecalcs && prev_calc ){
+        r = false;
+      }
+      prev_calc = true;
       prev_zero = false;
     }else{
       if( prev_calc ){

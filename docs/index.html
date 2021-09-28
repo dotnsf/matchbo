@@ -26,6 +26,15 @@
   <a class="navbar-brand" href="#">マッチ棒を１本だけ動かして正しい式にする（を自動解答）</a>
 </nav>
 
+<div class="container" id="options_div" style="position: relative; top: 20px;">
+  <ul>
+    <li><input type="checkbox" id="doublezeros_check" checked/>ゼロで始まる２桁以上の数を有効とする（例: 09 は 9 とみなす）</li>
+    <!-- <li><input type="checkbox" id="doublecalcs_check"/>「１足すマイナス２」(1+-2)のような表現を有効とする</li> -->
+    <li><input type="checkbox" id="doubleequals_check" checked readonly/>イコールは複数あってもよい（例: 1+2=3=4-1）</li>
+    <li><input type="checkbox" id="reverse_check"/>逆さに見て正しければ正解とする（例: 21-8=9-2 -> 2-6=8-12）</li>
+  </ul>
+</div>
+
 <div class="container" style="position: relative; top: 20px;">
   <div class="jumbotron mt-4">
     <div class="mybox">
@@ -33,7 +42,9 @@
         問題
         <form id="input_form" action="" method="post">
         <input type="text" id="input_formula" value="12+8=3+3"/>
+        <!--
         <span id="beta_reverse"><input type="checkbox" id="reverse_check"/>「逆さに見る」対応</span>
+        -->
         <button type="submit" style="display:none;">button</button>
         </form>
         <div>
