@@ -5,21 +5,14 @@
 
 Auto solver for **「マッチ一本だけ動かして、正しい式にしてください」**
 
+https://dotnsf.github.io/matchbo
+
 
 ## How to play
 
-- Input incorrect formula in robot's mouth, and submit it.
+- Input incorrect formula, and submit it.
 
-- You will find corrected formula in robot's body.
-
-
-## Specification
-
-- [x] More than 2 '='s.
-
-- [ ] Fraction
-
-- [ ] Brackets
+- You will find corrected formulas, if exists.
 
 
 ## Rule
@@ -27,6 +20,9 @@ Auto solver for **「マッチ一本だけ動かして、正しい式にして�
 Based on [BS8 **クイズ!脳ベル SHOW**](https://www.bsfuji.tv/noubellshow/), you need to alter **valid** formula after you move **single** match.
 
 You can **NOT** use &#x2260;("not-equal") symbol. You can use only following numbers and symbols in your answer.
+
+You can customize minor rules at https://dotnsf.github.io/matchbo?beta=1
+
 
 ### Numbers
 

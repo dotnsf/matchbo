@@ -137,7 +137,7 @@ $(function(){
               for( var k = 0; k < rev_transition2[0].length; k ++ ){
                 // ↓文字を逆さにした状態で、右から足す必要がある点を修正
                 var new_formula = '';
-                for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                   if( idx3 != idx1 && idx3 != idx2 ){
                     var m3 = matches[idx3];
                     var rev_transition3 = rev_transitions[m3.idx];
@@ -157,7 +157,7 @@ $(function(){
             for( var j = 0; j < rev_transition1[0].length; j ++ ){
               for( var k = 0; k < rev_transition2[1].length; k ++ ){
                 var new_formula = '';
-                for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                   if( idx3 != idx1 && idx3 != idx2 ){
                     var m3 = matches[idx3];
                     var rev_transition3 = rev_transitions[m3.idx];
@@ -182,13 +182,13 @@ $(function(){
   
             //. idx1 から１本引いて、どこかの文字に１本足す
             for( var j = 0; j < rev_transition1[1].length; j ++ ){
-              for( var idx2 = 0; idx2 < formula.length; idx2 ++ ){
+              for( var idx2 = 0; idx2 < matches.length; idx2 ++ ){
                 if( idx2 != idx1 ){
                   var m2 = matches[idx2];
                   var rev_transition2 = rev_transitions[m2.idx];
                   for( var k = 0; k < rev_transition2[0].length; k ++ ){
                     var new_formula = '';
-                    for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                    for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                       if( idx3 != idx1 && idx3 != idx2 ){
                         var m3 = matches[idx3];
                         var rev_transition3 = rev_transitions[m3.idx];
@@ -209,7 +209,7 @@ $(function(){
             //. 同じ所で数値を別のものにする
             for( var j = 0; j < rev_transition1[2].length; j ++ ){
               var new_formula = '';
-              for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+              for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                 if( idx3 != idx1 ){
                   var m3 = matches[idx3];
                   var rev_transition3 = rev_transitions[m3.idx];
@@ -225,7 +225,7 @@ $(function(){
             //. idx1 から１本引いて、どこかにマイナス記号を１本足す
             for( var j = 0; j < rev_transition1[1].length; j ++ ){
               var new_formula1 = '';
-              for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+              for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                 if( idx3 != idx1 ){
                   var m3 = matches[idx3];
                   var rev_transition3 = rev_transitions[m3.idx];
@@ -244,13 +244,13 @@ $(function(){
   
             //. どこかから１本引いて、idx1 に１本足す
             for( var j = 0; j < rev_transition1[0].length; j ++ ){
-              for( var idx2 = 0; idx2 < formula.length; idx2 ++ ){
+              for( var idx2 = 0; idx2 < matches.length; idx2 ++ ){
                 if( idx2 != idx1 ){
                   var m2 = matches[idx2];
                   var rev_transition2 = rev_transitions[m2.idx];
                   for( var k = 0; k < rev_transition2[1].length; k ++ ){
                     var new_formula = '';
-                    for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                    for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                       if( idx3 != idx1 && idx3 != idx2 ){
                         var m3 = matches[idx3];
                         var rev_transition3 = rev_transitions[m3.idx];
@@ -290,7 +290,7 @@ $(function(){
             if( formula.indexOf( '-' ) > -1 ){
               for( var j = 0; j < rev_transition1[0].length; j ++ ){
                 var new_formula1 = '';
-                for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                   if( idx3 != idx1 ){
                     var m3 = matches[idx3];
                     var rev_transition3 = rev_transitions[m3.idx];
@@ -316,19 +316,19 @@ $(function(){
           }
           break;
         case 0:
-          for( var idx1 = 0; idx1 < formula.length; idx1 ++ ){
+          for( var idx1 = 0; idx1 < matches.length; idx1 ++ ){
             var m1 = matches[idx1];
             var rev_transition1 = rev_transitions[m1.idx];
   
             //. どこかから１本引いて、どこかの文字に１本足す
             for( var j = 0; j < rev_transition1[1].length; j ++ ){
-              for( var idx2 = 0; idx2 < formula.length; idx2 ++ ){
+              for( var idx2 = 0; idx2 < matches.length; idx2 ++ ){
                 if( idx2 != idx1 ){
                   var m2 = matches[idx2];
                   var rev_transition2 = rev_transitions[m2.idx];
                   for( var k = 0; k < rev_transition2[0].length; k ++ ){
                     var new_formula = '';
-                    for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                    for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                       if( idx3 != idx1 && idx3 != idx2 ){
                         var m3 = matches[idx3];
                         var rev_transition3 = rev_transitions[m3.idx];
@@ -349,7 +349,7 @@ $(function(){
             //. 同じ所で数値を別のものにする
             for( var j = 0; j < rev_transition1[2].length; j ++ ){
               var new_formula = '';
-              for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+              for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                 if( idx3 != idx1 ){
                   var m3 = matches[idx3];
                   var rev_transition3 = rev_transitions[m3.idx];
@@ -364,12 +364,12 @@ $(function(){
           }
   
           //. どこかから１本引いて、どこかにマイナス記号を１本足す
-          for( var idx1 = 0; idx1 < formula.length; idx1 ++ ){
+          for( var idx1 = 0; idx1 < matches.length; idx1 ++ ){
             var m1 = matches[idx1];
             var rev_transition1 = rev_transitions[m1.idx];
             for( var j = 0; j < rev_transition1[1].length; j ++ ){
               var new_formula1 = '';
-              for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+              for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                 if( idx3 != idx1 ){
                   var m3 = matches[idx3];
                   var rev_transition3 = rev_transitions[m3.idx];
@@ -389,12 +389,12 @@ $(function(){
   
           if( formula.indexOf( '-' ) > -1 ){
             //. マイナス記号を１本引いて、どこかに１本足す
-            for( var idx1 = 0; idx1 < formula.length; idx1 ++ ){
+            for( var idx1 = 0; idx1 < matches.length; idx1 ++ ){
               var m1 = matches[idx1];
               var rev_transition1 = rev_transitions[m1.idx];
               for( var j = 0; j < rev_transition1[0].length; j ++ ){
                 var new_formula1 = '';
-                for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                   if( idx3 != idx1 ){
                     var m3 = matches[idx3];
                     var rev_transition3 = rev_transitions[m3.idx];
@@ -423,9 +423,8 @@ $(function(){
             do{
               start = formula.indexOf( '-', start );
               if( start > -1 ){
-                var new_formula1 = formula.substr( 0, start ) + formula.substr( start + 1 );
                 var new_formula1 = '';
-                for( var idx3 = formula.length - 1; idx3 >= 0; idx3 -- ){
+                for( var idx3 = matches.length - 1; idx3 >= 0; idx3 -- ){
                   if( idx3 != start ){
                     var m3 = matches[idx3];
                     var rev_transition3 = rev_transitions[m3.idx];
