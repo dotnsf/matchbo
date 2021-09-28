@@ -443,6 +443,138 @@ $(function(){
               }
             }while( start > -1 );
           }
+
+          //. 今は１文字ずつしか見ていないので #9 に未対応
+          if( formula.indexOf( '11' ) > -1 ){
+            var matches11 = checkFormula1( formula, true );
+
+            for( var idx1 = 0; idx1 < matches11.length; idx1 ++ ){
+              var m1 = matches11[idx1];
+              var rev_transition1 = rev_transitions[m1.idx];
+  
+              //. どこかから１本引いて、どこかの文字に１本足す
+              for( var j = 0; j < rev_transition1[1].length; j ++ ){
+                for( var idx2 = 0; idx2 < matches11.length; idx2 ++ ){
+                  if( idx2 != idx1 ){
+                    var m2 = matches11[idx2];
+                    var rev_transition2 = rev_transitions[m2.idx];
+                    for( var k = 0; k < rev_transition2[0].length; k ++ ){
+                      var new_formula = '';
+                      for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                        if( idx3 != idx1 && idx3 != idx2 ){
+                          var m3 = matches11[idx3];
+                          var rev_transition3 = rev_transitions[m3.idx];
+                          new_formula += rev_transition3[3][0];
+                        }else if( idx3 == idx1 ){
+                          new_formula += rev_transition1[1][j];
+                        }else{
+                          new_formula += rev_transition2[0][k];
+                        }
+                      }
+                      var found = isValidFormula( new_formula );
+                      if( found ){ answers.push( { formula: new_formula, rev: true } ); }
+                    }
+                  }
+                }
+              }
+  
+              //. 同じ所で数値を別のものにする
+              for( var j = 0; j < rev_transition1[2].length; j ++ ){
+                var new_formula = '';
+                for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                  if( idx3 != idx1 ){
+                    var m3 = matches11[idx3];
+                    var rev_transition3 = rev_transitions[m3.idx];
+                    new_formula += rev_transition3[3][0];
+                  }else{
+                    new_formula += rev_transition1[2][j];
+                  }
+                }
+                var found = isValidFormula( new_formula );
+                if( found ){ answers.push( { formula: new_formula, rev: true } ); }
+              }
+            }
+    
+            //. どこかから１本引いて、どこかにマイナス記号を１本足す
+            for( var idx1 = 0; idx1 < matches11.length; idx1 ++ ){
+              var m1 = matches11[idx1];
+              var rev_transition1 = rev_transitions[m1.idx];
+              for( var j = 0; j < rev_transition1[1].length; j ++ ){
+                var new_formula1 = '';
+                for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                  if( idx3 != idx1 ){
+                    var m3 = matches11[idx3];
+                    var rev_transition3 = rev_transitions[m3.idx];
+                    new_formula1 += rev_transition3[3][0];
+                  }else{
+                    new_formula1 += rev_transition1[1][j];
+                  }
+                }
+  
+                for( var k = 0; k <= new_formula1.length; k ++ ){
+                  var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
+                  var found = isValidFormula( new_formula2 );
+                  if( found ){ answers.push( { formula: new_formula2, rev: true } ); }
+                }
+              }
+            }
+    
+            if( formula.indexOf( '-' ) > -1 ){
+              //. マイナス記号を１本引いて、どこかに１本足す
+              for( var idx1 = 0; idx1 < matches11.length; idx1 ++ ){
+                var m1 = matches11[idx1];
+                var rev_transition1 = rev_transitions[m1.idx];
+                for( var j = 0; j < rev_transition1[0].length; j ++ ){
+                  var new_formula1 = '';
+                  for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                    if( idx3 != idx1 ){
+                      var m3 = matches11[idx3];
+                      var rev_transition3 = rev_transitions[m3.idx];
+                      new_formula1 += rev_transition3[3][0];
+                    }else{
+                      new_formula1 += rev_transition1[0][j];
+                    }
+                  }
+  
+                  var start = 0;
+                  do{
+                    start = new_formula1.indexOf( '-', start );
+                    if( start > -1 ){
+                      var new_formula2 = new_formula1.substr( 0, start ) + new_formula1.substr( start + 1 );
+                      var found = isValidFormula( new_formula2 );
+                      if( found ){ answers.push( { formula: new_formula2, rev: true } ); }
+    
+                      start ++;
+                    }
+                  }while( start > -1 );
+                }
+              }
+  
+              //. マイナス記号を１本引いて、どこかにマイナス記号を１本足す
+              var start = 0;
+              do{
+                start = formula.indexOf( '-', start );
+                if( start > -1 ){
+                  var new_formula1 = '';
+                  for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                    if( idx3 != start ){
+                      var m3 = matches11[idx3];
+                      var rev_transition3 = rev_transitions[m3.idx];
+                      new_formula1 += rev_transition3[3][0];
+                    }
+                  }
+    
+                  for( var k = 0; k <= new_formula1.length; k ++ ){
+                    var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
+                    var found = isValidFormula( new_formula2 );
+                    if( found ){ answers.push( { formula: new_formula2, rev: true } ); }
+                  }
+    
+                  start ++;
+                }
+              }while( start > -1 );
+            }
+          }
           break;
         }
       }
@@ -835,7 +967,7 @@ function checkFormula( formula, eleven ){
   return r;
 }
 
-function checkFormula1( formula ){
+function checkFormula1( formula, eleven ){
   var matches = [];
 
   if( formula ){
@@ -863,7 +995,13 @@ function checkFormula1( formula ){
         }
         matches.push( { type: "calc", kind: c, idx: idx } );
       }else if( '0' <= c && c <= '9' ){
-        matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        //matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
+          matches.push( { type: "num", kind: 11, idx: 11 } );
+          i ++;
+        }else{
+          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        }
       }else{
         matches.push( { type: "else", kind: c, idx: -1 } );
       }
