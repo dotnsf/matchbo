@@ -10,7 +10,7 @@ function getParam( name, url ){
 }
 var beta_function = getParam( 'beta' );
 var isvalid_doublezeros = true;
-var isvalid_doublecalcs = true; //false;
+var isvalid_doublecalcs = false;
 var isvalid_doubleequals = true;
 var isvalid_reverse = false;
 
