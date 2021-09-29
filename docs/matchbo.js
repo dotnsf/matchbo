@@ -10,7 +10,7 @@ function getParam( name, url ){
 }
 var beta_function = getParam( 'beta' );
 var isvalid_doublezeros = true;
-var isvalid_doublecalcs = false;
+var isvalid_doublecalcs = true; //false;
 var isvalid_doubleequals = true;
 var isvalid_reverse = false;
 
@@ -828,28 +828,47 @@ function checkFormulaFor2( formula, eleven ){
           }
         }
 
-        //. 左辺および右辺の最初の数字をマイナスにする
-
-        //. 左辺
-        var matches4 = [ { type: "calc", kind: '-', idx: 13 } ];
-        for( var ii = 0; ii < matches.length; ii ++ ){
-          matches4.push( matches[ii] );
-        }
-        var new_formula = subString( matches4, 0 );
-        var found = isValidFormula( new_formula );
-        if( found ){ answers.push( { formula: new_formula, rev: false } ); }
-
-        //. 右辺
-        matches4 = [];
-        for( var ii = 0; ii < matches.length; ii ++ ){
-          matches4.push( matches[ii] );
-          if( matches[ii].type == 'calc' && matches[ii].idx == 16 ){
-            matches4.push( { type: "calc", kind: '-', idx: 13 } );
+        //. #12
+        if( isvalid_doublecalcs ){
+          //. 全ての隙間に '-' を入れる可能性を考慮する
+          for( var iii = 0; iii <= matches.length; iii ++ ){
+            var matches4 = [];
+            for( var ii = 0; ii < matches.length; ii ++ ){
+              if( iii == ii ){
+                matches4.push( { type: "calc", kind: '-', idx: 13 } );
+              }
+              matches4.push( matches[ii] );
+            }
+            if( iii == matches.length ){
+              matches4.push( { type: "calc", kind: '-', idx: 13 } );
+            }
+            var new_formula = subString( matches4, 0 );
+            var found = isValidFormula( new_formula );
+            if( found ){ answers.push( { formula: new_formula, rev: false } ); }
           }
+        }else{
+          //. 左辺および右辺の最初の数字をマイナスにする
+          //. 左辺
+          var matches4 = [ { type: "calc", kind: '-', idx: 13 } ];
+          for( var ii = 0; ii < matches.length; ii ++ ){
+            matches4.push( matches[ii] );
+          }
+          var new_formula = subString( matches4, 0 );
+          var found = isValidFormula( new_formula );
+          if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+
+          //. 右辺
+          matches4 = [];
+          for( var ii = 0; ii < matches.length; ii ++ ){
+            matches4.push( matches[ii] );
+            if( matches[ii].type == 'calc' && matches[ii].idx == 16 ){
+              matches4.push( { type: "calc", kind: '-', idx: 13 } );
+            }
+          }
+          new_formula = subString( matches4, 0 );
+          found = isValidFormula( new_formula );
+          if( found ){ answers.push( { formula: new_formula, rev: false } ); }
         }
-        new_formula = subString( matches4, 0 );
-        found = isValidFormula( new_formula );
-        if( found ){ answers.push( { formula: new_formula, rev: false } ); }
       }
     }
   }
@@ -937,16 +956,27 @@ function checkFormula( formula, eleven ){
 
           //. 式の i 文字目を translation[1][j] に置き換える
           var new_formula_ = subString( matches, 0, i ) + transition[1][j] + subString( matches, i + 1 );
-          //. 各辺の頭に '-' をつける
-          var tmp = new_formula_.split( '=' );
-          if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
-            for( var k = 0; k < tmp.length; k ++ ){
-              var f = JSON.parse( JSON.stringify( tmp ) );
-              if( f[k].indexOf( '-' ) != 0 ){
-                f[k] = '-' + f[k];
-                var new_formula = f.join( '=' );
-                var found = isValidFormula( new_formula );
-                if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+
+          //. #12
+          if( isvalid_doublecalcs ){
+            //. 全ての隙間に '-' を入れる可能性を考慮する
+            for( var k = 0; k <= new_formula_.length; k ++ ){
+              var new_formula = new_formula_.substr( 0, k ) + '-' + new_formula_.substr( k );
+              var found = isValidFormula( new_formula );
+              if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+            }
+          }else{
+            //. 各辺の頭に '-' をつける
+            var tmp = new_formula_.split( '=' );
+            if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
+              for( var k = 0; k < tmp.length; k ++ ){
+                var f = JSON.parse( JSON.stringify( tmp ) );
+                if( f[k].indexOf( '-' ) != 0 ){
+                  f[k] = '-' + f[k];
+                  var new_formula = f.join( '=' );
+                  var found = isValidFormula( new_formula );
+                  if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+                }
               }
             }
           }
