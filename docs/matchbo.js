@@ -80,12 +80,28 @@ $(function(){
   $('#input_form').submit( function( e ){
     e.preventDefault();
 
-    answers = [];
-    $('#answers_list').html( '' );
-
-    $('#output_formula').val( '' );
     var formula = $('#input_formula').val();
     formula = formula.split(' ').join('');
+
+    answers = fullcheckFormula( formula );
+    showAnswers( answers );
+
+    return false;
+  });
+
+  $('#input_formula').on( 'keyup', function(){
+    onKeyup( 'input' );
+  });
+  onKeyup( 'input' );
+
+  $('#input_formula').focus();
+});
+
+
+function fullcheckFormula( formula ){
+    answers = [];
+    $('#answers_list').html( '' );
+    $('#output_formula').val( '' );
 
     checkFormula( formula, false );
     //. '1', '1' を '11' とみなせないか？
@@ -579,18 +595,9 @@ $(function(){
       }
     }
 
-    showAnswers( answers );
-
-    return false;
-  });
-
-  $('#input_formula').on( 'keyup', function(){
-    onKeyup( 'input' );
-  });
-  onKeyup( 'input' );
-
-  $('#input_formula').focus();
-});
+    return answers;
+    //showAnswers( answers );
+}
 
 function onKeyup( x ){
   var formula = $('#' + x + '_formula').val();
