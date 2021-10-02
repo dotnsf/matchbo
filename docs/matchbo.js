@@ -12,6 +12,8 @@ var beta_function = getParam( 'beta' );
 var isvalid_doublezeros = true;
 var isvalid_doublecalcs = false;
 var isvalid_doubleequals = true;
+var isvalid_onetoplus = false;
+var isvalid_plustoone = false;
 var isvalid_reverse = false;
 
 var formula = getParam( 'formula' );
@@ -22,7 +24,7 @@ if( formula && formula.indexOf( ' ' ) > -1 ){
 var transitions = [
   //. [ 足してできる数, 引いてできる数, 置き換えてできる数 ]
   [ [ 8 ], [ ], [ 6, 9 ] ],         //. 0
-  [ [], [], [ '+' ] ],              //. 1
+  [ [], [], [] ],                   //. 1
   [ [], [], [ 3 ] ],                //. 2
   [ [ 9 ], [], [ 2, 5 ] ],          //. 3
   [ [], [], [ 7, 11 ] ],            //. 4
@@ -33,7 +35,7 @@ var transitions = [
   [ [ 8 ], [ 3, 5 ], [ 0, 6 ] ],    //. 9
   [ [], [], [] ],                   //. 10
   [ [], [], [ 4, 7 ] ],             //. 11
-  [ [], [ '-' ], [ '1', '=' ] ],    //. +
+  [ [], [ '-' ], [ '=' ] ],         //. +
   [ [ '+', '=' ], [], [] ],         //. -
   [ [], [], [] ],                   //. *
   [ [], [], [] ],                   //. /
@@ -43,7 +45,7 @@ var transitions = [
 //. #1 （逆さにして）[ 足してできる数, 引いてできる数, 置き換えてできる数, そのままで成立する数 ]
 var rev_transitions = [
   [ [ 8 ], [], [ 6, 9 ], [ 0 ] ],          //. 0
-  [ [], [], [ '+' ], [ 1 ] ],              //. 1
+  [ [], [], [], [ 1 ] ],                   //. 1
   [ [], [], [ 3 ], [ 2 ] ],                //. 2
   [ [ 6 ], [], [ 2, 5 ], [] ],             //. 3
   [ [], [], [ 11 ], [] ],                  //. 4
@@ -54,7 +56,7 @@ var rev_transitions = [
   [ [ 8 ], [ 3, 5 ], [ 0, 9 ], [ 6 ] ],    //. 9
   [ [], [], [], [ 1 ] ],                   //. 10
   [ [], [], [ 4, 7 ], [ 11 ] ],            //. 11
-  [ [], [ '-' ], [ '1', '=' ], [ '+' ] ],  //. +
+  [ [], [ '-' ], [ '=' ], [ '+' ] ],       //. +
   [ [ '+', '=' ], [], [], [ '-' ] ],       //. -
   [ [], [], [], [ '*' ] ],                 //. *
   [ [], [], [], [ '/' ] ],                 //. /
@@ -79,6 +81,12 @@ $(function(){
   });
   $('#doubleequals_check').change( function(){
     isvalid_doubleequals = $('#doubleequals_check').prop( 'checked' );
+  });
+  $('#onetoplus_check').change( function(){
+    isvalid_onetoplus = $('#onetoplus_check').prop( 'checked' );
+  });
+  $('#plustoone_check').change( function(){
+    isvalid_plustoone = $('#plustoone_check').prop( 'checked' );
   });
   $('#reverse_check').change( function(){
     isvalid_reverse = $('#reverse_check').prop( 'checked' );
@@ -109,6 +117,21 @@ function fullcheckFormula( formula ){
   answers = [];
   $('#answers_list').html( '' );
   $('#output_formula').val( '' );
+
+  if( isvalid_onetoplus ){
+    transitions[1][2] = [ '+' ];
+    rev_transitions[1][2] = [ '+' ];
+  }else{
+    transitions[1][2] = [];
+    rev_transitions[1][2] = [];
+  }
+  if( isvalid_plustoone ){
+    transitions[12][2] = [ '1', '=' ];
+    rev_transitions[12][2] = [ '1', '=' ];
+  }else{
+    transitions[12][2] = [ '=' ];
+    rev_transitions[12][2] = [ '=' ];
+  }
 
   checkFormula( formula, false );
   //. '1', '1' を '11' とみなせないか？
