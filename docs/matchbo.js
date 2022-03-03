@@ -141,6 +141,9 @@ function fullcheckFormula( formula ){
   //. '1', '1' を '11' とみなせないか？
   if( formula.indexOf( '11' ) > -1 ){
     checkFormula( formula, true );
+    if( formula.indexOf( '111' ) > -1 ){
+      checkFormula( formula, false, true );
+    }
   }
 
   //. #2 対応
@@ -148,6 +151,9 @@ function fullcheckFormula( formula ){
     checkFormulaFor2( formula, false );
     if( formula.indexOf( '11' ) > -1 ){
       checkFormulaFor2( formula, true );
+      if( formula.indexOf( '111' ) > -1 ){
+        checkFormulaFor2( formula, false, true );
+      }
     }
   }
 
@@ -156,11 +162,17 @@ function fullcheckFormula( formula ){
     checkFormulaFor31( formula, false );
     if( formula.indexOf( '11' ) > -1 ){
       checkFormulaFor31( formula, true );
+      if( formula.indexOf( '111' ) > -1 ){
+        checkFormulaFor31( formula, false, true );
+      }
     }
 
     checkFormulaFor32( formula );
     if( formula.indexOf( '11' ) > -1 ){
       checkFormulaFor32( formula, true );
+      if( formula.indexOf( '111' ) > -1 ){
+        checkFormulaFor32( formula, false, true );
+      }
     }
   }
 
@@ -645,6 +657,139 @@ function fullcheckFormula( formula ){
             }while( start > -1 );
           }
         }
+
+        //. #15
+        if( formula.indexOf( '111' ) > -1 ){
+          var matches11 = checkFormula1( formula, false, true );
+
+          for( var idx1 = 0; idx1 < matches11.length; idx1 ++ ){
+            var m1 = matches11[idx1];
+            var rev_transition1 = rev_transitions[m1.idx];
+
+            //. どこかから１本引いて、どこかの文字に１本足す
+            for( var j = 0; j < rev_transition1[1].length; j ++ ){
+              for( var idx2 = 0; idx2 < matches11.length; idx2 ++ ){
+                if( idx2 != idx1 ){
+                  var m2 = matches11[idx2];
+                  var rev_transition2 = rev_transitions[m2.idx];
+                  for( var k = 0; k < rev_transition2[0].length; k ++ ){
+                    var new_formula = '';
+                    for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                      if( idx3 != idx1 && idx3 != idx2 ){
+                        var m3 = matches11[idx3];
+                        var rev_transition3 = rev_transitions[m3.idx];
+                        new_formula += rev_transition3[3][0];
+                      }else if( idx3 == idx1 ){
+                        new_formula += rev_transition1[1][j];
+                      }else{
+                        new_formula += rev_transition2[0][k];
+                      }
+                    }
+                    var found = isValidFormula( new_formula );
+                    if( found ){ answers.push( { formula: new_formula, rev: true } ); }
+                  }
+                }
+              }
+            }
+  
+            //. 同じ所で数値を別のものにする
+            for( var j = 0; j < rev_transition1[2].length; j ++ ){
+              var new_formula = '';
+              for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                if( idx3 != idx1 ){
+                  var m3 = matches11[idx3];
+                  var rev_transition3 = rev_transitions[m3.idx];
+                  new_formula += rev_transition3[3][0];
+                }else{
+                  new_formula += rev_transition1[2][j];
+                }
+              }
+              var found = isValidFormula( new_formula );
+              if( found ){ answers.push( { formula: new_formula, rev: true } ); }
+            }
+          }
+  
+          //. どこかから１本引いて、どこかにマイナス記号を１本足す
+          for( var idx1 = 0; idx1 < matches11.length; idx1 ++ ){
+            var m1 = matches11[idx1];
+            var rev_transition1 = rev_transitions[m1.idx];
+            for( var j = 0; j < rev_transition1[1].length; j ++ ){
+              var new_formula1 = '';
+              for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                if( idx3 != idx1 ){
+                  var m3 = matches11[idx3];
+                  var rev_transition3 = rev_transitions[m3.idx];
+                  new_formula1 += rev_transition3[3][0];
+                }else{
+                  new_formula1 += rev_transition1[1][j];
+                }
+              }
+
+              for( var k = 0; k <= new_formula1.length; k ++ ){
+                var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
+                var found = isValidFormula( new_formula2 );
+                if( found ){ answers.push( { formula: new_formula2, rev: true } ); }
+              }
+            }
+          }
+  
+          if( formula.indexOf( '-' ) > -1 ){
+            //. マイナス記号を１本引いて、どこかに１本足す
+            for( var idx1 = 0; idx1 < matches11.length; idx1 ++ ){
+              var m1 = matches11[idx1];
+              var rev_transition1 = rev_transitions[m1.idx];
+              for( var j = 0; j < rev_transition1[0].length; j ++ ){
+                var new_formula1 = '';
+                for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                  if( idx3 != idx1 ){
+                    var m3 = matches11[idx3];
+                    var rev_transition3 = rev_transitions[m3.idx];
+                    new_formula1 += rev_transition3[3][0];
+                  }else{
+                    new_formula1 += rev_transition1[0][j];
+                  }
+                }
+
+                var start = 0;
+                do{
+                  start = new_formula1.indexOf( '-', start );
+                  if( start > -1 ){
+                    var new_formula2 = new_formula1.substr( 0, start ) + new_formula1.substr( start + 1 );
+                    var found = isValidFormula( new_formula2 );
+                    if( found ){ answers.push( { formula: new_formula2, rev: true } ); }
+  
+                    start ++;
+                  }
+                }while( start > -1 );
+              }
+            }
+
+            //. マイナス記号を１本引いて、どこかにマイナス記号を１本足す
+            var start = 0;
+            do{
+              start = formula.indexOf( '-', start );
+              if( start > -1 ){
+                var new_formula1 = '';
+                for( var idx3 = matches11.length - 1; idx3 >= 0; idx3 -- ){
+                  if( idx3 != start ){
+                    var m3 = matches11[idx3];
+                    var rev_transition3 = rev_transitions[m3.idx];
+                    new_formula1 += rev_transition3[3][0];
+                  }
+                }
+  
+                for( var k = 0; k <= new_formula1.length; k ++ ){
+                  var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
+                  var found = isValidFormula( new_formula2 );
+                  if( found ){ answers.push( { formula: new_formula2, rev: true } ); }
+                }
+  
+                start ++;
+              }
+            }while( start > -1 );
+          }
+        }
+
         break;
       }
     }
@@ -752,7 +897,7 @@ function formula2imgs_rev( formula ){
 }
 
 //. #3
-function checkFormulaFor31( formula, eleven ){
+function checkFormulaFor31( formula, eleven, eleven2 ){
   //. （数字から）１本とって別の数字になるか、（プラスから）１本とってマイナスにしてから、２桁以上の数字の間に入れて引き算
   var r = null;
 
@@ -765,7 +910,12 @@ function checkFormulaFor31( formula, eleven ){
         var idx = 12;
         matches.push( { type: "calc", kind: c, idx: idx } );
       }else if( '0' <= c && c <= '9' ){
-        if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
+        if( eleven2 && c == '1' && i - 2 < formula.length && formula.charAt( i + 1 ) == '1' && formula.charAt( i + 2 ) == '1' ){
+          //. #15
+          matches.push( { type: "num", kind: 1, idx: 1 } );
+          matches.push( { type: "num", kind: 11, idx: 11 } );
+          i += 2;
+        }else if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
           matches.push( { type: "num", kind: 11, idx: 11 } );
           i ++;
         }else{
@@ -804,7 +954,7 @@ function checkFormulaFor31( formula, eleven ){
   return r;
 }
 
-function checkFormulaFor32( formula, eleven ){
+function checkFormulaFor32( formula, eleven, eleven2 ){
   //. （マイナスから）１本とって前後の数字を連結してから、２桁以上の数字の間に入れて引き算
   var r = null;
 
@@ -830,7 +980,7 @@ function checkFormulaFor32( formula, eleven ){
   return r;
 }
 
-function checkFormulaFor2( formula, eleven ){
+function checkFormulaFor2( formula, eleven, eleven2 ){
   var r = null;
 
   if( formula ){
@@ -865,7 +1015,12 @@ function checkFormulaFor2( formula, eleven ){
             }
             matches.push( { type: "calc", kind: d, idx: idx } );
           }else if( '0' <= d && d <= '9' ){
-            if( eleven && d == '1' && j - 1 < formula2.length && formula2.charAt( j + 1 ) == '1' ){
+            if( eleven2 && d == '1' && j - 2 < formula2.length && formula2.charAt( j + 1 ) == '1' && formula2.charAt( j + 2 ) == '1' ){
+              //. #15
+              matches.push( { type: "num", kind: 1, idx: 1 } );
+              matches.push( { type: "num", kind: 11, idx: 11 } );
+              j += 2;
+            }else if( eleven && d == '1' && j - 1 < formula2.length && formula2.charAt( j + 1 ) == '1' ){
               matches.push( { type: "num", kind: 11, idx: 11 } );
               j ++;
             }else{
@@ -940,7 +1095,7 @@ function checkFormulaFor2( formula, eleven ){
   return r;
 }
 
-function checkFormula( formula, eleven ){
+function checkFormula( formula, eleven, eleven2 ){
   var r = null;
 
   if( formula ){
@@ -969,7 +1124,12 @@ function checkFormula( formula, eleven ){
         }
         matches.push( { type: "calc", kind: c, idx: idx } );
       }else if( '0' <= c && c <= '9' ){
-        if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
+        if( eleven2 && c == '1' && i - 2 < formula.length && formula.charAt( i + 1 ) == '1' && formula.charAt( i + 2 ) == '1' ){
+          //. #15
+          matches.push( { type: "num", kind: 1, idx: 1 } );
+          matches.push( { type: "num", kind: 11, idx: 11 } );
+          i += 2;
+        }else if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
           matches.push( { type: "num", kind: 11, idx: 11 } );
           i ++;
         }else{
@@ -1060,7 +1220,7 @@ function checkFormula( formula, eleven ){
   return r;
 }
 
-function checkFormula1( formula, eleven ){
+function checkFormula1( formula, eleven, eleven2 ){
   var matches = [];
 
   if( formula ){
@@ -1089,7 +1249,12 @@ function checkFormula1( formula, eleven ){
         matches.push( { type: "calc", kind: c, idx: idx } );
       }else if( '0' <= c && c <= '9' ){
         //matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
-        if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
+        if( eleven2 && c == '1' && i - 2 < formula.length && formula.charAt( i + 1 ) == '1' && formula.charAt( i + 2 ) == '1' ){
+          //. #15
+          matches.push( { type: "num", kind: 1, idx: 1 } );
+          matches.push( { type: "num", kind: 11, idx: 11 } );
+          i += 2;
+        }else if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
           matches.push( { type: "num", kind: 11, idx: 11 } );
           i ++;
         }else{
