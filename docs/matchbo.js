@@ -15,6 +15,7 @@ var isvalid_doubleequals = true;
 var isvalid_onetoplus = false;
 var isvalid_plustoone = false;
 var isvalid_reverse = false;
+var isvalid_plusminus = false;
 
 var formula = getParam( 'formula' );
 if( formula && formula.indexOf( ' ' ) > -1 ){
@@ -91,6 +92,9 @@ $(function(){
   $('#reverse_check').change( function(){
     isvalid_reverse = $('#reverse_check').prop( 'checked' );
   });
+  $('#plusminus_check').change( function(){
+    isvalid_plusminus = $('#plusminus_check').prop( 'checked' );
+  });
 
   $('#input_form').submit( function( e ){
     e.preventDefault();
@@ -158,6 +162,27 @@ function fullcheckFormula( formula ){
     if( formula.indexOf( '11' ) > -1 ){
       checkFormulaFor32( formula, true );
     }
+  }
+
+  //. #16
+  if( isvalid_plusminus ){
+    //. '+8' => '±0' パターン
+    var n1 = formula.indexOf( '+8' );
+    if( n1 > -1 ){
+      var c1 = '';
+      if( formula.length > n1 + 2 ){
+        c1 = formula.charAt( n1 + 2 );
+      }
+      if( formula.length == ( n1 + 2 ) || c1 == '=' ){
+        //. 変換パターンが成立するのはこの時だけ
+        var new_formula = formula.substr( 0, n1 ) + '±0' + formula.substr( n1 + 2 );
+
+        var found = isValidFormula( new_formula );
+        if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+      }
+    }
+
+    //. '=0' => '±0' パターン
   }
 
   if( isvalid_reverse ){
@@ -646,7 +671,7 @@ function formula2imgs( formula ){
     for( var i = 0; i < formula.length; i ++ ){
       var c = formula.charAt( i );
       var idx = -1;
-      if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+      if( ['+','-','*','/','=','±'].indexOf( c ) > -1 ){
         switch( c ){
         case '+':
           idx = 12;
@@ -662,6 +687,9 @@ function formula2imgs( formula ){
           break;
         case '=':
           idx = 16;
+          break;
+        case '±':
+          idx = 17;
           break;
         }
       }else{
@@ -1079,6 +1107,9 @@ function checkFormula1( formula, eleven ){
 
 function isValidFormula( f ){
   var r = false;
+
+  //. #16
+  f = f.split( '±' ).join( '+' );
 
   var tmp = f.split( '=' );
   if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
