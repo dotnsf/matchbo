@@ -103,7 +103,7 @@ $(function(){
     formula = formula.split(' ').join('');
 
     answers = fullcheckFormula( formula );
-    showAnswers( answers );
+    showAnswers( answers, formula );
 
     return false;
   });
@@ -1428,21 +1428,32 @@ function unique( arr ){
   return new_arr;
 }
 
-function showAnswers( answers ){
+function showAnswers( answers, formula ){
   answers = unique( answers );
   //console.log( answers );
   if( answers && answers.length > 0 ){
     $('#answers_list').append( '<ol id="answers_list_ol"></ol>' );
+
+    //. #19 難易度順に（易しい順に）ソート
     for( var i = 0; i < answers.length; i ++ ){
       var answer = answers[i];
       var answer_formula = answer.formula;
+      answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
+    }
+    answers.sort( sortByDifficulty );
+
+    for( var i = 0; i < answers.length; i ++ ){
+      var answer = answers[i];
+      var answer_formula = answer.formula;
+      var difficulty = answer.difficulty;  //. #19
+
       var answer_rev = answer.rev;
 
       var img = ( answer_rev ? formula2imgs_rev( answer_formula ) : formula2imgs( answer_formula ) );
       var li = '<li>'
         + ( answer_rev ? '（逆さに見る）' : '' )
         + '<form><input type="text" class="blue" id="output_formula_' + i + '" value="' + answer_formula + '" readonly/></form>' 
-        + '<span id="output_imgs_' + i + '">' + img + '</span>'
+        + '<span id="output_imgs_' + i + '" title="' + difficulty + '">' + img + '</span>'  //. #19
         + '</li>';
       $('#answers_list_ol').append( li );
     }
@@ -1452,4 +1463,50 @@ function showAnswers( answers ){
     //$('#output_formula').val( '無理っす' );
     //$('#output_imgs').html( '' );
   }
+}
+
+//. #18
+function countDifficulties( f_question, f_answer ){
+  var parts_question = divideParts( f_question );
+  var parts_answer = divideParts( f_answer );
+
+  var cnt = Math.abs( parts_question.length - parts_answer.length );
+  for( var i = 0, j = 0; i < parts_question.length && j < parts_answer.length; i ++, j ++ ){
+    while( parts_question[i] != parts_answer[j] ){
+      cnt ++;
+      if( parts_question.length <= parts_answer.length ){
+        i --;
+      }else{
+        j --;
+      }
+    }
+  }
+
+  return cnt;
+}
+
+function divideParts( f ){
+  var parts = [];
+
+  for( var i = 0; i < f.length; i ++ ){
+    var c = f.charAt( i );
+    if( '0' <= c && c <= '9' ){
+      parts.push( 'N' );
+    }else{
+      parts.push( 'C' );
+    }
+  }
+
+  return parts;
+}
+
+function sortByDifficulty( a, b ){
+  var r = 0;
+  if( a.difficulty < b.difficulty ){
+    r = -1;
+  }else if( a.difficulty > b.difficulty ){
+    r = 1;
+  }
+
+  return r;
 }
