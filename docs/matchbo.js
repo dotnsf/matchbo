@@ -1604,6 +1604,7 @@ var quiz_pattern = [
   //. 最後は数字(N)のはず
   [ 'N', 'E', 'N' ]
   , [ 'N', 'E', 'N', 'N' ]
+  , [ 'N', 'N', 'E', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N' ]
   /*
   , [ 'N', 'C', 'N', 'E', 'N', 'N' ]
@@ -1696,6 +1697,7 @@ function generate_quiz( idx ){
   var cnt = 0;
 
   var priority = $('#quiz_priority').val();
+  $('#generated_quizs').css( 'display', 'none' );
 
   while( quiz !== null ){
     if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
@@ -1731,15 +1733,23 @@ function generate_quiz( idx ){
   }
 
   if( quizs.length > 0 ){
-    console.log( quizs );
-    var r = Math.floor( Math.random() * quizs.length );
-    var selected_quiz = quizs[r];
+    $('#generated_quizs').css( 'display', 'block' );
+    $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
 
-    $('#input_formula').val( selected_quiz );
-    var imgs = formula2imgs( selected_quiz );
-    if( imgs ){
-      $('#input_imgs').html( imgs );
+    for( var i = 0; i < quizs.length; i ++ ){
+      var o = '<option value="' + quizs[i] + '">' + quizs[i] + '</option>';
+      $('#generated_quizs').append( o );
     }
+    $('#generated_quizs').change( function(){
+      var selected_quiz = $(this).val();
+      if( selected_quiz ){
+        $('#input_formula').val( selected_quiz );
+        var imgs = formula2imgs( selected_quiz );
+        if( imgs ){
+          $('#input_imgs').html( imgs );
+        }
+      }
+    });
   }
 }
 
