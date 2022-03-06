@@ -113,6 +113,18 @@ $(function(){
   });
   onKeyup( 'input' );
 
+  //. #17
+  $('#quiz_pattern').html( '' );
+  for( var i = 0; i < quiz_pattern.length; i ++ ){
+    var pattern = quiz_pattern[i];
+    var v = '';
+    for( var j = 0; j < pattern.length; j ++ ){
+      v += pattern[j];
+    }
+    var option = '<option value="' + i + '">' + v + '</option>';
+    $('#quiz_pattern').append( option );
+  }
+
   $('#input_formula').focus();
 });
 
@@ -1517,9 +1529,11 @@ var quiz_pattern = [
   [ 'N', 'E', 'N' ]
   , [ 'N', 'E', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N' ]
+  /*
   , [ 'N', 'C', 'N', 'E', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
+  */
 ];
 
 //. 深さ優先
@@ -1531,7 +1545,6 @@ function recursive_generate_quiz( current, pattern, is_next ){
     if( c == '9' ){ //. 式の最後は数字のはず
       return recursive_generate_quiz( current, pattern, false );
     }else{
-      //. '0' で来ても '1' にして返してしまう？
       var code = c.charCodeAt( 0 ) + 1;
       current += String.fromCharCode( code );
       return current;
@@ -1600,25 +1613,51 @@ function recursive_generate_quiz( current, pattern, is_next ){
 }
 
 function generate_quiz( idx ){
+  var quizs = [];
+  var max_dif = 0;
   var pattern = quiz_pattern[idx];
   var quiz = recursive_generate_quiz( '', pattern, true );
   var cnt = 0;
-  while( quiz !== null /*&& cnt < 30*/ ){
-    //console.log( cnt, quiz );
-    cnt ++;
+  while( quiz !== null ){
+    if( !isValidFormula( quiz ) ){
+      cnt ++;
 
-    //. check
-    answers = fullcheckFormula( quiz );
-    if( answers.length == 1 ){
-      console.log( cnt, quiz );
-      for( var i = 0; i < answers.length; i ++ ){
-        var answer = answers[i];
-        var dif = countDifficulties( quiz, answer );
-        console.log( answer, dif );
+      //. check
+      var quiz_answers = fullcheckFormula( quiz );
+      if( quiz_answers.length == 1 ){
+        for( var i = 0; i < quiz_answers.length; i ++ ){
+          var answer = quiz_answers[i];
+          var dif = countDifficulties( quiz, answer );
+          //console.log( cnt, quiz, answer.formula, dif );
+          if( dif > max_dif ){
+            max_dif = dif;
+            quizs = [ quiz ];
+          }else if( dif == max_dif ){
+            quizs.push( quiz );
+          }
+        }
       }
     }
 
     quiz = recursive_generate_quiz( quiz, pattern, false );
   }
+
+  if( quizs.length > 0 ){
+    var r = Math.floor( Math.random() * quizs.length );
+    var selected_quiz = quizs[r];
+
+    $('#input_formula').val( selected_quiz );
+    var imgs = formula2imgs( selected_quiz );
+    if( imgs ){
+      $('#input_imgs').html( imgs );
+    }
+  }
 }
-generate_quiz( 1 );
+
+function generate_quiz_btn(){
+  var v = $('#quiz_pattern').val();
+  if( v ){
+    v = parseInt( v );
+    generate_quiz( v );
+  }
+}
