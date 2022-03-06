@@ -115,11 +115,16 @@ $(function(){
 
   //. #17
   $('#quiz_pattern').html( '' );
+  var pattern_labels = {
+    'N': '数',
+    'C': '記',
+    'E': '＝'
+  };
   for( var i = 0; i < quiz_pattern.length; i ++ ){
     var pattern = quiz_pattern[i];
     var v = '';
     for( var j = 0; j < pattern.length; j ++ ){
-      v += pattern[j];
+      v += pattern_labels[pattern[j]];
     }
     var option = '<option value="' + i + '">' + v + '</option>';
     $('#quiz_pattern').append( option );
@@ -1353,6 +1358,77 @@ function isValidRuled( f ){
   return r;
 }
 
+//. #17
+function isValidQuiz( q ){
+  var r = false;
+
+  //q = q.split( '±' ).join( '+' );
+
+  var tmp = q.split( '=' );
+  if( tmp.length == 2 ){   //. '=' は１つのみとする
+    var b = true;
+    for( var i = 0; i < tmp.length && b; i ++ ){
+      b = isValidRuledQuiz( tmp[i] );
+    }
+
+    try{
+      var v0 = eval( tmp[0] );
+      if( v0 != undefined ){
+        for( var i = 1; i < tmp.length && b; i ++ ){
+          var v1 = eval( tmp[i] );
+          b = ( v0 !== v1 );
+        }
+
+        r = b;
+      }
+    }catch( e ){
+      //console.log( tmp[0] );
+      //console.log( e );
+    }
+  }
+
+  return r;
+}
+
+function isValidRuledQuiz( q ){
+  //. (1) f に 0 で始まる２桁以上の数はないこと
+  //. (2) f に符号が２つ以上繋がってないこと
+  var r = true;
+  var prev_calc = false;
+  var prev_zero = false;
+
+  for( var i = 0; i < q.length && r; i ++ ){
+    var c = q.charAt( i );
+    if( '0' == c ){
+      if( prev_zero ){
+        r = false;
+      }
+      prev_zero = true;
+      prev_calc = false;
+    }else if( '1' <= c && c <= '9' ){
+      if( prev_zero ){
+        r = false;
+      }
+      prev_calc = false;
+      prev_zero = false;
+    }else if( '-' == c ){
+      if( prev_calc ){
+        r = false;
+      }
+      prev_calc = true;
+      prev_zero = false;
+    }else{
+      if( prev_calc ){
+        r = false;
+      }
+      prev_calc = true;
+      prev_zero = false;
+    }
+  }
+
+  return r;
+}
+
 function subString( arr, s, e ){
   var r = '';
 
@@ -1614,27 +1690,39 @@ function recursive_generate_quiz( current, pattern, is_next ){
 
 function generate_quiz( idx ){
   var quizs = [];
-  var max_dif = 0;
+  var max_num = 0;
   var pattern = quiz_pattern[idx];
   var quiz = recursive_generate_quiz( '', pattern, true );
   var cnt = 0;
+
+  var priority = $('#quiz_priority').val();
+
   while( quiz !== null ){
-    if( !isValidFormula( quiz ) ){
+    if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
       cnt ++;
 
       //. check
       var quiz_answers = fullcheckFormula( quiz );
-      if( quiz_answers.length == 1 ){
-        for( var i = 0; i < quiz_answers.length; i ++ ){
-          var answer = quiz_answers[i];
-          var dif = countDifficulties( quiz, answer );
-          //console.log( cnt, quiz, answer.formula, dif );
-          if( dif > max_dif ){
-            max_dif = dif;
-            quizs = [ quiz ];
-          }else if( dif == max_dif ){
-            quizs.push( quiz );
+      if( priority == 'difficulty' ){
+        if( quiz_answers.length == 1 ){
+          for( var i = 0; i < quiz_answers.length; i ++ ){
+            var answer = quiz_answers[i];
+            var dif = countDifficulties( quiz, answer );
+            //console.log( cnt, quiz, answer.formula, dif );
+            if( dif > max_num ){
+              max_num = dif;
+              quizs = [ quiz ];
+            }else if( dif == max_num ){
+              quizs.push( quiz );
+            }
           }
+        }
+      }else if( priority == 'variety' ){
+        if( quiz_answers.length > max_num ){
+          max_num = quiz_answers.length;
+          quizs = [ quiz ];
+        }else if( quiz_answers.length == max_num ){
+          quizs.push( quiz );
         }
       }
     }
@@ -1643,6 +1731,7 @@ function generate_quiz( idx ){
   }
 
   if( quizs.length > 0 ){
+    console.log( quizs );
     var r = Math.floor( Math.random() * quizs.length );
     var selected_quiz = quizs[r];
 

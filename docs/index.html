@@ -38,17 +38,23 @@
       <li><input type="checkbox" id="plusminus_check"/>プラスマイナス記号を認める（例: 1+4=5+8 -> 1+4=5±0）</li>
     </ul>
   </div>
+    <img src="./imgs/ai_robot.png" width="50"/><br/>
     <table>
       <tr>
-        <td>
-          問題自動生成
-        </tr>
         <td>
           <select id="quiz_pattern">
           </select>
         </td>
         <td>
-          <button class="btn btn-xs btn-success" id="quiz_generate_btn" onClick="generate_quiz_btn();">生成</button>
+          <select id="quiz_priority">
+            <option value="difficulty" selected>解が１つで難易度の高いもの</option>
+            <option value="variety">解の種類が多いもの</option>
+          </select>
+        </td>
+        <td>
+          <button class="btn btn-xs btn-success" id="quiz_generate_btn" onClick="generate_quiz_btn();">
+          <b>問題自動生成</b>
+          </button>
         </td>
       </tr>
     </table>
