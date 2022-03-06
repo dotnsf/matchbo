@@ -1510,3 +1510,115 @@ function sortByDifficulty( a, b ){
 
   return r;
 }
+
+//. #17
+var quiz_pattern = [
+  //. 最後は数字(N)のはず
+  [ 'N', 'E', 'N' ]
+  , [ 'N', 'E', 'N', 'N' ]
+  , [ 'N', 'C', 'N', 'E', 'N' ]
+  , [ 'N', 'C', 'N', 'E', 'N', 'N' ]
+  , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
+  , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
+];
+
+//. 深さ優先
+var cs = ['+','-','*','/'];
+function recursive_generate_quiz( current, pattern, is_next ){
+  if( current.length == pattern.length ){
+    var c = current.charAt( current.length - 1 );
+    current = current.substr( 0, current.length - 1 );
+    if( c == '9' ){ //. 式の最後は数字のはず
+      return recursive_generate_quiz( current, pattern, false );
+    }else{
+      //. '0' で来ても '1' にして返してしまう？
+      var code = c.charCodeAt( 0 ) + 1;
+      current += String.fromCharCode( code );
+      return current;
+    }
+  }else{
+    if( is_next ){
+      var p = pattern[current.length];
+      if( p == 'E' ){
+        current += '=';
+        return recursive_generate_quiz( current, pattern, true );
+      }else if( p == 'N' ){
+        current += '0';
+        if( current.length == pattern.length ){
+          return current;
+        }else{
+          return recursive_generate_quiz( current, pattern, true );
+        }
+      }else{
+        // ['+','-','*','/']
+        current += '+';
+        return recursive_generate_quiz( current, pattern, true );
+      }
+    }else{
+      var c = current.charAt( current.length - 1 );
+      var p = pattern[current.length - 1];
+      if( p == 'N' ){
+        if( c != '9' ){
+          current = current.substr( 0, current.length - 1 );
+          var code = c.charCodeAt( 0 ) + 1;
+          current += String.fromCharCode( code );
+          return recursive_generate_quiz( current, pattern, true );
+        }else{
+          if( current.length > 0 ){
+            current = current.substr( 0, current.length - 1 );
+            return recursive_generate_quiz( current, pattern, false );
+          }else{
+            return null;
+          }
+        }
+      }else if( p == 'C' ){
+        // ['+','-','*','/']
+        if( c != '/' ){
+          current = current.substr( 0, current.length - 1 );
+          var i = cs.indexOf( c );
+          current += cs[i+1];
+          return recursive_generate_quiz( current, pattern, true );
+        }else{
+          if( current.length > 0 ){
+            current = current.substr( 0, current.length - 1 );
+            return recursive_generate_quiz( current, pattern, false );
+          }else{
+            return null;
+          }
+        }
+      }else{
+        //. '='
+        if( current.length > 0 ){
+          current = current.substr( 0, current.length - 1 );
+          return recursive_generate_quiz( current, pattern, false );
+        }else{
+          return null;
+        }
+      }
+    }
+  }
+}
+
+function generate_quiz( idx ){
+  var pattern = quiz_pattern[idx];
+  var quiz = recursive_generate_quiz( '', pattern, true );
+  var cnt = 0;
+  while( quiz !== null /*&& cnt < 30*/ ){
+    //console.log( cnt, quiz );
+    cnt ++;
+
+    //. check
+    answers = fullcheckFormula( quiz );
+    if( answers.length == 1 ){
+      console.log( cnt, quiz );
+      for( var i = 0; i < answers.length; i ++ ){
+        var answer = answers[i];
+        var dif = countDifficulties( quiz, answer );
+        console.log( answer, dif );
+      }
+    }
+
+    quiz = recursive_generate_quiz( quiz, pattern, false );
+  }
+}
+generate_quiz( 1 );
