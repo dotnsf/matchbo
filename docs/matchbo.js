@@ -1156,7 +1156,6 @@ function checkFormula( formula, eleven, eleven2 ){
         matches.push( { type: "else", kind: c, idx: -1 } );
       }
     }
-    //console.log( matches );
 
     //. 最初の１文字目から調べる
     for( var i = 0; i < matches.length; i ++ ){
@@ -1518,7 +1517,6 @@ function unique( arr ){
 
 function showAnswers( answers, formula ){
   answers = unique( answers );
-  //console.log( answers );
   if( answers && answers.length > 0 ){
     $('#answers_list').append( '<ol id="answers_list_ol"></ol>' );
 
@@ -1526,6 +1524,7 @@ function showAnswers( answers, formula ){
     for( var i = 0; i < answers.length; i ++ ){
       var answer = answers[i];
       var answer_formula = answer.formula;
+      //. この結果が返ってこない？？
       answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
     }
     answers.sort( sortByDifficulty );
@@ -1559,8 +1558,9 @@ function countDifficulties( f_question, f_answer ){
   var parts_answer = divideParts( f_answer );
 
   var cnt = Math.abs( parts_question.length - parts_answer.length );
+
   for( var i = 0, j = 0; i < parts_question.length && j < parts_answer.length; i ++, j ++ ){
-    while( parts_question[i] != parts_answer[j] ){
+    if( parts_question[i] != parts_answer[j] ){
       cnt ++;
       if( parts_question.length <= parts_answer.length ){
         i --;
