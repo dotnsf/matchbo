@@ -1689,47 +1689,89 @@ function recursive_generate_quiz( current, pattern, is_next ){
   }
 }
 
-function generate_quiz( idx ){
+async function getDataFromDB( id ){
+  return new Promise( function( resolve, reject ){
+    var data = [];
+    $.ajax({
+      url: 'https://matchbodb.herokuapp.com/api/db/item/' + id,
+      type: 'GET',
+      success: function( result ){
+        //console.log( { result } );
+        if( result && result.result && result.result.quizs ){
+          resolve( result.result.quizs );
+        }else{
+          resolve( [] );
+        }
+      },
+      error: function( e0, e1, e2 ){
+        console.log( e0, e1, e2 );
+        resolve( [] );
+      }
+    });
+  });
+}
+
+async function generate_quiz( idx ){
   var quizs = [];
   var max_num = 0;
   var pattern = quiz_pattern[idx];
-  var quiz = recursive_generate_quiz( '', pattern, true );
   var cnt = 0;
 
   var priority = $('#quiz_priority').val();
   $('#generated_quizs').css( 'display', 'none' );
 
-  while( quiz !== null ){
-    if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
-      cnt ++;
+  var pattern_str = pattern.join( '' );
+  var result_data = await getDataFromDB( pattern_str + '-' + priority );
 
-      //. check
-      var quiz_answers = fullcheckFormula( quiz );
-      if( priority == 'difficulty' ){
-        if( quiz_answers.length == 1 ){
-          for( var i = 0; i < quiz_answers.length; i ++ ){
-            var answer = quiz_answers[i];
-            var dif = countDifficulties( quiz, answer );
-            //console.log( cnt, quiz, answer.formula, dif );
-            if( dif > max_num ){
-              max_num = dif;
-              quizs = [ quiz ];
-            }else if( dif == max_num ){
-              quizs.push( quiz );
+  if( result_data && result_data.length > 0 ){
+    quizs = result_data;
+  }else{
+    var quiz = recursive_generate_quiz( '', pattern, true );
+    while( quiz !== null ){
+      if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
+        cnt ++;
+
+        //. check
+        var quiz_answers = fullcheckFormula( quiz );
+        if( priority == 'difficulty' ){
+          if( quiz_answers.length == 1 ){
+            for( var i = 0; i < quiz_answers.length; i ++ ){
+              var answer = quiz_answers[i];
+              var dif = countDifficulties( quiz, answer );
+              //console.log( cnt, quiz, answer.formula, dif );
+              if( dif > max_num ){
+                max_num = dif;
+                quizs = [ quiz ];
+              }else if( dif == max_num ){
+                quizs.push( quiz );
+              }
             }
           }
-        }
-      }else if( priority == 'variety' ){
-        if( quiz_answers.length > max_num ){
-          max_num = quiz_answers.length;
-          quizs = [ quiz ];
-        }else if( quiz_answers.length == max_num ){
-          quizs.push( quiz );
+        }else if( priority == 'variety' ){
+          if( quiz_answers.length > max_num ){
+            max_num = quiz_answers.length;
+            quizs = [ quiz ];
+          }else if( quiz_answers.length == max_num ){
+            quizs.push( quiz );
+          }
         }
       }
+
+      quiz = recursive_generate_quiz( quiz, pattern, false );
     }
 
-    quiz = recursive_generate_quiz( quiz, pattern, false );
+    //. 登録
+    $.ajax({
+      url: 'https://matchbodb.herokuapp.com/api/db/item',
+      type: 'POST',
+      data: { id: pattern_str + '-' + priority, quizs: quizs },
+      success: function( result ){
+        console.log( { result } );
+      },
+      error: function( e0, e1, e2 ){
+        console.log( e0, e1, e2 );
+      }
+    });
   }
 
   if( quizs.length > 0 ){
