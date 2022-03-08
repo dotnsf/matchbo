@@ -1606,8 +1606,8 @@ var quiz_pattern = [
   , [ 'N', 'E', 'N', 'N' ]
   , [ 'N', 'N', 'E', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N' ]
-  /*
   , [ 'N', 'C', 'N', 'E', 'N', 'N' ]
+  /*
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
   */
@@ -1691,14 +1691,12 @@ function recursive_generate_quiz( current, pattern, is_next ){
 
 async function getDataFromDB( id ){
   return new Promise( function( resolve, reject ){
-    var data = [];
     $.ajax({
-      url: 'https://matchbodb.herokuapp.com/api/db/item/' + id,
+      url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + id,
       type: 'GET',
       success: function( result ){
-        //console.log( { result } );
-        if( result && result.result && result.result.quizs ){
-          resolve( result.result.quizs );
+        if( result && result.status && result.result && result.result.data ){
+          resolve( JSON.parse( result.result.data ) );
         }else{
           resolve( [] );
         }
@@ -1761,10 +1759,11 @@ async function generate_quiz( idx ){
     }
 
     //. 登録
+    console.log( '#quizs = ' + quizs.length );
     $.ajax({
-      url: 'https://matchbodb.herokuapp.com/api/db/item',
+      url: 'https://matchbodb.herokuapp.com/api/db/quiz',
       type: 'POST',
-      data: { id: pattern_str + '-' + priority, quizs: quizs },
+      data: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
       success: function( result ){
         console.log( { result } );
       },
