@@ -55,74 +55,6 @@ var rev_transitions = [
 ];
 
 var answers = [];
-/*
-$(function(){
-  if( !beta_function ){
-    $('#options_div').addClass( 'display_none' );
-  }
-  if( formula ){
-    $('#input_formula').val( formula );
-  }
-
-  $('#doublezeros_check').change( function(){
-    isvalid_doublezeros = $('#doublezeros_check').prop( 'checked' );
-  });
-  $('#doublecalcs_check').change( function(){
-    isvalid_doublecalcs = $('#doublecalcs_check').prop( 'checked' );
-  });
-  $('#doubleequals_check').change( function(){
-    isvalid_doubleequals = $('#doubleequals_check').prop( 'checked' );
-  });
-  $('#onetoplus_check').change( function(){
-    isvalid_onetoplus = $('#onetoplus_check').prop( 'checked' );
-  });
-  $('#plustoone_check').change( function(){
-    isvalid_plustoone = $('#plustoone_check').prop( 'checked' );
-  });
-  $('#reverse_check').change( function(){
-    isvalid_reverse = $('#reverse_check').prop( 'checked' );
-  });
-  $('#plusminus_check').change( function(){
-    isvalid_plusminus = $('#plusminus_check').prop( 'checked' );
-  });
-
-  $('#input_form').submit( function( e ){
-    e.preventDefault();
-
-    var formula = $('#input_formula').val();
-    formula = formula.split(' ').join('');
-
-    answers = fullcheckFormula( formula );
-    showAnswers( answers, formula );
-
-    return false;
-  });
-
-  $('#input_formula').on( 'keyup', function(){
-    onKeyup( 'input' );
-  });
-  onKeyup( 'input' );
-
-  //. #17
-  $('#quiz_pattern').html( '' );
-  var pattern_labels = {
-    'N': '数',
-    'C': '記',
-    'E': '＝'
-  };
-  for( var i = 0; i < quiz_pattern.length; i ++ ){
-    var pattern = quiz_pattern[i];
-    var v = '';
-    for( var j = 0; j < pattern.length; j ++ ){
-      v += pattern_labels[pattern[j]];
-    }
-    var option = '<option value="' + i + '">' + v + '</option>';
-    $('#quiz_pattern').append( option );
-  }
-
-  $('#input_formula').focus();
-});
-*/
 
 function fullcheckFormula( formula ){
   answers = [];
@@ -1563,6 +1495,52 @@ function countDifficulties( f_question, f_answer ){
   return cnt;
 }
 
+//. #23
+function countDifficulty( f_question ){
+  var cnt = 0;
+  for( var i = 0; i < f_question.length; i ++ ){
+    var c = f_question.charAt( i );
+    var idx = -1;
+    if( '0' <= c && c <= '9' ){
+      idx = c - '0';
+    }else{
+      switch( c ){
+      case '+':
+        idx = 12;
+        break;
+      case '-':
+        idx = 13;
+        break;
+      case '*':
+        idx = 14;
+        break;
+      case '/':
+        idx = 15;
+        break;
+      case '=':
+        idx = 16;
+        break;
+      }
+
+      if( idx > -1 ){
+        var trans = transitions[idx];
+        trans.forEach( function( t ){
+          cnt += trans.length;
+        });
+      }
+    }
+  }
+
+  //. 11
+  var n = f_question.indexOf( '11' );
+  while( n > -1 ){
+    cnt += 2;
+    n = f_question.indexOf( '11', n + 1 );
+  }
+
+  return cnt;
+}
+
 function divideParts( f ){
   var parts = [];
 
@@ -1599,9 +1577,7 @@ var quiz_pattern = [
   , [ 'N', 'C', 'N', 'E', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N', 'N' ]
-  /*
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
-  */
 ];
 
 //. 深さ優先
@@ -1682,23 +1658,6 @@ function recursive_generate_quiz( current, pattern, is_next ){
 
 async function getDataFromDB( id ){
   return new Promise( function( resolve, reject ){
-    /* 23
-    $.ajax({
-      url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + id,
-      type: 'GET',
-      success: function( result ){
-        if( result && result.status && result.result && result.result.data ){
-          resolve( JSON.parse( result.result.data ) );
-        }else{
-          resolve( [] );
-        }
-      },
-      error: function( e0, e1, e2 ){
-        console.log( e0, e1, e2 );
-        resolve( [] );
-      }
-    });
-    */
     var option = {
       url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + id,
       method: 'GET',
@@ -1722,33 +1681,31 @@ async function getDataFromDB( id ){
 }
 
 async function generate_quiz( idx, priority ){
-  var quizs = [];
-  var max_num = 0;
-  var pattern = quiz_pattern[idx];
-  var cnt = 0;
+  return new Promise( async function( resolve, reject ){
+    var quizs = [];
+    var max_num = 0;
+    var pattern = quiz_pattern[idx];
+    var cnt = 0;
 
-  //var priority = $('#quiz_priority').val();
-  //$('#generated_quizs').css( 'display', 'none' );
+    //var priority = $('#quiz_priority').val();
+    //$('#generated_quizs').css( 'display', 'none' );
+  
+    var pattern_str = pattern.join( '' );
+    var result_data = await getDataFromDB( pattern_str + '-' + priority );
 
-  var pattern_str = pattern.join( '' );
-  var result_data = await getDataFromDB( pattern_str + '-' + priority );
-
-  if( result_data && result_data.length > 0 ){
-    quizs = result_data;
-  }else{
-    var quiz = recursive_generate_quiz( '', pattern, true );
-    while( quiz !== null ){
-      if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
-        cnt ++;
-
-        //. check
-        var quiz_answers = fullcheckFormula( quiz );
-        if( priority == 'difficulty' ){
-          if( quiz_answers.length == 1 ){
-            for( var i = 0; i < quiz_answers.length; i ++ ){
-              var answer = quiz_answers[i];
-              var dif = countDifficulties( quiz, answer );
-              //console.log( cnt, quiz, answer.formula, dif );
+    if( result_data && result_data.length > 0 ){
+      quizs = result_data;
+    }else{
+      var quiz = recursive_generate_quiz( '', pattern, true );
+      while( quiz !== null ){
+        if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
+          cnt ++;
+  
+          //. check
+          var quiz_answers = fullcheckFormula( quiz );
+          if( priority == 'difficulty' ){
+            if( quiz_answers.length == 1 ){
+              var dif = countDifficulty( quiz );
               if( dif > max_num ){
                 max_num = dif;
                 quizs = [ quiz ];
@@ -1756,85 +1713,54 @@ async function generate_quiz( idx, priority ){
                 quizs.push( quiz );
               }
             }
-          }
-        }else if( priority == 'variety' ){
-          if( quiz_answers.length > max_num ){
-            max_num = quiz_answers.length;
-            quizs = [ quiz ];
-          }else if( quiz_answers.length == max_num ){
-            quizs.push( quiz );
+          }else if( priority == 'variety' ){
+            if( quiz_answers.length > max_num ){
+              max_num = quiz_answers.length;
+              quizs = [ quiz ];
+            }else if( quiz_answers.length == max_num ){
+              quizs.push( quiz );
+            }
           }
         }
+
+        quiz = recursive_generate_quiz( quiz, pattern, false );
       }
 
-      quiz = recursive_generate_quiz( quiz, pattern, false );
+      //. 登録
+      console.log( '#quizs = ' + quizs.length );
+      var option = {
+        url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+        method: 'POST',
+        json: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
+        headers: { 'Accept': 'application/json' }
+      };
+      request( option, ( err, res, body ) => {
+        if( err ){
+          console.log( { err } );
+        }else{
+          console.log( { body } );
+        }
+        resolve( true );
+      });
     }
+  });
+}
 
-    //. 登録
-    console.log( '#quizs = ' + quizs.length );
-    /* #23
-    $.ajax({
-      url: 'https://matchbodb.herokuapp.com/api/db/quiz',
-      type: 'POST',
-      data: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
-      success: function( result ){
-        console.log( { result } );
-      },
-      error: function( e0, e1, e2 ){
-        console.log( e0, e1, e2 );
-      }
-    });
-    */
-    var option = {
-      url: 'https://matchbodb.herokuapp.com/api/db/quiz',
-      method: 'POST',
-      json: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
-      headers: { 'Accept': 'application/json' }
-    };
-    request( option, ( err, res, body ) => {
-      if( err ){
-        console.log( { err } );
+try{
+  if( process.argv.length > 2 ){
+    var n = parseInt( process.argv[2] );
+    if( n > -1 ){
+      if( process.argv.length > 3 ){
+        var o = process.argv[3];
+        generate_quiz( n, o );
       }else{
-        console.log( { body } );
+        generate_quiz( n, 'difficulty' ).then( function(){
+          generate_quiz( n, 'variety' );
+        });
       }
-    });
-  }
-
-  /*
-  if( quizs.length > 0 ){
-    $('#generated_quizs').css( 'display', 'block' );
-    $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
-
-    for( var i = 0; i < quizs.length; i ++ ){
-      var o = '<option value="' + quizs[i] + '">' + quizs[i] + '</option>';
-      $('#generated_quizs').append( o );
     }
-    $('#generated_quizs').change( function(){
-      var selected_quiz = $(this).val();
-      if( selected_quiz ){
-        $('#input_formula').val( selected_quiz );
-        var imgs = formula2imgs( selected_quiz );
-        if( imgs ){
-          $('#input_imgs').html( imgs );
-        }
-      }
-    });
+  }else{
+    console.log( 'Usage: $ node matchbo [n] [difficulty|variety]' );
   }
-  */
-}
-
-function generate_quiz_btn(){
-  var v = $('#quiz_pattern').val();
-  if( v ){
-    v = parseInt( v );
-    generate_quiz( v );
-  }
-}
-
-if( process.argv.length > 3 ){
-  var n = parseInt( process.argv[2] );
-  var o = process.argv[3];
-  generate_quiz( n, o );
-}else{
-  console.log( 'Usage: $ node matchbo [n] [difficuly|variety]' );
+}catch( e ){
 }

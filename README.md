@@ -46,6 +46,15 @@ You can customize minor rules at https://dotnsf.github.io/matchbo?beta=1
 ![=](./docs/imgs/16.png)
 
 
+## How to generate quizs
+
+- `$ node docs/generator [n] [kind]`
+
+  - n: index
+
+  - kind: ["difficulty" or "variety"]
+
+
 ## Licensing
 
 This code is licensed under MIT.
