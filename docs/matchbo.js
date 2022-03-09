@@ -1607,10 +1607,9 @@ var quiz_pattern = [
   , [ 'N', 'N', 'E', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N', 'N' ]
-  /*
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
+  , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
-  */
 ];
 
 //. 深さ優先
@@ -1724,6 +1723,7 @@ async function generate_quiz( idx ){
   if( result_data && result_data.length > 0 ){
     quizs = result_data;
   }else{
+    /*
     var quiz = recursive_generate_quiz( '', pattern, true );
     while( quiz !== null ){
       if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
@@ -1771,10 +1771,11 @@ async function generate_quiz( idx ){
         console.log( e0, e1, e2 );
       }
     });
+    */
   }
 
+  $('#generated_quizs').css( 'display', 'block' );
   if( quizs.length > 0 ){
-    $('#generated_quizs').css( 'display', 'block' );
     $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
 
     for( var i = 0; i < quizs.length; i ++ ){
@@ -1791,6 +1792,8 @@ async function generate_quiz( idx ){
         }
       }
     });
+  }else{
+    $('#generated_quizs').html( '<option value="">（このタイプの出題はまだ用意できていません）</option>' );
   }
 }
 
