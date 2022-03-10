@@ -70,6 +70,7 @@ var answers = [];
 $(function(){
   if( !alpha_function ){
     $('#options_div_alpha').addClass( 'display_none' );
+  }else{
     //. #26
     $.ajax({
       url: 'https://matchbodb.herokuapp.com/',
