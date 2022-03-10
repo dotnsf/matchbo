@@ -8,6 +8,7 @@ function getParam( name, url ){
   if( !results[2] ) return '';
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+var alpha_function = getParam( 'alpha' );
 var beta_function = getParam( 'beta' );
 var isvalid_doublezeros = true;
 var isvalid_doublecalcs = false;
@@ -67,8 +68,11 @@ var rev_transitions = [
 var answers = [];
 
 $(function(){
+  if( !alpha_function ){
+    $('#options_div_alpha').addClass( 'display_none' );
+  }
   if( !beta_function ){
-    $('#options_div').addClass( 'display_none' );
+    $('#options_div_beta').addClass( 'display_none' );
   }
   if( formula ){
     $('#input_formula').val( formula );
