@@ -70,6 +70,15 @@ var answers = [];
 $(function(){
   if( !alpha_function ){
     $('#options_div_alpha').addClass( 'display_none' );
+    //. #26
+    $.ajax({
+      url: 'https://matchbodb.herokuapp.com/',
+      type: 'GET',
+      success: function( result ){},
+      error: function( e0, e1, e2 ){
+        console.log( e0, e1, e2 );
+      }
+    });
   }
   if( !beta_function ){
     $('#options_div_beta').addClass( 'display_none' );
