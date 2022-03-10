@@ -1790,6 +1790,9 @@ async function generate_quiz( idx ){
         if( imgs ){
           $('#input_imgs').html( imgs );
         }
+
+        //. #25
+        $('#answers_list').html( '' );
       }
     });
   }else{
