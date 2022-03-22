@@ -1569,7 +1569,7 @@ function countDifficulty( f_question ){
       trans1.forEach( function( c1 ){
         var new_formula = f_question.substr( 0, i ) + c1 + f_question.substr( i + 1 );
         var found = isValidFormula( new_formula );
-        if( found ){ cnt += 100; }
+        if( found ){ cnt += 1000; }
       });
     }
   }
@@ -1756,7 +1756,7 @@ async function generate_quiz( idx, priority ){
       quiz = recursive_generate_quiz( quiz, pattern, false );
     }
 
-    console.log( '#quizs = ' + quizs.length );
+    console.log( '#quizs = ' + quizs.length + ' (' + max_num + ')' );
 
     var pattern_str = pattern.join( '' );
     var result_data = await getDataFromDB( pattern_str + '-' + priority );
