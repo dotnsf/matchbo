@@ -1250,10 +1250,12 @@ function isValidRuled( f ){
   for( var i = 0; i < f.length && r; i ++ ){
     var c = f.charAt( i );
     if( '0' == c ){
-      if( !isvalid_doublezeros && prev_zero ){
-        r = false;
+      //. #29 １つ前が '0' であっても、その前が '0' 以外の数字だった場合はフラグを立てない
+      if( !isvalid_doublezeros && ( prev_calc || i == 0 || prev_zero ) ){
+        prev_zero = true;
+      }else{
+        prev_zero = false;
       }
-      prev_zero = true;
       prev_calc = false;
     }else if( '1' <= c && c <= '9' ){
       if( !isvalid_doublezeros && prev_zero ){
@@ -1274,6 +1276,10 @@ function isValidRuled( f ){
       prev_calc = true;
       prev_zero = false;
     }
+  }
+
+  if( r && !isvalid_doublezeros && prev_zero ){
+    r = false;
   }
 
   return r;
