@@ -1,14 +1,15 @@
 //. generator.js
 var request = require( 'request' );
 
+//. #31
 var beta_function = false;
-var isvalid_doublezeros = true;
-var isvalid_doublecalcs = false;
-var isvalid_doubleequals = true;
-var isvalid_onetoplus = false;
-var isvalid_plustoone = false;
-var isvalid_reverse = false;
-var isvalid_plusminus = false;
+var isvalid_doublezeros = 'DOUBLEZEROS' in process.env ? process.env.DOUBLEZEROS : false; //. #30
+var isvalid_doublecalcs = 'DOUBLECALCS' in process.env ? process.env.DOUBLECALCS : false;
+var isvalid_doubleequals = 'DOUBLEEQUALS' in process.env ? process.env.DOUBLEEQUALS : true;
+var isvalid_onetoplus = 'ONETOPLUS' in process.env ? process.env.ONETOPLUS : false;
+var isvalid_plustoone = 'PLUSTOONE' in process.env ? process.env.PLUSTOONE : false;
+var isvalid_reverse = 'REVERSE' in process.env ? process.env.REVERSE : false;
+var isvalid_plusminus = 'PLUSMINUS' in process.env ? process.env.PLUSMINUS : false;
 
 var formula = '';
 
