@@ -10,6 +10,7 @@ var isvalid_onetoplus = 'ONETOPLUS' in process.env ? process.env.ONETOPLUS : fal
 var isvalid_plustoone = 'PLUSTOONE' in process.env ? process.env.PLUSTOONE : false;
 var isvalid_reverse = 'REVERSE' in process.env ? process.env.REVERSE : false;
 var isvalid_plusminus = 'PLUSMINUS' in process.env ? process.env.PLUSMINUS : false;
+var no_updatedb = 'NO_UPDATEDB' in process.env ? process.env.NO_UPDATEDB : false;  //. #32
 
 var formula = '';
 
@@ -1765,41 +1766,45 @@ async function generate_quiz( idx, priority ){
 
     console.log( '#quizs = ' + quizs.length + ' (' + max_num + ')' );
 
-    var pattern_str = pattern.join( '' );
-    var result_data = await getDataFromDB( pattern_str + '-' + priority );
-    if( result_data && result_data.length > 0 ){
-      //. 更新登録(#28)
-      //quizs = result_data;
-      var option = {
-        url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-' + priority,
-        method: 'PUT',
-        json: { data: JSON.stringify( quizs ) },
-        headers: { 'Accept': 'application/json' }
-      };
-      request( option, ( err, res, body ) => {
-        if( err ){
-          console.log( { err } );
-        }else{
-          console.log( { body } );
-        }
-        resolve( true );
-      });
+    if( !no_updatedb ){
+      var pattern_str = pattern.join( '' );
+      var result_data = await getDataFromDB( pattern_str + '-' + priority );
+      if( result_data && result_data.length > 0 ){
+        //. 更新登録(#28)
+        //quizs = result_data;
+        var option = {
+          url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-' + priority,
+          method: 'PUT',
+          json: { data: JSON.stringify( quizs ) },
+          headers: { 'Accept': 'application/json' }
+        };
+        request( option, ( err, res, body ) => {
+          if( err ){
+            console.log( { err } );
+          }else{
+            console.log( { body } );
+          }
+          resolve( true );
+        });
+      }else{
+        //. 新規登録
+        var option = {
+          url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+          method: 'POST',
+          json: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
+          headers: { 'Accept': 'application/json' }
+        };
+        request( option, ( err, res, body ) => {
+          if( err ){
+            console.log( { err } );
+          }else{
+            console.log( { body } );
+          }
+          resolve( true );
+        });
+      }
     }else{
-      //. 新規登録
-      var option = {
-        url: 'https://matchbodb.herokuapp.com/api/db/quiz',
-        method: 'POST',
-        json: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
-        headers: { 'Accept': 'application/json' }
-      };
-      request( option, ( err, res, body ) => {
-        if( err ){
-          console.log( { err } );
-        }else{
-          console.log( { body } );
-        }
-        resolve( true );
-      });
+      resolve( true );
     }
   });
 }
