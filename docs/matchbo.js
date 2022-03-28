@@ -1370,9 +1370,11 @@ function isValidRuled( f ){
     }
   }
 
+  /*
   if( r && !isvalid_doublezeros && prev_zero ){
     r = false;
   }
+  */
 
   return r;
 }
@@ -1630,6 +1632,7 @@ var quiz_pattern = [
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
+  , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
 ];
 
 //. 深さ優先

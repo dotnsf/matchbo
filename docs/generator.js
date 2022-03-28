@@ -1220,7 +1220,7 @@ function isValidFormula( f ){
   if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
     var b = true;
     for( var i = 0; i < tmp.length && b; i ++ ){
-      b = isValidRuled( tmp[i] );
+      b = isValidRuled( tmp[i] );  
     }
 
     try{
@@ -1280,9 +1280,11 @@ function isValidRuled( f ){
     }
   }
 
+  /*
   if( r && !isvalid_doublezeros && prev_zero ){
     r = false;
   }
+  */
 
   return r;
 }
@@ -1504,7 +1506,7 @@ function countDifficulties( f_question, f_answer ){
 }
 
 //. #23
-function countDifficulty( f_question ){
+function countDifficulty( f_question, f_answers ){
   var cnt = 0;
   for( var i = 0; i < f_question.length; i ++ ){
     var c = f_question.charAt( i );
@@ -1572,6 +1574,7 @@ function countDifficulty( f_question ){
       }
     }
 
+    //. 「１本抜くと成立する」場合は1000ポイント
     if( idx > -1 ){
       var trans1 = transitions[idx][1];
       trans1.forEach( function( c1 ){
@@ -1579,6 +1582,16 @@ function countDifficulty( f_question ){
         var found = isValidFormula( new_formula );
         if( found ){ cnt += 1000; }
       });
+    }
+  }
+
+  //. 「イコールが複数存在する」場合は1000ポイント
+  if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
+    for( var i = 0; i < f_answers.length; i ++ ){
+      var tmp = f_answers[i].formula.split( '=' );
+      if( tmp.length > 2 ){
+        cnt += ( tmp.length - 2 ) * 1000;
+      }
     }
   }
 
@@ -1622,6 +1635,7 @@ var quiz_pattern = [
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
+  , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
 ];
 
 //. 深さ優先
@@ -1743,7 +1757,7 @@ async function generate_quiz( idx, priority ){
         var quiz_answers = fullcheckFormula( quiz );
         if( priority == 'difficulty' ){
           if( quiz_answers.length == 1 ){
-            var dif = countDifficulty( quiz );
+            var dif = countDifficulty( quiz, quiz_answers );
             if( dif > max_num ){
               max_num = dif;
               quizs = [ quiz ];
