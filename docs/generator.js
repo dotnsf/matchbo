@@ -1804,6 +1804,7 @@ async function generate_quiz( idx, priority ){
         });
       }
     }else{
+      console.log( { data: JSON.stringify( quizs ) } );
       resolve( true );
     }
   });
