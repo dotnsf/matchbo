@@ -48,7 +48,9 @@ You can customize minor rules at https://dotnsf.github.io/matchbo?beta=1
 
 ## How to generate quizs
 
-- `$ node docs/generator [n] [kind]`
+- `$ cd docs`
+
+- `$ node generator [n] [kind]`
 
   - n: index
 

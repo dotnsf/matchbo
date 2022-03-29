@@ -1,5 +1,6 @@
 //. generator.js
 var request = require( 'request' );
+var fs = require( 'fs' );
 
 //. #31
 var beta_function = false;
@@ -1637,6 +1638,7 @@ function sortByDifficulty( a, b ){
 }
 
 //. #17
+/*
 var quiz_pattern = [
   //. 最後は数字(N)のはず
   [ 'N', 'E', 'N' ]
@@ -1650,6 +1652,8 @@ var quiz_pattern = [
   , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'N', 'C', 'N' ]
 ];
+*/
+var quiz_pattern = JSON.parse( fs.readFileSync( './quiz_pattern.json', 'utf8' ) );
 
 //. 深さ優先
 var cs = ['+','-','*','/'];

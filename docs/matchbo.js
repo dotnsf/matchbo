@@ -134,15 +134,26 @@ $(function(){
     'C': '記',
     'E': '＝'
   };
-  for( var i = 0; i < quiz_pattern.length; i ++ ){
-    var pattern = quiz_pattern[i];
-    var v = '';
-    for( var j = 0; j < pattern.length; j ++ ){
-      v += pattern_labels[pattern[j]];
+
+  $.ajax({
+    type: 'GET',
+    url: './quiz_pattern.json',
+    success: function( r ){
+      quiz_pattern = JSON.parse( JSON.stringify( r ) );
+      for( var i = 0; i < quiz_pattern.length; i ++ ){
+        var pattern = quiz_pattern[i];
+        var v = '';
+        for( var j = 0; j < pattern.length; j ++ ){
+          v += pattern_labels[pattern[j]];
+        }
+        var option = '<option value="' + i + '">' + v + '</option>';
+        $('#quiz_pattern').append( option );
+      }
+    },
+    error: function( e0, e1, e2 ){
+      console.log( e0, e1, e2 );
     }
-    var option = '<option value="' + i + '">' + v + '</option>';
-    $('#quiz_pattern').append( option );
-  }
+  });
 
   $('#input_formula').focus();
 });
@@ -1623,6 +1634,7 @@ function sortByDifficulty( a, b ){
 
 //. #17
 var quiz_pattern = [
+/*
   //. 最後は数字(N)のはず
   [ 'N', 'E', 'N' ]
   , [ 'N', 'E', 'N', 'N' ]
@@ -1634,6 +1646,7 @@ var quiz_pattern = [
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
   , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'N', 'C', 'N' ]
+  */
 ];
 
 //. 深さ優先
