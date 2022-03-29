@@ -1648,6 +1648,7 @@ var quiz_pattern = [
   , [ 'N', 'C', 'N', 'E', 'N', 'C', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'N', 'E', 'N', 'C', 'N', 'N' ]
   , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'C', 'N' ]
+  , [ 'N', 'C', 'N', 'C', 'N', 'E', 'N', 'N', 'C', 'N' ]
 ];
 
 //. 深さ優先
@@ -1838,14 +1839,22 @@ async function generate_quiz( idx, priority ){
 
 try{
   if( process.argv.length > 2 ){
+    var ts1 = ( new Date() ).getTime();
     var n = parseInt( process.argv[2] );
     if( 0 <= n && n < quiz_pattern.length ){
       if( process.argv.length > 3 ){
         var o = process.argv[3];
         generate_quiz( n, o );
+        var ts2 = ( new Date() ).getTime();
+        var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+        console.log( ' ... ' + ts + 'sec' );
       }else{
         generate_quiz( n, 'difficulty' ).then( function(){
-          generate_quiz( n, 'variety' );
+          generate_quiz( n, 'variety' ).then( function(){
+            var ts2 = ( new Date() ).getTime();
+            var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+            console.log( ' ... ' + ts + 'sec' );
+          });
         });
       }
     }else{
