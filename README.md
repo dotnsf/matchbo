@@ -64,4 +64,4 @@ This code is licensed under MIT.
 
 ## Copyright
 
-2020-2021  [K.Kimura @ Juge.Me](https://github.com/dotnsf) all rights reserved.
+2020-2022  [K.Kimura @ Juge.Me](https://github.com/dotnsf) all rights reserved.

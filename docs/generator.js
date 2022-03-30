@@ -1518,6 +1518,11 @@ function countDifficulties( f_question, f_answer ){
   return cnt;
 }
 
+//. #39
+const COUNT_ELEVEN = 'COUNT_ELEVEN' in process.env ? parseInt( process.env.COUNT_ELEVEN ) : 2;
+const COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.env.VALID_MINUS ) : 1000;
+const COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.MULTI_EQUAL ) : 1000;
+
 //. #23
 function countDifficulty( f_question, f_answers ){
   var cnt = 0;
@@ -1557,7 +1562,7 @@ function countDifficulty( f_question, f_answers ){
   //. '11'
   var n = f_question.indexOf( '11' );
   while( n > -1 ){
-    cnt += 2;
+    cnt += COUNT_ELEVEN;
     n = f_question.indexOf( '11', n + 1 );
   }
 
@@ -1593,7 +1598,7 @@ function countDifficulty( f_question, f_answers ){
       trans1.forEach( function( c1 ){
         var new_formula = f_question.substr( 0, i ) + c1 + f_question.substr( i + 1 );
         var found = isValidFormula( new_formula );
-        if( found ){ cnt += 1000; }
+        if( found ){ cnt += COUNT_VALID_MINUS; }
       });
     }
   }
@@ -1603,7 +1608,7 @@ function countDifficulty( f_question, f_answers ){
     for( var i = 0; i < f_answers.length; i ++ ){
       var tmp = f_answers[i].formula.split( '=' );
       if( tmp.length > 2 ){
-        cnt += ( tmp.length - 2 ) * 1000;
+        cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
       }
     }
   }
@@ -1755,10 +1760,12 @@ async function getDataFromDB( id ){
   });
 }
 
-async function generate_quiz( idx, priority ){
+async function generate_quiz( idx ){
   return new Promise( async function( resolve, reject ){
-    var quizs = [];
-    var max_num = 0;
+    var quizs_d = [];
+    var quizs_v = [];
+    var max_num_d = 0;
+    var max_num_v = 0;
     var pattern = quiz_pattern[idx];
     var cnt = 0;
 
@@ -1772,66 +1779,140 @@ async function generate_quiz( idx, priority ){
   
         //. check
         var quiz_answers = fullcheckFormula( quiz );
-        if( priority == 'difficulty' ){
-          if( quiz_answers.length == 1 ){
-            var dif = countDifficulty( quiz, quiz_answers );
-            if( dif > max_num ){
-              max_num = dif;
-              quizs = [ quiz ];
-            }else if( dif == max_num ){
-              quizs.push( quiz );
-            }
+
+        //. difficulty
+        if( quiz_answers.length == 1 ){
+          var dif = countDifficulty( quiz, quiz_answers );
+          if( dif > max_num_d ){
+            max_num_d = dif;
+            quizs_d = [ quiz ];
+          }else if( dif == max_num_d ){
+            quizs_d.push( quiz );
           }
-        }else if( priority == 'variety' ){
-          if( quiz_answers.length > max_num ){
-            max_num = quiz_answers.length;
-            quizs = [ quiz ];
-          }else if( quiz_answers.length == max_num ){
-            quizs.push( quiz );
-          }
+        }
+
+        //. variety
+        if( quiz_answers.length > max_num_v ){
+          max_num_v = quiz_answers.length;
+          quizs_v = [ quiz ];
+        }else if( quiz_answers.length == max_num_v ){
+          quizs_v.push( quiz );
         }
       }
 
       quiz = recursive_generate_quiz( quiz, pattern, false );
     }
 
-    console.log( '#quizs = ' + quizs.length + ' (' + max_num + ')' );
+    console.log( '#quizs_d = ' + quizs_d.length + ' (' + max_num_d + ')' );
+    console.log( '#quizs_v = ' + quizs_v.length + ' (' + max_num_v + ')' );
 
     if( !no_updatedb ){
       var pattern_str = pattern.join( '' );
-      var result_data = await getDataFromDB( pattern_str + '-' + priority );
-      if( result_data && result_data.length > 0 ){
+      var result_data_d = await getDataFromDB( pattern_str + '-difficulty' );
+      if( result_data_d && result_data_d.length > 0 ){
         //. 更新登録(#28)
         //quizs = result_data;
-        var option = {
-          url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-' + priority,
+        var option_d = {
+          url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-difficulty',
           method: 'PUT',
-          json: { data: JSON.stringify( quizs ) },
+          json: { data: JSON.stringify( quizs_d ) },
           headers: { 'Accept': 'application/json' }
         };
-        request( option, ( err, res, body ) => {
+        request( option_d, async ( err, res, body ) => {
           if( err ){
             console.log( { err } );
+            resolve( false );
           }else{
             console.log( { body } );
+
+            var result_data_v = await getDataFromDB( pattern_str + '-variety' );
+            if( result_data_v && result_data_v.length > 0 ){
+              var option_v = {
+                url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-difficulty',
+                method: 'PUT',
+                json: { data: JSON.stringify( quizs_v ) },
+                headers: { 'Accept': 'application/json' }
+              };
+              request( option_v, ( err, res, body ) => {
+                if( err ){
+                  console.log( { err } );
+                  resolve( false );
+                }else{
+                  console.log( { body } );
+                  resolve( true );
+                }
+              });
+            }else{
+              //. 新規登録
+              var option_v = {
+                url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+                method: 'POST',
+                json: { id: pattern_str + '-variety', data: JSON.stringify( quizs_v ) },
+                headers: { 'Accept': 'application/json' }
+              };
+              request( option_v, ( err, res, body ) => {
+                if( err ){
+                  console.log( { err } );
+                  resolve( false );
+                }else{
+                  console.log( { body } );
+                  resolve( true );
+                }
+              });
+            }
           }
-          resolve( true );
         });
       }else{
         //. 新規登録
-        var option = {
+        var option_d = {
           url: 'https://matchbodb.herokuapp.com/api/db/quiz',
           method: 'POST',
-          json: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
+          json: { id: pattern_str + '-difficulty', data: JSON.stringify( quizs_d ) },
           headers: { 'Accept': 'application/json' }
         };
-        request( option, ( err, res, body ) => {
+        request( option_d, async ( err, res, body ) => {
           if( err ){
             console.log( { err } );
+            resolve( false );
           }else{
             console.log( { body } );
+
+            var result_data_v = await getDataFromDB( pattern_str + '-variety' );
+            if( result_data_v && result_data_v.length > 0 ){
+              var option_v = {
+                url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-difficulty',
+                method: 'PUT',
+                json: { data: JSON.stringify( quizs_v ) },
+                headers: { 'Accept': 'application/json' }
+              };
+              request( option_v, ( err, res, body ) => {
+                if( err ){
+                  console.log( { err } );
+                  resolve( false );
+                }else{
+                  console.log( { body } );
+                  resolve( true );
+                }
+              });
+            }else{
+              //. 新規登録
+              var option_v = {
+                url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+                method: 'POST',
+                json: { id: pattern_str + '-variety', data: JSON.stringify( quizs_v ) },
+                headers: { 'Accept': 'application/json' }
+              };
+              request( option_v, ( err, res, body ) => {
+                if( err ){
+                  console.log( { err } );
+                  resolve( false );
+                }else{
+                  console.log( { body } );
+                  resolve( true );
+                }
+              });
+            }
           }
-          resolve( true );
         });
       }
     }else{
@@ -1843,31 +1924,21 @@ async function generate_quiz( idx, priority ){
 
 try{
   if( process.argv.length > 2 ){
-    var ts1 = ( new Date() ).getTime();
     var n = parseInt( process.argv[2] );
     if( 0 <= n && n < quiz_pattern.length ){
-      if( process.argv.length > 3 ){
-        var o = process.argv[3];
-        generate_quiz( n, o );
-        var ts2 = ( new Date() ).getTime();
-        var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
-        console.log( ' ... ' + ts + 'sec' );
-      }else{
-        generate_quiz( n, 'difficulty' ).then( function(){
-          generate_quiz( n, 'variety' ).then( function(){
-            var ts2 = ( new Date() ).getTime();
-            var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
-            console.log( ' ... ' + ts + 'sec' );
-          });
-        });
-      }
+      var ts1 = ( new Date() ).getTime();
+      generate_quiz( n );
+      var ts2 = ( new Date() ).getTime();
+      var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+      console.log( ' ... ' + ts + 'sec' );
     }else{
-      console.log( 'Usage: $ node generator [n] [difficulty|variety]' );
+      console.log( 'Usage: $ node generator [n]' );
       console.log( '  n : 0 <= n < ' + quiz_pattern.length );
     }
   }else{
-    console.log( 'Usage: $ node generator [n] [difficulty|variety]' );
+    console.log( 'Usage: $ node generator [n]' );
     console.log( '  n : 0 <= n < ' + quiz_pattern.length );
   }
 }catch( e ){
+  console.log( e );
 }
