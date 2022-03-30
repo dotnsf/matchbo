@@ -2,6 +2,9 @@
 var request = require( 'request' );
 var fs = require( 'fs' );
 
+var matchbodb_url = "https://matchbodb.herokuapp.com";
+//var matchbodb_url = "http://localhost:8080";
+
 //. #31
 var beta_function = false;
 var isvalid_doublezeros = 'DOUBLEZEROS' in process.env ? process.env.DOUBLEZEROS : false; //. #30
@@ -1739,7 +1742,7 @@ function recursive_generate_quiz( current, pattern, is_next ){
 async function getDataFromDB( id ){
   return new Promise( function( resolve, reject ){
     var option = {
-      url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + id,
+      url: matchbodb_url + '/api/db/quiz/' + id,
       method: 'GET',
       headers: { 'Accept': 'application/json' }
     };
@@ -1813,9 +1816,9 @@ async function generate_quiz( idx ){
         //. 更新登録(#28)
         //quizs = result_data;
         var option_d = {
-          url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-difficulty',
+          url: matchbodb_url + '/api/db/quiz/' + pattern_str + '-difficulty',
           method: 'PUT',
-          json: { data: JSON.stringify( quizs_d ) },
+          json: { data: JSON.stringify( quizs_d ), num: quizs_d.length, length: max_num_d },
           headers: { 'Accept': 'application/json' }
         };
         request( option_d, async ( err, res, body ) => {
@@ -1828,9 +1831,9 @@ async function generate_quiz( idx ){
             var result_data_v = await getDataFromDB( pattern_str + '-variety' );
             if( result_data_v && result_data_v.length > 0 ){
               var option_v = {
-                url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-difficulty',
+                url: matchbodb_url + '/api/db/quiz/' + pattern_str + '-variety',
                 method: 'PUT',
-                json: { data: JSON.stringify( quizs_v ) },
+                json: { data: JSON.stringify( quizs_v ), num: quizs_v.length, length: max_num_v },
                 headers: { 'Accept': 'application/json' }
               };
               request( option_v, ( err, res, body ) => {
@@ -1845,9 +1848,9 @@ async function generate_quiz( idx ){
             }else{
               //. 新規登録
               var option_v = {
-                url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+                url: matchbodb_url + '/api/db/quiz',
                 method: 'POST',
-                json: { id: pattern_str + '-variety', data: JSON.stringify( quizs_v ) },
+                json: { id: pattern_str + '-variety', data: JSON.stringify( quizs_v ), num: quizs_v.length, length: max_num_v },
                 headers: { 'Accept': 'application/json' }
               };
               request( option_v, ( err, res, body ) => {
@@ -1865,9 +1868,9 @@ async function generate_quiz( idx ){
       }else{
         //. 新規登録
         var option_d = {
-          url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+          url: matchbodb_url + '/api/db/quiz',
           method: 'POST',
-          json: { id: pattern_str + '-difficulty', data: JSON.stringify( quizs_d ) },
+          json: { id: pattern_str + '-difficulty', data: JSON.stringify( quizs_d ), num: quizs_d.length, length: max_num_d },
           headers: { 'Accept': 'application/json' }
         };
         request( option_d, async ( err, res, body ) => {
@@ -1880,9 +1883,9 @@ async function generate_quiz( idx ){
             var result_data_v = await getDataFromDB( pattern_str + '-variety' );
             if( result_data_v && result_data_v.length > 0 ){
               var option_v = {
-                url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + pattern_str + '-difficulty',
+                url: matchbodb_url + '/api/db/quiz/' + pattern_str + '-variety',
                 method: 'PUT',
-                json: { data: JSON.stringify( quizs_v ) },
+                json: { data: JSON.stringify( quizs_v ), num: quizs_v.length, length: max_num_v },
                 headers: { 'Accept': 'application/json' }
               };
               request( option_v, ( err, res, body ) => {
@@ -1897,9 +1900,9 @@ async function generate_quiz( idx ){
             }else{
               //. 新規登録
               var option_v = {
-                url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+                url: matchbodb_url + '/api/db/quiz',
                 method: 'POST',
-                json: { id: pattern_str + '-variety', data: JSON.stringify( quizs_v ) },
+                json: { id: pattern_str + '-variety', data: JSON.stringify( quizs_v ), num: quizs_v.length, length: max_num_v },
                 headers: { 'Accept': 'application/json' }
               };
               request( option_v, ( err, res, body ) => {
