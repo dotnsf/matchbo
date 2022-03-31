@@ -1919,7 +1919,8 @@ async function generate_quiz( idx ){
         });
       }
     }else{
-      console.log( { data: JSON.stringify( quizs ) } );
+      console.log( { data: JSON.stringify( quizs_d ) } );
+      console.log( { data: JSON.stringify( quizs_v ) } );
       resolve( true );
     }
   });
