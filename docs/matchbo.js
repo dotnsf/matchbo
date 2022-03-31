@@ -2031,10 +2031,10 @@ function generate_quiz_btn(){
 
 //. #37 : https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/
 class Random {
-  constructor(seed = 88675123) {
-    this.x = 123456789;
-    this.y = 362436069;
-    this.z = 521288629;
+  constructor(seed = 19681106) {
+    this.x = 31415926535;
+    this.y = 8979323846;
+    this.z = 2643383279;
     this.w = seed;
   }
   
