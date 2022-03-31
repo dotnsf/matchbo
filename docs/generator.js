@@ -1782,9 +1782,7 @@ async function getDataFromDB( id ){
 }
 
 async function generate_quiz( idx ){
-  console.log( '0: idx='+idx );
   return new Promise( async function( resolve, reject ){
-  console.log( '1: idx='+idx );   //. undefined??
     var quizs_d = [];
     var quizs_v = [];
     var max_num_d = 0;
@@ -1814,9 +1812,9 @@ async function generate_quiz( idx ){
             quizs_d.sort( sortByNumRev );
 
             if( quizs_d[min_formulas-1].num > quizs_d[quizs_d.length-1].num ){
-              var idx = -1;
-              for( idx = min_formulas; idx < quizs_d.length && quizs_d[idx].num == quizs_d[min_formulas-1].num; idx ++ ){}
-              quizs_d.splice( idx, quizs_d.length - idx );
+              var _idx = -1;
+              for( _idx = min_formulas; _idx < quizs_d.length && quizs_d[_idx].num == quizs_d[min_formulas-1].num; _idx ++ ){}
+              quizs_d.splice( _idx, quizs_d.length - _idx );
             }
           }
 
@@ -1836,9 +1834,9 @@ async function generate_quiz( idx ){
             quizs_v.sort( sortByNumRev );
 
             if( quizs_v[min_formulas-1].num > quizs_v[quizs_v.length-1].num ){
-              var idx = -1;
-              for( idx = min_formulas; idx < quizs_v.length && quizs_v[idx].num == quizs_v[min_formulas-1].num; idx ++ ){}
-              quizs_v.splice( idx, quizs_d.length - idx );
+              var _idx = -1;
+              for( _idx = min_formulas; _idx < quizs_v.length && quizs_v[_idx].num == quizs_v[min_formulas-1].num; _idx ++ ){}
+              quizs_v.splice( _idx, quizs_d.length - _idx );
             }
           }
 
@@ -1964,7 +1962,8 @@ async function generate_quiz( idx ){
         });
       }
     }else{
-      console.log( { data: JSON.stringify( quizs ) } );
+      console.log( { data: JSON.stringify( quizs_d ) } );
+      console.log( { data: JSON.stringify( quizs_v ) } );
       resolve( true );
     }
   });
