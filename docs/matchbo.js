@@ -1,4 +1,7 @@
 
+var matchbodb_url = "https://matchbodb.herokuapp.com";
+//var matchbodb_url = "http://localhost:8080";
+
 function getParam( name, url ){
   if( !url ) url = window.location.href;
   name = name.replace(/[\[\]]/g, "\\$&");
@@ -75,7 +78,7 @@ $(function(){
   }else{
     //. #26
     $.ajax({
-      url: 'https://matchbodb.herokuapp.com/',
+      url: matchbodb_url + '/',
       type: 'GET',
       success: function( result ){},
       error: function( e0, e1, e2 ){
@@ -88,6 +91,37 @@ $(function(){
   }
   if( formula ){
     $('#input_formula').val( formula );
+    onKeyup( 'input' );
+  }else{
+    //. #37
+    $.ajax({
+      url: matchbodb_url + '/api/db/generated',
+      type: 'GET',
+      success: function( result ){
+        if( result && result.status ){
+          var formula_list = result.results;
+
+          var dt = new Date();
+          var y = dt.getFullYear();
+          var m = dt.getMonth() + 1;
+          m = ( ( m < 10 ) ? '0' : '' ) + m;
+          var d = dt.getDate();
+          d = ( ( d < 10 ) ? '0' : '' ) + d;
+          dt = new Date( y + '-' + m + '-' + d + ' 00:00:00' );
+
+          var seed = dt.getTime();
+          var random = new Random( seed );
+          var value = random.nextInt( 0, formula_list.length );
+
+          formula = formula_list[value].formula;
+          $('#input_formula').val( formula );
+          onKeyup( 'input' );
+        }
+      },
+      error: function( e0, e1, e2 ){
+        console.log( e0, e1, e2 );
+      }
+    });
   }
 
   $('#doublezeros_check').change( function(){
@@ -1878,7 +1912,7 @@ function recursive_generate_quiz( current, pattern, is_next ){
 async function getDataFromDB( id ){
   return new Promise( function( resolve, reject ){
     $.ajax({
-      url: 'https://matchbodb.herokuapp.com/api/db/quiz/' + id,
+      url: matchbodb_url + '/api/db/quiz/' + id,
       type: 'GET',
       success: function( result ){
         if( result && result.status && result.result && result.result.data ){
@@ -1948,7 +1982,7 @@ async function generate_quiz( idx ){
     //. 登録
     console.log( '#quizs = ' + quizs.length );
     $.ajax({
-      url: 'https://matchbodb.herokuapp.com/api/db/quiz',
+      url: matchbodb_url + '/api/db/quiz',
       type: 'POST',
       data: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
       success: function( result ){
@@ -1992,5 +2026,30 @@ function generate_quiz_btn(){
   if( v ){
     v = parseInt( v );
     generate_quiz( v );
+  }
+}
+
+//. #37 : https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/
+class Random {
+  constructor(seed = 88675123) {
+    this.x = 123456789;
+    this.y = 362436069;
+    this.z = 521288629;
+    this.w = seed;
+  }
+  
+  // XorShift
+  next() {
+    let t;
+ 
+    t = this.x ^ (this.x << 11);
+    this.x = this.y; this.y = this.z; this.z = this.w;
+    return this.w = (this.w ^ (this.w >>> 19)) ^ (t ^ (t >>> 8)); 
+  }
+  
+  // min以上max以下の乱数を生成する
+  nextInt(min, max) {
+    const r = Math.abs(this.next());
+    return min + (r % (max + 1 - min));
   }
 }
