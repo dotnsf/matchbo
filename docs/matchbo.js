@@ -1816,7 +1816,7 @@ async function generate_quiz( idx ){
     $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
 
     for( var i = 0; i < quizs.length; i ++ ){
-      var o = '<option value="' + quizs[i] + '">' + quizs[i] + '</option>';
+      var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
       $('#generated_quizs').append( o );
     }
     $('#generated_quizs').change( function(){
