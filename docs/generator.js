@@ -15,6 +15,7 @@ var isvalid_plustoone = 'PLUSTOONE' in process.env ? process.env.PLUSTOONE : fal
 var isvalid_reverse = 'REVERSE' in process.env ? process.env.REVERSE : false;
 var isvalid_plusminus = 'PLUSMINUS' in process.env ? process.env.PLUSMINUS : false;
 var no_updatedb = 'NO_UPDATEDB' in process.env ? process.env.NO_UPDATEDB : false;  //. #32
+var min_formulas = 'MIN_FORMULAS' in process.env ? parseInt( process.env.MIN_FORMULAS ) : 100;  //. #41
 
 var formula = '';
 
@@ -1523,8 +1524,9 @@ function countDifficulties( f_question, f_answer ){
 
 //. #39
 const COUNT_ELEVEN = 'COUNT_ELEVEN' in process.env ? parseInt( process.env.COUNT_ELEVEN ) : 2;
-const COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.env.VALID_MINUS ) : 1000;
-const COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.MULTI_EQUAL ) : 1000;
+const COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.env.VALID_MINUS ) : 100;
+const COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.MULTI_EQUAL ) : 100;
+const COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.env.MULTI_MINUS_VALUE ) : 50;  //. #43
 
 //. #23
 function countDifficulty( f_question, f_answers ){
@@ -1613,6 +1615,11 @@ function countDifficulty( f_question, f_answers ){
       if( tmp.length > 2 ){
         cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
       }
+
+      //. #43
+      if( eval( tmp[0] ) < 0 ){
+        cnt += COUNT_MINUS_VALUE;
+      }
     }
   }
 
@@ -1640,6 +1647,17 @@ function sortByDifficulty( a, b ){
     r = -1;
   }else if( a.difficulty > b.difficulty ){
     r = 1;
+  }
+
+  return r;
+}
+
+function sortByNumRev( a, b ){
+  var r = 0;
+  if( a.num < b.num ){
+    r = 1;
+  }else if( a.num > b.num ){
+    r = -1;
   }
 
   return r;
@@ -1764,7 +1782,9 @@ async function getDataFromDB( id ){
 }
 
 async function generate_quiz( idx ){
+  console.log( '0: idx='+idx );
   return new Promise( async function( resolve, reject ){
+  console.log( '1: idx='+idx );   //. undefined??
     var quizs_d = [];
     var quizs_v = [];
     var max_num_d = 0;
@@ -1786,20 +1806,45 @@ async function generate_quiz( idx ){
         //. difficulty
         if( quiz_answers.length == 1 ){
           var dif = countDifficulty( quiz, quiz_answers );
+          if( quizs_d.length < min_formulas ){
+            quizs_d.push( { formula: quiz, num: dif } );
+            //quizs_d.sort( sortByNumRev );
+          }else if( dif >= quizs_d[min_formulas-1].num ){
+            quizs_d.push( { formula: quiz, num: dif } );
+            quizs_d.sort( sortByNumRev );
+
+            if( quizs_d[min_formulas-1].num > quizs_d[quizs_d.length-1].num ){
+              var idx = -1;
+              for( idx = min_formulas; idx < quizs_d.length && quizs_d[idx].num == quizs_d[min_formulas-1].num; idx ++ ){}
+              quizs_d.splice( idx, quizs_d.length - idx );
+            }
+          }
+
           if( dif > max_num_d ){
             max_num_d = dif;
-            quizs_d = [ quiz ];
-          }else if( dif == max_num_d ){
-            quizs_d.push( quiz );
           }
         }
 
         //. variety
-        if( quiz_answers.length > max_num_v ){
-          max_num_v = quiz_answers.length;
-          quizs_v = [ quiz ];
-        }else if( quiz_answers.length == max_num_v ){
-          quizs_v.push( quiz );
+        if( quiz_answers.length > 1 ){
+          var dif = quiz_answers.length;
+          if( quizs_v.length < min_formulas ){
+            quizs_v.push( { formula: quiz, num: dif } );
+            //quizs_v.sort( sortByNumRev );
+          }else if( dif >= quizs_v[min_formulas-1].num ){
+            quizs_v.push( { formula: quiz, num: dif } );
+            quizs_v.sort( sortByNumRev );
+
+            if( quizs_v[min_formulas-1].num > quizs_v[quizs_v.length-1].num ){
+              var idx = -1;
+              for( idx = min_formulas; idx < quizs_v.length && quizs_v[idx].num == quizs_v[min_formulas-1].num; idx ++ ){}
+              quizs_v.splice( idx, quizs_d.length - idx );
+            }
+          }
+
+          if( dif > max_num_v ){
+            max_num_v = dif;
+          }
         }
       }
 
@@ -1930,10 +1975,11 @@ try{
     var n = parseInt( process.argv[2] );
     if( 0 <= n && n < quiz_pattern.length ){
       var ts1 = ( new Date() ).getTime();
-      generate_quiz( n );
-      var ts2 = ( new Date() ).getTime();
-      var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
-      console.log( ' ... ' + ts + 'sec' );
+      generate_quiz( n ).then( function(){
+        var ts2 = ( new Date() ).getTime();
+        var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+        console.log( ' ... ' + ts + 'sec' );
+      });
     }else{
       console.log( 'Usage: $ node generator [n]' );
       console.log( '  n : 0 <= n < ' + quiz_pattern.length );
