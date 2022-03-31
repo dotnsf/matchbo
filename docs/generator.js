@@ -14,6 +14,8 @@ var isvalid_onetoplus = 'ONETOPLUS' in process.env ? process.env.ONETOPLUS : fal
 var isvalid_plustoone = 'PLUSTOONE' in process.env ? process.env.PLUSTOONE : false;
 var isvalid_reverse = 'REVERSE' in process.env ? process.env.REVERSE : false;
 var isvalid_plusminus = 'PLUSMINUS' in process.env ? process.env.PLUSMINUS : false;
+var isvalid_fourtooneminusone = false;
+var isvalid_fourtominusone = false;
 var no_updatedb = 'NO_UPDATEDB' in process.env ? process.env.NO_UPDATEDB : false;  //. #32
 var min_formulas = 'MIN_FORMULAS' in process.env ? parseInt( process.env.MIN_FORMULAS ) : 100;  //. #41
 
@@ -141,6 +143,17 @@ function fullcheckFormula( formula ){
     }
 
     //. '=0' => '±0' パターン
+  }
+
+  //. #42 対応
+  if( isvalid_fourtooneminusone ){
+    //. '4' => '1-1' パターン
+    checkFormulaFor421( formula );
+  }
+
+  if( isvalid_fourtominusone ){
+    //. '4' => '-1' パターン
+    checkFormulaFor422( formula );
   }
 
   if( isvalid_reverse ){
@@ -1033,6 +1046,136 @@ function checkFormulaFor2( formula, eleven, eleven2 ){
           new_formula = subString( matches4, 0 );
           found = isValidFormula( new_formula );
           if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+        }
+      }
+    }
+  }
+
+  return r;
+}
+
+function checkFormulaFor421( formula ){
+  var r = null;
+
+  if( formula ){
+    //. 式を一文字ずつ、種類に分けて分解
+    var fours = [];
+    var matches = [];
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+        var idx = 0;
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        }
+        matches.push( { type: "calc", kind: c, idx: idx } );
+      }else if( '0' <= c && c <= '9' ){
+        matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        if( c == '4' ){
+          fours.push( i );
+        }
+      }else{
+        matches.push( { type: "else", kind: c, idx: -1 } );
+      }
+    }
+
+    if( fours.length > 0 ){
+      for( var f = 0; f < fours.length; f ++ ){
+        //. 最初の１文字目から調べる
+        for( var i = 0; i < matches.length; i ++ ){
+          if( fours[f] != i ){
+            var m = matches[i];
+            if( m.type == 'num' || m.type == 'calc' ){
+              var transition = transitions[m.idx];
+
+              //. 引いてできる数
+              for( var j = 0; j < transition[1].length; j ++ ){
+                var new_formula = subString( matches, 0, i ) + transition[1][j] + subString( matches, i + 1 );
+                new_formula = new_formula.substr( 0, fours[f] ) + '1-1' + new_formula.substr( fours[f] + 1 );
+                var found = isValidFormula( new_formula );
+                if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return r;
+}
+
+function checkFormulaFor422( formula ){
+  var r = null;
+
+  if( formula ){
+    //. 式を一文字ずつ、種類に分けて分解
+    var fours = [];
+    var matches = [];
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+        var idx = 0;
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        }
+        matches.push( { type: "calc", kind: c, idx: idx } );
+      }else if( '0' <= c && c <= '9' ){
+        matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        if( c == '4' ){
+          fours.push( i );
+        }
+      }else{
+        matches.push( { type: "else", kind: c, idx: -1 } );
+      }
+    }
+
+    if( fours.length > 0 ){
+      for( var f = 0; f < fours.length; f ++ ){
+        //. 最初の１文字目から調べる
+        for( var i = 0; i < matches.length; i ++ ){
+          if( fours[f] != i ){
+            var m = matches[i];
+            if( m.type == 'num' || m.type == 'calc' ){
+              var transition = transitions[m.idx];
+
+              //. 足してできる数
+              for( var j = 0; j < transition[0].length; j ++ ){
+                var new_formula = subString( matches, 0, i ) + transition[0][j] + subString( matches, i + 1 );
+                new_formula = new_formula.substr( 0, fours[f] ) + '-1' + new_formula.substr( fours[f] + 1 );
+                var found = isValidFormula( new_formula );
+                if( found ){ answers.push( { formula: new_formula, rev: false } ); }
+              }
+            }
+          }
         }
       }
     }
