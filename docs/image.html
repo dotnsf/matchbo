@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+<meta charset="utf8"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+function getParam( name, url ){
+  if( !url ) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if( !results ) return null;
+  if( !results[2] ) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+var formula = getParam( 'formula' ).split( ' ' ).join( '+' );
+var imgs = Array(18);
+
+$(function(){
+  var cnt = 0;
+  for( var i = 0; i < 18; i ++ ){
+    imgs[i] = new Image();
+    imgs[i].onload = function( e ){
+      cnt ++;
+      if( cnt == 16 ){
+        drawFormula();
+      }
+    };
+    imgs[i].src = './imgs/' + i + '.png';
+  }
+});
+
+function drawFormula(){
+  if( formula ){
+    var canvas = document.getElementById( 'mycanvas' );
+    if( !canvas || !canvas.getContext ){
+      return false;
+    }
+
+    canvas.width = 50 * formula.length;
+    canvas.height = 112;
+
+    var ctx = canvas.getContext( '2d' );
+    ctx.clearRect( 0, 0, canvas.width, canvas.height );
+
+    var x = 0;
+    for( var i = 0; i < formula.length; i ++ ){
+      var c = formula.charAt( i );
+      var idx = -1;
+      if( ['+','-','*','/','=','±'].indexOf( c ) > -1 ){
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        case '±':
+          idx = 17;
+          break;
+        }
+      }else{
+        try{
+          idx = parseInt( c );
+        }catch( e ){
+        }
+      }
+
+      if( idx > -1 ){
+        ctx.drawImage( imgs[idx], x, 0 );
+        x += 50;
+      }
+    }
+
+    var img = new Image();
+    img.src = canvas.toDataURL( "image/png" );
+    img.onload = function(){
+      console.log( 'result' );
+      $('#result').attr( 'src', img.src );
+    }
+  }
+}
+</script>
+
+<link rel="shortcut icon" href="./imgs/logo.png" type="image/png"/>
+<link rel="icon" href="./imgs/logo.png" type="image/png"/>
+<link rel="apple-touch-icon" href="./imgs/logo.png"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Match Bo - Image"/>
+
+<title>Match Bo - Image</title>
+</head>
+<body>
+<div style="display:none;">
+  <canvas id="mycanvas"></canvas>
+</div>
+<div>
+  <img id="result"/>
+</div>
+
+</body>
+</html>
