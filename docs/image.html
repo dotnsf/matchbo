@@ -15,7 +15,10 @@ function getParam( name, url ){
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-var formula = getParam( 'formula' ).split( ' ' ).join( '+' );
+var formula = getParam( 'formula' );
+if( formula ){
+  formula = formula.split( ' ' ).join( '+' );
+}
 var imgs = Array(18);
 
 $(function(){
@@ -83,13 +86,37 @@ function drawFormula(){
       }
     }
 
+    $('#download-button').css( 'display', 'block' );
+    $('#download-button').click( downloadImage );
+
     var img = new Image();
     img.src = canvas.toDataURL( "image/png" );
     img.onload = function(){
-      console.log( 'result' );
       $('#result').attr( 'src', img.src );
     }
+  }else{
+    var msg = '<b>formula=数式</b> の URL パラメータをつけてアクセスすると、数式をマッチ棒画像に変換します。'
+      + '<br/>（例） https://dotnsf.github.io/matchbo/image.html?formula=12+3=16'
+    $('#result-div').html( msg );
   }
+}
+
+function downloadImage( evt ){
+  evt.preventDefault();
+
+  var canvas = document.getElementById( 'mycanvas' );
+  canvas.toBlob( function( blob ){
+    var url = URL.createObjectURL( blob );
+    var a = document.createElement( 'a' );
+    document.body.appendChild( a );
+    a.download = formula + '.png';
+    a.href = url;
+    a.click();
+    a.remove();
+    setTimeout( function(){
+      URL.revokeObjectURL( url );
+    }, 1E4 );
+  }, 'image/png' );
 }
 </script>
 
@@ -108,8 +135,10 @@ function drawFormula(){
 <div style="display:none;">
   <canvas id="mycanvas"></canvas>
 </div>
-<div>
+<div id="result-div">
   <img id="result"/>
+  <p/>
+  <input type="button" id="download-button" style="display:none;" value="画像でダウンロード"/>
 </div>
 
 </body>
