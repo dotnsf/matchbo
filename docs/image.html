@@ -4,6 +4,8 @@
 <meta charset="utf8"/>
 <meta http-equiv="pragma" content="no-cache"/>
 <script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
 <script>
 function getParam( name, url ){
   if( !url ) url = window.location.href;
@@ -86,6 +88,7 @@ function drawFormula(){
       }
     }
 
+    $('#download-button').val( formula + ' のマッチ棒画像をダウンロード' );
     $('#download-button').css( 'display', 'block' );
     $('#download-button').click( downloadImage );
 
@@ -132,13 +135,17 @@ function downloadImage( evt ){
 <title>Match Bo - Image</title>
 </head>
 <body>
+<div class="container">
+
 <div style="display:none;">
   <canvas id="mycanvas"></canvas>
 </div>
 <div id="result-div">
   <img id="result"/>
   <p/>
-  <input type="button" id="download-button" style="display:none;" value="画像でダウンロード"/>
+  <input type="button" class="btn btn-primary" id="download-button" style="display:none;" value="画像でダウンロード"/>
+</div>
+
 </div>
 
 </body>
