@@ -168,7 +168,7 @@ $(function(){
   $('#input_formula').on( 'keyup', function(){
     onKeyup( 'input' );
   });
-  onKeyup( 'input' );
+  //onKeyup( 'input' );
 
   //. #17
   $('#quiz_pattern').html( '' );
