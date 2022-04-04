@@ -92,36 +92,6 @@ $(function(){
   if( formula ){
     $('#input_formula').val( formula );
     onKeyup( 'input' );
-  }else{
-    //. #37
-    $.ajax({
-      url: matchbodb_url + '/api/db/generated',
-      type: 'GET',
-      success: function( result ){
-        if( result && result.status ){
-          var formula_list = result.results;
-
-          var dt = new Date();
-          var y = dt.getFullYear();
-          var m = dt.getMonth() + 1;
-          m = ( ( m < 10 ) ? '0' : '' ) + m;
-          var d = dt.getDate();
-          d = ( ( d < 10 ) ? '0' : '' ) + d;
-          dt = new Date( y + '-' + m + '-' + d + ' 00:00:00' );
-
-          var seed = dt.getTime();
-          var random = new Random( seed );
-          var value = random.nextInt( 0, formula_list.length );
-
-          formula = formula_list[value].formula;
-          $('#input_formula').val( formula );
-          onKeyup( 'input' );
-        }
-      },
-      error: function( e0, e1, e2 ){
-        console.log( e0, e1, e2 );
-      }
-    });
   }
 
   $('#doublezeros_check').change( function(){
@@ -168,7 +138,7 @@ $(function(){
   $('#input_formula').on( 'keyup', function(){
     onKeyup( 'input' );
   });
-  //onKeyup( 'input' );
+  onKeyup( 'input' );
 
   //. #17
   $('#quiz_pattern').html( '' );
@@ -201,6 +171,43 @@ $(function(){
   $('#input_formula').focus();
 });
 
+//. #44
+function getGeneratedFormula(){
+  //. #37
+	var obj = getBusyOverlay( 'viewport', { color: 'black', opacity: 0.5, text: 'ロード中', style: 'text-decoration:blink; font-weight: bold; font-size: 12px; color: white;' } );
+  $.ajax({
+    url: matchbodb_url + '/api/db/generated',
+    type: 'GET',
+    success: function( result ){
+			obj.remove();
+			obj = null;
+      if( result && result.status ){
+        var formula_list = result.results;
+
+        var dt = new Date();
+        var y = dt.getFullYear();
+        var m = dt.getMonth() + 1;
+        m = ( ( m < 10 ) ? '0' : '' ) + m;
+        var d = dt.getDate();
+        d = ( ( d < 10 ) ? '0' : '' ) + d;
+        dt = new Date( y + '-' + m + '-' + d + ' 00:00:00' );
+
+        var seed = dt.getTime();
+        var random = new Random( seed );
+        var value = random.nextInt( 0, formula_list.length );
+
+        formula = formula_list[value].formula;
+        $('#input_formula').val( formula );
+        onKeyup( 'input' );
+      }
+    },
+    error: function( e0, e1, e2 ){
+			obj.remove();
+			obj = null;
+      console.log( e0, e1, e2 );
+    }
+  });
+}
 
 function fullcheckFormula( formula ){
   answers = [];
