@@ -136,6 +136,81 @@ class Matchbo{
       }
 
       //. '=0' => '±0' パターン
+      var tmp = formula.split( '=' );
+      if( tmp.length > 2 ){
+        var n1 = formula.indexOf( '=0' );
+        while( n1 > -1 ){
+          if( formula.length == n1 + 2 || ['+','-','*','/','='].indexOf( formula.charAt( n1 + 2 ) ) > -1 ){
+            //. 変換パターンが成立するのはこの時だけ
+
+            //. 式を一文字ずつ、種類に分けて分解
+            var matches = [];
+            for( var i = 0; i < formula.length; i ++ ){
+              var c = formula.charAt( i );
+              if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+                var idx = 0;
+                switch( c ){
+                case '+':
+                  idx = 12;
+                  break;
+                case '-':
+                  idx = 13;
+                  break;
+                case '*':
+                  idx = 14;
+                  break;
+                case '/':
+                  idx = 15;
+                  break;
+                case '=':
+                  idx = 16;
+                  break;
+                }
+                matches.push( { type: "calc", kind: c, idx: idx } );
+              }else if( '0' <= c && c <= '9' ){
+                matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+              }else{
+                matches.push( { type: "else", kind: c, idx: -1 } );
+              }
+            }
+
+            //. 最初の１文字目から調べる
+            for( var i = 0; i < matches.length; i ++ ){
+              if( i != n1 && i != ( n1 + 1 ) ){
+                var m = matches[i];
+                if( m.type == 'num' || m.type == 'calc' ){
+                  var transition = this.transitions[m.idx];
+    
+                  //. 引いてできる数
+                  for( var j = 0; j < transition[1].length; j ++ ){
+                    //. 式の i 文字目を translation[1][j] に置き換える
+                    var formula2 = this.subString( matches, 0, i ) + transition[1][j] + this.subString( matches, i + 1 );
+                    var new_formula = formula2.substr( 0, n1 ) + '±0' + formula2.substr( n1 + 2 ); 
+  
+                    var found = this.isValidFormula( new_formula );
+                    if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus' } ); }
+                  }
+                }
+              }
+            }
+
+            //. '-' を抜いて作る
+            var n2 = formula.indexOf( '-' );
+            while( n2 > -1 ){
+              //. 式の n2 文字目の '-' を消す
+              var formula2 = formula.substr( 0, n1 ) + '±0' + formula.substr( n1 + 2 ); 
+              var new_formula = formula2.substr( 0, n2 ) + formula2.substr( n2 + 1 ); 
+  
+              var found = this.isValidFormula( new_formula );
+              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus' } ); }
+
+              n2 = formula.indexOf( '-', n2 + 1 );
+            }
+          }
+
+          n1 = formula.indexOf( '=0', n1 + 2 );
+        }
+      }
     }
 
     //. #42 対応
