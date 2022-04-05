@@ -1290,6 +1290,7 @@ class Matchbo{
   isValidRuled( f ){
     //. (1) f に 0 で始まる２桁以上の数はないこと
     //. (2) f に符号が２つ以上繋がってないこと
+    //. (3) f が式として成立していること #34
     var r = true;
     var prev_calc = false;
     var prev_zero = false;
@@ -1325,16 +1326,22 @@ class Matchbo{
       }
     }
 
-    /*
-    if( r && !isvalid_doublezeros && prev_zero ){
-      r = false;
+    //. #34
+    if( r ){
+      try{
+        var v = eval( f );
+        if( v == undefined || v == Infinity ){
+          r = false;
+        }
+      }catch( e ){
+        r = false;
+      }
     }
-    */
 
     return r;
   }
 
-  //. #17
+  //. #17(出題としての正当性判断)
   isValidQuiz( q ){
     var r = false;
 
@@ -1531,3 +1538,7 @@ class Matchbo{
     }
   }
 };
+
+if( typeof module === 'object' ){
+  module.exports = Matchbo;
+}
