@@ -1537,6 +1537,105 @@ class Matchbo{
       }
     }
   }
+
+  //. #23
+  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE ){
+    var cnt = 0;
+    for( var i = 0; i < f_question.length; i ++ ){
+      var c = f_question.charAt( i );
+      var idx = -1;
+      if( '0' <= c && c <= '9' ){
+        idx = c - '0';
+      }else{
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        }
+      }
+
+      if( idx > -1 ){
+        var trans = this.transitions[idx];
+        trans.forEach( function( t ){
+          cnt += trans.length;
+        });
+      }
+    }
+
+    //. '11'
+    var n = f_question.indexOf( '11' );
+    while( n > -1 ){
+      cnt += COUNT_ELEVEN;
+      n = f_question.indexOf( '11', n + 1 );
+    }
+
+    //. #27
+    for( var i = 0; i < f_question.length; i ++ ){
+      var c = f_question.charAt( i );
+      var idx = -1;
+      if( '0' <= c && c <= '9' ){
+        idx = c - '0';
+      }else{
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        }
+      }
+
+      //. 「１本抜くと成立する」場合は100ポイント
+      if( idx > -1 ){
+        var trans1 = this.transitions[idx][1];
+        for( var j = 0; j < trans1.length; j ++ ){
+          var c1 = trans1[j];
+          var new_formula = f_question.substr( 0, i ) + c1 + f_question.substr( i + 1 );
+          var found = this.isValidFormula( new_formula );
+          if( found ){ cnt += COUNT_VALID_MINUS; }
+        }
+      }
+    }
+
+    //. 「イコールが複数存在する」場合は100ポイント
+    if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
+      for( var i = 0; i < f_answers.length; i ++ ){
+        var tmp = f_answers[i].formula.split( '=' );
+        if( tmp.length > 2 ){
+          cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
+        }
+
+        //. #43
+        if( eval( tmp[0] ) < 0 ){
+          cnt += COUNT_MINUS_VALUE;
+        }
+      }
+    }
+
+    return cnt;
+  }
 };
 
 if( typeof module === 'object' ){

@@ -4,6 +4,12 @@ var matchbo = null;
 var matchbodb_url = "https://matchbodb.herokuapp.com";
 //var matchbodb_url = "http://localhost:8080";
 
+//. #39
+var COUNT_ELEVEN = 2;
+var COUNT_VALID_MINUS = 100;
+var COUNT_MULTI_EQUAL = 100;
+var COUNT_MINUS_VALUE = 50;  //. #43
+
 function getParam( name, url ){
   if( !url ) url = window.location.href;
   name = name.replace(/[\[\]]/g, "\\$&");
@@ -204,7 +210,8 @@ function showAnswers( answers, formula ){
       var answer = answers[i];
       var answer_formula = answer.formula;
       //. この結果が返ってこない？？
-      answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
+      //answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
+      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
     }
     answers.sort( sortByDifficulty );
 

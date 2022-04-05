@@ -122,7 +122,7 @@ function countDifficulty( f_question, f_answers ){
       }
     }
 
-    //. 「１本抜くと成立する」場合は1000ポイント
+    //. 「１本抜くと成立する」場合は100ポイント
     if( idx > -1 ){
       var trans1 = matchbo.transitions[idx][1];
       trans1.forEach( function( c1 ){
@@ -133,7 +133,7 @@ function countDifficulty( f_question, f_answers ){
     }
   }
 
-  //. 「イコールが複数存在する」場合は1000ポイント
+  //. 「イコールが複数存在する」場合は100ポイント
   if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
     for( var i = 0; i < f_answers.length; i ++ ){
       var tmp = f_answers[i].formula.split( '=' );
@@ -208,7 +208,8 @@ async function generate_quiz( idx ){
 
         //. difficulty
         if( quiz_answers.length == 1 ){
-          var dif = countDifficulty( quiz, quiz_answers );
+          //var dif = countDifficulty( quiz, quiz_answers );
+          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
           if( quizs_d.length < min_formulas ){
             quizs_d.push( { formula: quiz, num: dif } );
             //quizs_d.sort( sortByNumRev );
