@@ -9,6 +9,7 @@ var COUNT_ELEVEN = 2;
 var COUNT_VALID_MINUS = 100;
 var COUNT_MULTI_EQUAL = 100;
 var COUNT_MINUS_VALUE = 50;  //. #43
+var COUNT_SPECIAL_CHECK = 50;  //. #46
 
 function getParam( name, url ){
   if( !url ) url = window.location.href;
@@ -190,16 +191,6 @@ function onKeyup( x ){
   }
 }
 
-function showAnswer( answer ){  //. 現在、使用せず
-  if( answer ){
-    $('#output_formula').val( answer );
-    onKeyup( 'output' );
-  }else{
-    $('#output_formula').val( '無理っす' );
-    $('#output_imgs').html( '' );
-  }
-}
-
 function showAnswers( answers, formula ){
   answers = unique( answers );
   if( answers && answers.length > 0 ){
@@ -211,7 +202,7 @@ function showAnswers( answers, formula ){
       var answer_formula = answer.formula;
       //. この結果が返ってこない？？
       //answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
-      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
+      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK );
     }
     answers.sort( sortByDifficulty );
 

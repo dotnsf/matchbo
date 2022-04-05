@@ -22,9 +22,10 @@ var min_formulas = 'MIN_FORMULAS' in process.env ? parseInt( process.env.MIN_FOR
 
 //. #39
 var COUNT_ELEVEN = 'COUNT_ELEVEN' in process.env ? parseInt( process.env.COUNT_ELEVEN ) : 2;
-var COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.env.VALID_MINUS ) : 100;
-var COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.MULTI_EQUAL ) : 100;
-var COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.env.MULTI_MINUS_VALUE ) : 50;  //. #43
+var COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.env.COUNT_VALID_MINUS ) : 100;
+var COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.COUNT_MULTI_EQUAL ) : 100;
+var COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.env.COUNT_MINUS_VALUE ) : 50;  //. #43
+var COUNT_SPECIAL_CHECK = 'COUNT_SPECIAL_CHECK' in process.env ? parseInt( process.env.COUNT_SPECIAL_CHECK ) : 50;  //. #46
 
 var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
 
@@ -133,9 +134,14 @@ function countDifficulty( f_question, f_answers ){
     }
   }
 
-  //. 「イコールが複数存在する」場合は100ポイント
   if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
     for( var i = 0; i < f_answers.length; i ++ ){
+      //. #46
+      if( f_answers[i].special_check ){
+        cnt += COUNT_SPECIAL_CHECK;
+      }
+
+      //. 「イコールが複数存在する」場合は100ポイント
       var tmp = f_answers[i].formula.split( '=' );
       if( tmp.length > 2 ){
         cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
