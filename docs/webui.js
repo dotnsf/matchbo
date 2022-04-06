@@ -250,8 +250,10 @@ function getTodaysFormula(){
       if( result && result.status ){
         var data = JSON.parse( result.result.data );
         if( data && data.length ){
-          var n = Math.floor( Math.random() * data.length );
-          formula = data[n].formula;
+          //. 候補の中で最も難易度の高いもの
+          data.sort( sortByNumRev );
+          formula = data[0].formula;
+
           $('#input_formula').val( formula );
           onKeyup( 'input' );
         }
@@ -588,6 +590,17 @@ function sortByDifficulty( a, b ){
     r = -1;
   }else if( a.difficulty > b.difficulty ){
     r = 1;
+  }
+
+  return r;
+}
+
+function sortByNumRev( a, b ){
+  var r = 0;
+  if( a.num < b.num ){
+    r = 1;
+  }else if( a.num > b.num ){
+    r = -1;
   }
 
   return r;
