@@ -21,7 +21,11 @@ Based on [BS8 **クイズ!脳ベル SHOW**](https://www.bsfuji.tv/noubellshow/),
 
 You can **NOT** use &#x2260;("not-equal") symbol. You can use only following numbers and symbols in your answer.
 
+You can check AI-generated quizs at https://dotnsf.github.io/matchbo?alpha=1
+
 You can customize minor rules at https://dotnsf.github.io/matchbo?beta=1
+
+You can check **daily** quizs at https://dotnsf.github.io/matchbo?gamma=1
 
 
 ### Numbers
@@ -50,11 +54,16 @@ You can customize minor rules at https://dotnsf.github.io/matchbo?beta=1
 
 - `$ cd docs`
 
-- `$ node generator [n] [kind]`
+- `$ node generator [n]`
 
-  - n: index
+  - n: index(0-9)
 
-  - kind: ["difficulty" or "variety"]
+
+## How to generate daily-quizs
+
+- `$ cd docs`
+
+- `$ node generator -1`
 
 
 ## Licensing
