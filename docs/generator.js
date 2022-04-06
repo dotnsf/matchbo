@@ -389,7 +389,11 @@ try{
       generate_quiz( n ).then( function(){
         var ts2 = ( new Date() ).getTime();
         var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
-        console.log( ' ... ' + ts + 'sec' );
+
+        var ts_min = Math.floor( ts / 60 );
+        var ts_sec = ( ts % 60 );
+
+        console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
       });
     }else{
       console.log( 'Usage: $ node generator [n]' );
