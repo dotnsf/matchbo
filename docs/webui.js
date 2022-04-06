@@ -139,6 +139,34 @@ $(function(){
     }
   });
 
+  //. #47
+  $.ajax({
+    type: 'GET',
+    url: './counts.json',
+    success: function( r ){
+      var counts = JSON.parse( JSON.stringify( r ) );
+      if( counts.COUNT_ELEVEN ){
+        COUNT_ELEVEN = counts.COUNT_ELEVEN;
+      }
+      if( counts.COUNT_VALID_MINUS ){
+        COUNT_VALID_MINUS = counts.COUNT_VALID_MINUS;
+      }
+      if( counts.COUNT_MULTI_EQUAL ){
+        COUNT_MULTI_EQUAL = counts.COUNT_MULTI_EQUAL;
+      }
+      if( counts.COUNT_MINUS_VALUE ){
+        COUNT_MINUS_VALUE = counts.COUNT_MINUS_VALUE;
+      }
+      if( counts.COUNT_SPECIAL_CHECK ){
+        COUNT_SPECIAL_CHECK = counts.COUNT_SPECIAL_CHECK;
+      }
+    },
+    error: function( e0, e1, e2 ){
+      console.log( e0, e1, e2 );
+    }
+  });
+
+
   $('#input_formula').focus();
 });
 
