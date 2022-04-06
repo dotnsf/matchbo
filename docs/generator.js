@@ -27,7 +27,7 @@ var counts = JSON.parse( fs.readFileSync( './counts.json', 'utf8' ) );
 var COUNT_ELEVEN = 'COUNT_ELEVEN' in process.env ? parseInt( process.env.COUNT_ELEVEN ) : counts.COUNT_ELEVEN;
 var COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.env.COUNT_VALID_MINUS ) : counts.COUNT_VALID_MINUS;
 var COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.COUNT_MULTI_EQUAL ) : counts.COUNT_MULTI_EQUAL;
-var COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.env.COUNT_MINUS_VALUE ) : counts.COUNT_MUNUS_VALUE;  //. #43
+var COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.env.COUNT_MINUS_VALUE ) : counts.COUNT_MINUS_VALUE;  //. #43
 var COUNT_SPECIAL_CHECK = 'COUNT_SPECIAL_CHECK' in process.env ? parseInt( process.env.COUNT_SPECIAL_CHECK ) : counts.COUNT_SPECIAL_CHECK;  //. #46
 
 var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
@@ -384,12 +384,119 @@ async function generate_quiz( idx ){
   });
 }
 
+//. #49
+async function generate_daily_quiz(){
+  return new Promise( async function( resolve, reject ){
+    var cs = [ '', '+', '-', '*', '/' ];
+    var days = [ 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+    var cnt = 0;
+    var k = 0;
+    for( var m = 0; m < 12; m ++ ){
+      var _m = m + 1;
+      var Mm = ( _m < 10 ? '0' : '' ) + _m;
+      for( var _d = 1; _d <= days[m]; _d ++ ){
+        var Dd = ( _d < 10 ? '0' : '' ) + _d;
+        var quizs = [];
+
+        //. "M c m = D c d" 形式の問題を作成する(c : 演算記号)
+        for( var i = 0; i < cs.length; i ++ ){
+          for( var j = 0; j < cs.length; j ++ ){
+            var quiz = Mm.charAt( 0 ) + cs[i] + Mm.charAt( 1 )
+              + '=' + Dd.charAt( 0 ) + cs[j] + Dd.charAt( 1 );
+
+            if( matchbo.isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
+              //. check
+              var quiz_answers = matchbo.fullcheckFormula( quiz );
+
+              if( quiz_answers.length > 0 ){
+                var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
+                quizs.push( { formula: quiz, num: dif } );
+              }
+            }
+          }
+        }
+
+        if( quizs.length > 0 ){
+          cnt ++;
+          var id = Mm + Dd + '-dailyquiz';
+          //console.log( id, quizs );
+
+          if( !no_updatedb ){
+            var result_data = await getDataFromDB( id );
+            if( result_data && result_data.length > 0 ){
+              //. 更新登録
+              var option = {
+                url: matchbodb_url + '/api/db/quiz/' + id,
+                method: 'PUT',
+                json: { data: JSON.stringify( quizs ), num: quizs.length, length: 0 },
+                headers: { 'Accept': 'application/json' }
+              };
+              request( option, async ( err, res, body ) => {
+                k ++;
+                if( err ){
+                  console.log( { err } );
+                }else{
+                  console.log( { body } );
+                }
+
+                if( k == 339 ){
+                  resolve( cnt );
+                }
+              });
+            }else{
+              //. 新規登録
+              var option = {
+                url: matchbodb_url + '/api/db/quiz',
+                method: 'POST',
+                json: { id: id, data: JSON.stringify( quizs ), num: quizs.length, length: 0 },
+                headers: { 'Accept': 'application/json' }
+              };
+              request( option, async ( err, res, body ) => {
+                k ++;
+                if( err ){
+                  console.log( { err } );
+                }else{
+                  console.log( { body } );
+                }
+
+                if( k == 339 ){
+                  resolve( cnt );
+                }
+              });
+            }
+          }else{
+            k ++;
+            if( k == 339 ){
+              resolve( cnt );
+            }
+          }
+        }
+      }
+    }
+    //resolve( cnt );
+  });
+}
+
+
 try{
   if( process.argv.length > 2 ){
     var n = parseInt( process.argv[2] );
     if( 0 <= n && n < quiz_pattern.length ){
       var ts1 = ( new Date() ).getTime();
       generate_quiz( n ).then( function(){
+        var ts2 = ( new Date() ).getTime();
+        var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+
+        var ts_min = Math.floor( ts / 60 );
+        var ts_sec = ( ts % 60 );
+
+        console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
+      });
+    }else if( n == -1 ){
+      //. #49
+      var ts1 = ( new Date() ).getTime();
+      generate_daily_quiz().then( function( count ){
+        //console.log( 'count = ' + count );
         var ts2 = ( new Date() ).getTime();
         var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
 
