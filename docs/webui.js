@@ -23,6 +23,7 @@ function getParam( name, url ){
 
 var alpha_function = getParam( 'alpha' );
 var beta_function = getParam( 'beta' );
+var gamma_function = getParam( 'gamma' );
 var formula = getParam( 'formula' );
 if( formula && formula.indexOf( ' ' ) > -1 ){
   formula = formula.split( ' ' ).join( '+' );
@@ -52,9 +53,24 @@ $(function(){
       }
     });
   }
+
   if( !beta_function ){
     $('#options_div_beta').addClass( 'display_none' );
   }
+
+  if( !gamma_function ){
+    $('#options_div_gamma').addClass( 'display_none' );
+  }else{
+    $.ajax({
+      url: matchbodb_url + '/',
+      type: 'GET',
+      success: function( result ){},
+      error: function( e0, e1, e2 ){
+        console.log( e0, e1, e2 );
+      }
+    });
+  }
+
   if( formula ){
     $('#input_formula').val( formula );
     onKeyup( 'input' );
@@ -198,6 +214,39 @@ function getGeneratedFormula(){
         formula = formula_list[value].formula;
         $('#input_formula').val( formula );
         onKeyup( 'input' );
+      }
+    },
+    error: function( e0, e1, e2 ){
+			obj.remove();
+			obj = null;
+      console.log( e0, e1, e2 );
+    }
+  });
+}
+
+//. #49
+function getTodaysFormula(){
+  var dt = new Date();
+  var m = dt.getMonth() + 1;
+  var d = dt.getDate();
+  var mmdd = ( m < 10 ? '0' : '' ) + m + ( d < 10 ? '0' : '' ) + d;
+  var id = mmdd + '-dailyquiz';
+
+	var obj = getBusyOverlay( 'viewport', { color: 'black', opacity: 0.5, text: 'ロード中', style: 'text-decoration:blink; font-weight: bold; font-size: 12px; color: white;' } );
+  $.ajax({
+    url: matchbodb_url + '/api/db/quiz/' + id,
+    type: 'GET',
+    success: function( result ){
+			obj.remove();
+			obj = null;
+      if( result && result.status ){
+        var data = JSON.parse( result.result.data );
+        if( data && data.length ){
+          var n = Math.floor( Math.random() * data.length );
+          formula = data[n].formula;
+          $('#input_formula').val( formula );
+          onKeyup( 'input' );
+        }
       }
     },
     error: function( e0, e1, e2 ){
