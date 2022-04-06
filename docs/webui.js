@@ -2,7 +2,6 @@
 var matchbo = null;
 
 var matchbodb_url = "https://matchbodb.herokuapp.com";
-//var matchbodb_url = "http://localhost:8080";
 
 //. #39
 var COUNT_ELEVEN = 2;
@@ -24,6 +23,15 @@ function getParam( name, url ){
 var alpha_function = getParam( 'alpha' );
 var beta_function = getParam( 'beta' );
 var gamma_function = getParam( 'gamma' );
+
+var _matchbodb_url = getParam( 'matchbodb_url' );
+if( _matchbodb_url ){
+  matchbodb_url = _matchbodb_url;
+}
+while( matchbodb_url.endsWith( '/' ) ){
+  matchbodb_url = matchbodb_url.substr( 0, matchbodb_url.length - 1 );
+}
+
 var formula = getParam( 'formula' );
 if( formula && formula.indexOf( ' ' ) > -1 ){
   formula = formula.split( ' ' ).join( '+' );
