@@ -488,6 +488,7 @@ async function generate_quiz( idx ){
   var quizs = [];
   var max_num = 0;
   var pattern = quiz_pattern[idx];
+  console.log( quiz_pattern, idx, pattern );
   var cnt = 0;
 
   var priority = $('#quiz_priority').val();
