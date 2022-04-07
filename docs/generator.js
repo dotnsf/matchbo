@@ -250,7 +250,7 @@ async function generate_quiz( idx ){
     }else{
       console.log( { data: JSON.stringify( quizs_d ) } );
       console.log( { data: JSON.stringify( quizs_v ) } );
-      resolve( true );
+      resolve( { quizs_d: quizs_d, num_d: quizs_d.length, length_d: max_num_d, quizs_v: quizs_v, num_v: quizs_v.length, length_v: max_num_v } );
     }
   });
 }
@@ -376,9 +376,140 @@ try{
 
         console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
       });
+    }else if( -2 >= n && n > -1 * quiz_pattern.length ){
+      n *= -1;
+      n = 5;  //. NCN=NCN
+      //n = 3;  //. NCN=N
+      var ts1 = ( new Date() ).getTime();
+      no_updatedb = 1;  //. DB 更新はしない
+
+      //. #48
+      var default_COUNT_ELEVEN = COUNT_ELEVEN;
+      var default_COUNT_VALID_MINUS = COUNT_VALID_MINUS;
+      var default_COUNT_MULTI_EQUAL = COUNT_MULTI_EQUAL;
+      var default_COUNT_MINUS_VALUE = COUNT_MINUS_VALUE;
+      var default_COUNT_SPECIAL_CHECK = COUNT_SPECIAL_CHECK;
+
+      var cnt = 0;
+      for( var i = 0; i < 13; i ++ ){
+        switch( i ){
+        case 0:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 1:
+          COUNT_ELEVEN = default_COUNT_ELEVEN / 2;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 2:
+          COUNT_ELEVEN = default_COUNT_ELEVEN * 2;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 3:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS / 2;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 4:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS * 2;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 5:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL / 2;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 6:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL * 2;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 7:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE / 2;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 8:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE * 2;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          break;
+        case 9:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK / 2;
+          break;
+        case 10:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK * 2;
+          break;
+        case 11:
+          COUNT_ELEVEN = default_COUNT_ELEVEN / 2;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS / 2;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL / 2;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE / 2;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK / 2;
+          break;
+        case 12:
+          COUNT_ELEVEN = default_COUNT_ELEVEN * 2;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS * 2;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL * 2;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE * 2;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK * 2;
+          break;
+        }
+
+        generate_quiz( n ).then( function( quizs ){
+          var resultname = 'result-' + n + '-' + cnt;
+
+          var result_d = { quizs: quizs.quizs_d, num: quizs.num_d, length: quizs.length_d };
+          var result_v = { quizs: quizs.quizs_v, num: quizs.num_v, length: quizs.length_v };
+
+          fs.writeFileSync( resultname + '-d.json', JSON.stringify( result_d, null, 2 ) );
+          fs.writeFileSync( resultname + '-v.json', JSON.stringify( result_v, null, 2 ) );
+
+          var ts2 = ( new Date() ).getTime();
+          var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+
+          var ts_min = Math.floor( ts / 60 );
+          var ts_sec = ( ts % 60 );
+
+          cnt ++;
+          console.log( cnt + '/13 finished ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
+        });
+      }
+
     }else{
       console.log( 'Usage: $ node generator [n]' );
       console.log( '  n : 0 <= n < ' + quiz_pattern.length );
+      var ts1 = ( new Date() ).getTime();
     }
   }else{
     console.log( 'Usage: $ node generator [n]' );
