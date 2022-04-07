@@ -137,7 +137,7 @@ $(function(){
   onKeyup( 'input' );
 
   //. #17
-  $('#quiz_pattern_select').html( '' );
+  $('#quiz_pattern').html( '' );
   var pattern_labels = {
     'N': '数',
     'C': '記',
@@ -156,7 +156,7 @@ $(function(){
           v += pattern_labels[pattern[j]];
         }
         var option = '<option value="' + i + '">' + v + '</option>';
-        $('#quiz_pattern_select').append( option );
+        $('#quiz_pattern').append( option );
       }
     },
     error: function( e0, e1, e2 ){
@@ -582,7 +582,7 @@ async function generate_quiz( idx ){
 }
 
 function generate_quiz_btn(){
-  var v = $('#quiz_pattern_select').val();
+  var v = $('#quiz_pattern').val();
   if( v ){
     v = parseInt( v );
     generate_quiz( v );
