@@ -1701,8 +1701,13 @@ class Matchbo{
         }
 
         //. #43
-        if( eval( tmp[0] ) < 0 ){
-          cnt += COUNT_MINUS_VALUE;
+        var tmp_f = tmp[0];
+        tmp_f.split( '±0' ).join( '+0' );
+        try{
+          if( eval( tmp_f ) < 0 ){
+            cnt += COUNT_MINUS_VALUE;
+          }
+        }catch( e ){
         }
       }
     }
