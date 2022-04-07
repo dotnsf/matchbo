@@ -5,7 +5,6 @@ var fs = require( 'fs' );
 var Matchbo = require( './matchbo' );
 
 var matchbodb_url = "https://matchbodb.herokuapp.com";
-//var matchbodb_url = "http://localhost:8080";
 
 //. #31
 var isvalid_doublezeros = 'DOUBLEZEROS' in process.env ? process.env.DOUBLEZEROS : false; //. #30
@@ -31,134 +30,6 @@ var COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.e
 var COUNT_SPECIAL_CHECK = 'COUNT_SPECIAL_CHECK' in process.env ? parseInt( process.env.COUNT_SPECIAL_CHECK ) : counts.COUNT_SPECIAL_CHECK;  //. #46
 
 var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
-
-//. #5
-function unique( arr ){
-  var new_arr = [];
-  var new_arr_formula = [];
-  var new_arr_rev = [];
-  for( var i = 0; i < arr.length; i ++ ){
-    var idx = new_arr_formula.indexOf( arr[i].formula );
-    if( idx > -1 ){
-      if( new_arr_rev[idx] != arr[i].rev ){
-        new_arr_formula.push( arr[i].formula );
-        new_arr_rev.push( arr[i].rev );
-      }
-    }else{
-      new_arr_formula.push( arr[i].formula );
-      new_arr_rev.push( arr[i].rev );
-    }
-  }
-
-  for( var i = 0; i < new_arr_formula.length; i ++ ){
-    new_arr.push( { formula: new_arr_formula[i], rev: new_arr_rev[i] } );
-  }
-
-  return new_arr;
-}
-
-//. #23
-function countDifficulty( f_question, f_answers ){
-  var cnt = 0;
-  for( var i = 0; i < f_question.length; i ++ ){
-    var c = f_question.charAt( i );
-    var idx = -1;
-    if( '0' <= c && c <= '9' ){
-      idx = c - '0';
-    }else{
-      switch( c ){
-      case '+':
-        idx = 12;
-        break;
-      case '-':
-        idx = 13;
-        break;
-      case '*':
-        idx = 14;
-        break;
-      case '/':
-        idx = 15;
-        break;
-      case '=':
-        idx = 16;
-        break;
-      }
-    }
-
-    if( idx > -1 ){
-      var trans = matchbo.transitions[idx];
-      trans.forEach( function( t ){
-        cnt += trans.length;
-      });
-    }
-  }
-
-  //. '11'
-  var n = f_question.indexOf( '11' );
-  while( n > -1 ){
-    cnt += COUNT_ELEVEN;
-    n = f_question.indexOf( '11', n + 1 );
-  }
-
-  //. #27
-  for( var i = 0; i < f_question.length; i ++ ){
-    var c = f_question.charAt( i );
-    var idx = -1;
-    if( '0' <= c && c <= '9' ){
-      idx = c - '0';
-    }else{
-      switch( c ){
-      case '+':
-        idx = 12;
-        break;
-      case '-':
-        idx = 13;
-        break;
-      case '*':
-        idx = 14;
-        break;
-      case '/':
-        idx = 15;
-        break;
-      case '=':
-        idx = 16;
-        break;
-      }
-    }
-
-    //. 「１本抜くと成立する」場合は100ポイント
-    if( idx > -1 ){
-      var trans1 = matchbo.transitions[idx][1];
-      trans1.forEach( function( c1 ){
-        var new_formula = f_question.substr( 0, i ) + c1 + f_question.substr( i + 1 );
-        var found = matchbo.isValidFormula( new_formula );
-        if( found ){ cnt += COUNT_VALID_MINUS; }
-      });
-    }
-  }
-
-  if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
-    for( var i = 0; i < f_answers.length; i ++ ){
-      //. #46
-      if( f_answers[i].special_check ){
-        cnt += COUNT_SPECIAL_CHECK;
-      }
-
-      //. 「イコールが複数存在する」場合は100ポイント
-      var tmp = f_answers[i].formula.split( '=' );
-      if( tmp.length > 2 ){
-        cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
-      }
-
-      //. #43
-      if( eval( tmp[0] ) < 0 ){
-        cnt += COUNT_MINUS_VALUE;
-      }
-    }
-  }
-
-  return cnt;
-}
 
 function sortByNumRev( a, b ){
   var r = 0;
@@ -218,7 +89,7 @@ async function generate_quiz( idx ){
         //. difficulty
         if( quiz_answers.length == 1 ){
           //var dif = countDifficulty( quiz, quiz_answers );
-          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
+          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK );
           if( quizs_d.length < min_formulas ){
             quizs_d.push( { formula: quiz, num: dif } );
             //quizs_d.sort( sortByNumRev );

@@ -1430,10 +1430,12 @@ class Matchbo{
       try{
         var v0 = eval( tmp[0] );
         if( v0 != undefined ){
+          /*
           for( var i = 1; i < tmp.length && b; i ++ ){
             var v1 = eval( tmp[i] );
-            b = ( v0 !== v1 );
+            b = ( v0 !== v1 );  //. 出題時点で成立していてはいけない場合にのみ必要
           }
+          */
     
           r = b;
         }
@@ -1692,9 +1694,14 @@ class Matchbo{
       }
     }
 
-    //. 「イコールが複数存在する」場合は100ポイント
     if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
       for( var i = 0; i < f_answers.length; i ++ ){
+        //. #46
+        if( f_answers[i].special_check ){
+          cnt += COUNT_SPECIAL_CHECK;
+        }
+
+        //. 「イコールが複数存在する」場合は100ポイント
         var tmp = f_answers[i].formula.split( '=' );
         if( tmp.length > 2 ){
           cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
