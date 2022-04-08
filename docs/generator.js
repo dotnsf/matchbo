@@ -348,9 +348,131 @@ async function generate_daily_quiz(){
   });
 }
 
+//. #49
+async function generate_daily_quiz_49(){
+  return new Promise( async function( resolve, reject ){
+    var cs = [ '', '+', '-', '*', '/' ];
+    var Ms = [ '0', '1', '1', '1', '1' ];
+    var ms = [ '7', '0', '1', '1', '2' ];
+    var Ds = [ '2', '1', '1', '2', '1' ];
+    var ds = [ '7', '4', '5', '7', '6' ];
+    var cnt = 0;
+    var k = 0;
+    for( var idx = 0; idx < 5; idx ++ ){
+      var _M = Ms[idx];
+      var _m = ms[idx];
+      var _D = Ds[idx];
+      var _d = ds[idx];
+
+      var quizs = [];
+
+      for( var i = 0; i < cs.length; i ++ ){
+        for( var j = 0; j < cs.length; j ++ ){
+          //. "M = m c D c d" 形式の問題を作成する(c : 演算記号)
+          var quiz1 = _M + '=' + _m + cs[i] + _D + cs[j] + _d;
+
+          if( matchbo.isValidQuiz( quiz1 ) ){  //. 出題としての Validation は別にするべき
+            //. check
+            var quiz_answers = matchbo.fullcheckFormula( quiz1 );
+
+            if( quiz_answers.length > 0 ){
+              var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
+              quizs.push( { formula: quiz1, num: dif } );
+            }
+          }
+
+          //. "M c m c D = d" 形式の問題を作成する(c : 演算記号)
+          var quiz2 = _M + cs[i] + _m + cs[j] + _D + '=' + _d;
+
+          if( matchbo.isValidQuiz( quiz2 ) ){  //. 出題としての Validation は別にするべき
+            //. check
+            var quiz_answers = matchbo.fullcheckFormula( quiz2 );
+
+            if( quiz_answers.length > 0 ){
+              var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE );
+              quizs.push( { formula: quiz2, num: dif } );
+            }
+          }
+        }
+      }
+
+      if( quizs.length > 0 ){
+        cnt ++;
+        var id = _M + _m + _D + _d + '-dailyquiz';
+        //console.log( id, quizs );
+
+        if( !no_updatedb ){
+          var result_data = await getDataFromDB( id );
+          if( result_data && result_data.length > 0 ){
+            //. 更新登録
+            var option = {
+              url: matchbodb_url + '/api/db/quiz/' + id,
+              method: 'PUT',
+              json: { data: JSON.stringify( quizs ), num: quizs.length, length: 0 },
+              headers: { 'Accept': 'application/json' }
+            };
+            request( option, async ( err, res, body ) => {
+              k ++;
+              if( err ){
+                console.log( { err } );
+              }else{
+                console.log( { body } );
+              }
+
+              if( k == 5 ){
+                resolve( cnt );
+              }
+            });
+          }else{
+            //. 新規登録
+            var option = {
+              url: matchbodb_url + '/api/db/quiz',
+              method: 'POST',
+              json: { id: id, data: JSON.stringify( quizs ), num: quizs.length, length: 0 },
+              headers: { 'Accept': 'application/json' }
+            };
+            request( option, async ( err, res, body ) => {
+              k ++;
+              if( err ){
+                console.log( { err } );
+              }else{
+                console.log( { body } );
+              }
+
+              if( k == 5 ){
+                resolve( cnt );
+              }
+            });
+          }
+        }else{
+          k ++;
+          if( k == 5 ){
+            resolve( cnt );
+          }
+        }
+      }
+    }
+    //resolve( cnt );
+  });
+}
+
+
 
 try{
-  if( process.argv.length > 2 ){
+  if( process.argv.length > 3 && process.argv[3] == 'xyz' ){
+    //. for reopened #49
+    var ts1 = ( new Date() ).getTime();
+    generate_daily_quiz_49().then( function( count ){
+      //console.log( 'count = ' + count );
+      var ts2 = ( new Date() ).getTime();
+      var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+
+      var ts_min = Math.floor( ts / 60 );
+      var ts_sec = ( ts % 60 );
+
+      console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
+    });
+  }else if( process.argv.length > 2 ){
     var n = parseInt( process.argv[2] );
     if( 0 <= n && n < quiz_pattern.length ){
       var ts1 = ( new Date() ).getTime();
