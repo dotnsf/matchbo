@@ -253,6 +253,7 @@ function getTodaysFormula(){
         if( data && data.length ){
           //. 候補の中で最も難易度の高いもの
           data.sort( sortByNumRev );
+          console.log( data );
           formula = data[0].formula;
 
           $('#input_formula').val( formula );
