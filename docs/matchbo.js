@@ -1613,6 +1613,44 @@ class Matchbo{
     }
   }
 
+  recursive_generate_computes( current, cs, length, is_next ){
+    if( current.length == length ){
+      var c = current[current.length - 1];
+      var idx = cs.indexOf( c );
+      current.splice( current.length - 1, 1 );
+      if( idx == cs.length - 1 ){
+        return this.recursive_generate_computes( current, cs, length, false );
+      }else{
+        current.push( cs[idx+1] );
+        return current;
+      }
+    }else{
+      if( is_next ){
+        current.push( cs[0] );
+        if( current.length == length ){
+          return current;
+        }else{
+          return this.recursive_generate_computes( current, cs, length, true );
+        }
+      }else{
+        if( current.length > 0 ){
+          var c = current[current.length - 1];
+          var idx = cs.indexOf( c );
+          current.splice( current.length - 1, 1 );
+          if( idx == cs.length - 1 ){
+            return this.recursive_generate_computes( current, cs, length, false );
+          }else{
+            current.push( cs[idx+1] );
+            return this.recursive_generate_computes( current, cs, length, true );
+          }
+        }else{
+          return null;
+        }
+      }
+    }
+  }
+
+
   //. #23
   countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK ){
     var cnt = 0;
