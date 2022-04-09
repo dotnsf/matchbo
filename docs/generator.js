@@ -576,33 +576,7 @@ async function generate_daily_quiz_49_2(){
 
 
 try{
-  if( process.argv.length > 3 && process.argv[3] == 'abc' ){
-    //. for reopened #49
-    var ts1 = ( new Date() ).getTime();
-    generate_daily_quiz_49_1().then( function( count ){
-      //console.log( 'count = ' + count );
-      var ts2 = ( new Date() ).getTime();
-      var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
-
-      var ts_min = Math.floor( ts / 60 );
-      var ts_sec = ( ts % 60 );
-
-      console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
-    });
-  }else if( process.argv.length > 3 && process.argv[3] == 'xyz' ){
-    //. for reopened #49
-    var ts1 = ( new Date() ).getTime();
-    //. この結果は「１つも見つからない」
-    generate_daily_quiz_49_2().then( function( count ){
-      var ts2 = ( new Date() ).getTime();
-      var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
-
-      var ts_min = Math.floor( ts / 60 );
-      var ts_sec = ( ts % 60 );
-
-      console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
-    });
-  }else if( process.argv.length > 2 ){
+  if( process.argv.length > 2 ){
     var n = parseInt( process.argv[2] );
     if( 0 <= n && n < quiz_pattern.length ){
       var ts1 = ( new Date() ).getTime();
@@ -616,17 +590,21 @@ try{
         console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
       });
     }else if( n == -1 ){
-      //. #49
+      //. #49, #55
       var ts1 = ( new Date() ).getTime();
       generate_daily_quiz().then( function( count ){
         //console.log( 'count = ' + count );
-        var ts2 = ( new Date() ).getTime();
-        var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
+        generate_daily_quiz_49_1().then( function( count ){
+          //console.log( 'count = ' + count );
+          //generate_daily_quiz_49_2().then( function( count ){} );
+          var ts2 = ( new Date() ).getTime();
+          var ts = Math.floor( ( ts2 - ts1 ) / 1000 );
 
-        var ts_min = Math.floor( ts / 60 );
-        var ts_sec = ( ts % 60 );
+          var ts_min = Math.floor( ts / 60 );
+          var ts_sec = ( ts % 60 );
 
-        console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
+          console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
+        });
       });
     }else if( -2 >= n && n > -1 * quiz_pattern.length ){
       n *= -1;
