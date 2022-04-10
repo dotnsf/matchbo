@@ -574,6 +574,69 @@ async function generate_daily_quiz_49_2(){
   });
 }
 
+//. #54, #55
+async function generate_quiz_from_nums( str_nums ){
+  return new Promise( async function( resolve, reject ){
+    var cs = [ '', '+', '-', '*', '/', '=' ];
+    var answers = [];
+    var quizs = [];
+
+    //. 数字だけを取り出して配列化
+    var nums = [];
+    for( var i = 0; i < str_nums.length; i ++ ){
+      try{
+        nums.push( parseInt( str_nums.charAt( i ) ) );
+      }catch( e ){
+      }
+    }
+
+    var min_answers = 0;
+    matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
+    var computes = matchbo.recursive_generate_computes( [], cs, nums.length - 1, true );
+    while( computes !== null ){
+      var quiz = '';
+      for( var i = 0; i < computes.length; i ++ ){
+        quiz += nums[i];
+        quiz += computes[i];
+      }
+      quiz += nums[nums.length-1];
+
+      if( matchbo.isValidQuiz( quiz ) ){  //. 出題としての Validation
+        var tmp = quiz.split( '=' );
+        var formulas = [];
+        formulas.push( tmp[0] + '=' + tmp[1] );
+        formulas.push( '-' + tmp[0] + '=' + tmp[1] );
+        formulas.push( tmp[0] + '=-' + tmp[1] );
+        formulas.push( '-' + tmp[0] + '=-' + tmp[1] );
+
+        //. check
+        for( var i = 0; i < formulas.length; i ++ ){
+          var quiz_answers = matchbo.fullcheckFormula( formulas[i] );
+          if( quiz_answers.length > 0 ){
+            if( min_answers == 0 || quiz_answers.length < min_answers ){
+              min_answers = quiz_answers.length;
+              answers = [ formulas[i] ];
+            }else if( min_answers > 0 && quiz_answers.length == min_answers ){
+              answers.push( formulas[i] );
+            }
+          }
+        }
+
+        for( var i = 0; i < answers.length; i ++ ){
+          var quiz_answers = matchbo.fullcheckFormula( answers[i] );
+          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK );
+          quizs.push( { formula: answers[i], num: dif } );
+        }
+      }
+
+      computes = matchbo.recursive_generate_computes( computes, cs, nums.length - 1, false );
+    }
+
+    resolve( quizs );
+  });
+}
+
+
 
 try{
   if( process.argv.length > 2 ){
@@ -588,6 +651,22 @@ try{
         var ts_sec = ( ts % 60 );
 
         console.log( ' ... ' + ts + ' sec (' + ts_min + ' min ' + ts_sec + ' sec)' );
+      });
+    }else if( process.argv[2].length > 2 ){
+      var str_nums = process.argv[2];
+      generate_quiz_from_nums( str_nums ).then( function( quizs ){
+        if( quizs.length > 0 ){
+          quizs.sort( sortByNumRev );
+          if( quizs.length > 10 ){
+            quizs.splice( 10, quizs.length - 10 );
+          }
+          console.log( JSON.stringify( quizs, null, 2 ) );
+
+          formula = quizs[0].formula;
+          console.log( 'formula = ' + formula );
+        }else{
+          console.log( 'No formulas can be generated for "' + str_nums + '".' );
+        }
       });
     }else if( n == -1 ){
       //. #49, #55
