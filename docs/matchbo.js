@@ -1651,8 +1651,8 @@ class Matchbo{
   }
 
 
-  //. #23
-  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK ){
+  //. #23, #56
+  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_MINUS_MULTI_DIVIDE ){
     var cnt = 0;
     for( var i = 0; i < f_question.length; i ++ ){
       var c = f_question.charAt( i );
@@ -1680,6 +1680,7 @@ class Matchbo{
       }
 
       if( idx > -1 ){
+        //. 問題に使われている文字の変化する候補の数をそのままポイントにする
         var trans = this.transitions[idx];
         trans.forEach( function( t ){
           cnt += trans.length;
@@ -1687,7 +1688,7 @@ class Matchbo{
       }
     }
 
-    //. '11'
+    //. 問題に使われている文字の '11' の数だけ COUNT_ELEVEN ポイントを追加する
     var n = f_question.indexOf( '11' );
     while( n > -1 ){
       cnt += COUNT_ELEVEN;
@@ -1720,7 +1721,7 @@ class Matchbo{
         }
       }
 
-      //. 「１本抜くと成立する」場合は100ポイント
+      //. 問題自体が「１本抜くと成立する」場合は COUNT_VALID_MINUS ポイント
       if( idx > -1 ){
         var trans1 = this.transitions[idx][1];
         for( var j = 0; j < trans1.length; j ++ ){
@@ -1732,20 +1733,22 @@ class Matchbo{
       }
     }
 
+    //. #56 : 問題内の掛け算や割り算は（変化しないので）難問になりにくい
+
     if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
       for( var i = 0; i < f_answers.length; i ++ ){
-        //. #46
+        //. #46 : 回答がチェックを入れないと見つからないものだった場合は COUNT_SPECIAL_CHECK ポイントを加算
         if( f_answers[i].special_check ){
           cnt += COUNT_SPECIAL_CHECK;
         }
 
-        //. 「イコールが複数存在する」場合は100ポイント
+        //. 「イコールが複数存在する」場合は COUNT_MULTI_EQUAL ポイント
         var tmp = f_answers[i].formula.split( '=' );
         if( tmp.length > 2 ){
           cnt += ( tmp.length - 2 ) * COUNT_MULTI_EQUAL;
         }
 
-        //. #43
+        //. #43 : 式の計算結果が負になる場合は COUNT_MINUS_VALUE を追加
         var tmp_f = tmp[0];
         tmp_f.split( '±0' ).join( '+0' );
         try{
