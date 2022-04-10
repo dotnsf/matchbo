@@ -56,7 +56,7 @@ You can check **daily** quizs at https://dotnsf.github.io/matchbo?gamma=1
 
 - `$ node generator [n]`
 
-  - n: index(0-11)
+  - n: index(0-17)
 
 
 ## How to generate daily-quizs
@@ -64,6 +64,15 @@ You can check **daily** quizs at https://dotnsf.github.io/matchbo?gamma=1
 - `$ cd docs`
 
 - `$ node generator -1`
+
+
+## How to generate compared results
+
+- `$ cd docs`
+
+- `$ node generator [n]`
+
+  - n: < -1
 
 
 ## Licensing
