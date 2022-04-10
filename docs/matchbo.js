@@ -1747,10 +1747,10 @@ class Matchbo{
         var tmp1 = f_question.split( '=' );
         var tmp2 = f_answers[0].formula.split( '=' );
         var v0 = eval( tmp2[0] );
-        if( v0 != undefined ){
+        if( v0 != undefined && v0 != 0 ){
           var v1 = eval( tmp1[0] );
           var v2 = eval( tmp1[1] );
-          if( v0 != v1 && v0 == v2 ){
+          if( v0 != v1 && v0 != v2 ){
             cnt += COUNT_CHANGED_ANSWER;
           }
         }
