@@ -686,7 +686,7 @@ try{
       });
     }else if( -2 >= n && n > -1 * quiz_pattern.length ){
       n *= -1;
-      n = 5;  //. NCN=NCN
+      //n = 5;  //. NCN=NCN
       //n = 3;  //. NCN=N
       var ts1 = ( new Date() ).getTime();
       no_updatedb = 1;  //. DB 更新はしない
