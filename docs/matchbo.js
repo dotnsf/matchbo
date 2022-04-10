@@ -1652,7 +1652,7 @@ class Matchbo{
 
 
   //. #23, #56
-  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_MINUS_MULTI_DIVIDE ){
+  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE ){
     var cnt = 0;
     for( var i = 0; i < f_question.length; i ++ ){
       var c = f_question.charAt( i );
@@ -1734,8 +1734,28 @@ class Matchbo{
     }
 
     //. #56 : 問題内の掛け算や割り算は（変化しないので）難問になりにくい
+    var num_multi = f_question.split( '*' ).length - 1;
+    var num_divide = f_question.split( '/' ).length - 1;
+    cnt -= ( num_multi + num_divide ) * COUNT_MINUS_MULTI_DIVIDE;
 
-    if( f_answers && f_answers.length ){  //. f_answers.length == 1 のはず
+    if( f_answers && f_answers.length ){ 
+      //. #58 COUNT_MINUS_MULTI_ANSWERS
+      cnt -= ( f_answers.length - 1 ) * COUNT_MINUS_MULTI_ANSWERS;
+      
+      //. #57 COUNT_CHANGED_ANSWER
+      if( f_answers.length == 1 ){
+        var tmp1 = f_question.split( '=' );
+        var tmp2 = f_answers[0].formula.split( '=' );
+        var v0 = eval( tmp2[0] );
+        if( v0 != undefined ){
+          var v1 = eval( tmp1[0] );
+          var v2 = eval( tmp1[1] );
+          if( v0 != v1 && v0 == v2 ){
+            cnt += COUNT_CHANGED_ANSWER;
+          }
+        }
+      }
+
       for( var i = 0; i < f_answers.length; i ++ ){
         //. #46 : 回答がチェックを入れないと見つからないものだった場合は COUNT_SPECIAL_CHECK ポイントを加算
         if( f_answers[i].special_check ){

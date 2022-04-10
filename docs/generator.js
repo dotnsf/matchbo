@@ -28,6 +28,8 @@ var COUNT_VALID_MINUS = 'COUNT_VALID_MINUS' in process.env ? parseInt( process.e
 var COUNT_MULTI_EQUAL = 'COUNT_MULTI_EQUAL' in process.env ? parseInt( process.env.COUNT_MULTI_EQUAL ) : counts.COUNT_MULTI_EQUAL;
 var COUNT_MINUS_VALUE = 'COUNT_MINUS_VALUE' in process.env ? parseInt( process.env.COUNT_MINUS_VALUE ) : counts.COUNT_MINUS_VALUE;  //. #43
 var COUNT_SPECIAL_CHECK = 'COUNT_SPECIAL_CHECK' in process.env ? parseInt( process.env.COUNT_SPECIAL_CHECK ) : counts.COUNT_SPECIAL_CHECK;  //. #46
+var COUNT_CHANGED_ANSWER = 'COUNT_CHANGED_ANSWER' in process.env ? parseInt( process.env.COUNT_CHANGED_ANSWER ) : counts.COUNT_CHANGED_ANSWER;  //. #57
+var COUNT_MINUS_MULTI_ANSWERS = 'COUNT_MINUS_MULTI_ANSWERS' in process.env ? parseInt( process.env.COUNT_MINUS_MULTI_ANSWERS ) : counts.COUNT_MINUS_MULTI_ANSWERS;  //. #58
 var COUNT_MINUS_MULTI_DIVIDE = 'COUNT_MINUS_MULTI_DIVIDE' in process.env ? parseInt( process.env.COUNT_MINUS_MULTI_DIVIDE ) : counts.COUNT_MINUS_MULTI_DIVIDE;  //. #56
 
 var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
@@ -89,7 +91,7 @@ async function generate_quiz( idx ){
 
         //. difficulty
         if( quiz_answers.length == 1 ){
-          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_MINUS_MULTI_DIVIDE );
+          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
           if( quizs_d.length < min_formulas ){
             quizs_d.push( { formula: quiz, num: dif } );
           }else if( dif >= quizs_d[min_formulas-1].num ){
@@ -277,7 +279,7 @@ async function generate_daily_quiz(){
               var quiz_answers = matchbo.fullcheckFormula( quiz );
 
               if( quiz_answers.length > 0 ){
-                var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_MINUS_MULTI_DIVIDE );
+                var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
                 quizs.push( { formula: quiz, num: dif } );
               }
             }
@@ -373,7 +375,7 @@ async function generate_daily_quiz_49_1(){
             var quiz_answers = matchbo.fullcheckFormula( quiz1 );
 
             if( quiz_answers.length > 0 ){
-              var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_MINUS_MULTI_DIVIDE );
+              var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
               quizs.push( { formula: quiz1, num: dif } );
             }
           }
@@ -386,7 +388,7 @@ async function generate_daily_quiz_49_1(){
             var quiz_answers = matchbo.fullcheckFormula( quiz2 );
 
             if( quiz_answers.length > 0 ){
-              var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_MINUS_MULTI_DIVIDE );
+              var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
               quizs.push( { formula: quiz2, num: dif } );
             }
           }
@@ -479,7 +481,7 @@ async function generate_daily_quiz_49_2(){
           var quiz_answers = matchbo.fullcheckFormula( quiz1 );
 
           if( quiz_answers.length > 0 ){
-            var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
             quizs.push( { formula: quiz1, num: dif } );
           }
         }
@@ -491,7 +493,7 @@ async function generate_daily_quiz_49_2(){
           var quiz_answers = matchbo.fullcheckFormula( quiz2 );
 
           if( quiz_answers.length > 0 ){
-            var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
             quizs.push( { formula: quiz2, num: dif } );
           }
         }
@@ -503,7 +505,7 @@ async function generate_daily_quiz_49_2(){
           var quiz_answers = matchbo.fullcheckFormula( quiz3 );
 
           if( quiz_answers.length > 0 ){
-            var dif = matchbo.countDifficulty( quiz3, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( quiz3, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
             quizs.push( { formula: quiz3, num: dif } );
           }
         }
@@ -621,7 +623,7 @@ async function generate_quiz_from_nums( str_nums ){
 
         for( var i = 0; i < answers.length; i ++ ){
           var quiz_answers = matchbo.fullcheckFormula( answers[i] );
-          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_MINUS_MULTI_DIVIDE );
+          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
           quizs.push( { formula: answers[i], num: dif } );
         }
       }
@@ -695,9 +697,12 @@ try{
       var default_COUNT_MULTI_EQUAL = COUNT_MULTI_EQUAL;
       var default_COUNT_MINUS_VALUE = COUNT_MINUS_VALUE;
       var default_COUNT_SPECIAL_CHECK = COUNT_SPECIAL_CHECK;
+      var default_COUNT_CHANGED_ANSWER = COUNT_CHANGED_ANSWER;
+      var default_COUNT_MINUS_MULTI_ANSWERS = COUNT_MINUS_MULTI_ANSWERS;
+      var default_COUNT_MINUS_MULTI_DIVIDE = COUNT_MINUS_MULTI_DIVIDE;
 
       var cnt = 0;
-      for( var i = 0; i < 13; i ++ ){
+      for( var i = 0; i < 19; i ++ ){
         switch( i ){
         case 0:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -705,6 +710,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 1:
           COUNT_ELEVEN = default_COUNT_ELEVEN / 2;
@@ -712,6 +720,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 2:
           COUNT_ELEVEN = default_COUNT_ELEVEN * 2;
@@ -719,6 +730,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 3:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -726,6 +740,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 4:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -733,6 +750,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 5:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -740,6 +760,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL / 2;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 6:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -747,6 +770,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL * 2;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 7:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -754,6 +780,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE / 2;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 8:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -761,6 +790,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE * 2;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 9:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -768,6 +800,9 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK / 2;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 10:
           COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -775,20 +810,89 @@ try{
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK * 2;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
           break;
         case 11:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER / 2;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+          break;
+        case 12:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER * 2;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+          break;
+        case 13:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS / 2;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+          break;
+        case 14:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS * 2;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+          break;
+        case 15:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE / 2;
+          break;
+        case 16:
+          COUNT_ELEVEN = default_COUNT_ELEVEN;
+          COUNT_VALID_MINUS = default_COUNT_VALID_MINUS;
+          COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL;
+          COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE;
+          COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE * 2;
+          break;
+        case 17:
           COUNT_ELEVEN = default_COUNT_ELEVEN / 2;
           COUNT_VALID_MINUS = default_COUNT_VALID_MINUS / 2;
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL / 2;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE / 2;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK / 2;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER / 2;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS / 2;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE / 2;
           break;
-        case 12:
+        case 18:
           COUNT_ELEVEN = default_COUNT_ELEVEN * 2;
           COUNT_VALID_MINUS = default_COUNT_VALID_MINUS * 2;
           COUNT_MULTI_EQUAL = default_COUNT_MULTI_EQUAL * 2;
           COUNT_MINUS_VALUE = default_COUNT_MINUS_VALUE * 2;
           COUNT_SPECIAL_CHECK = default_COUNT_SPECIAL_CHECK * 2;
+          COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER * 2;
+          COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS * 2;
+          COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE * 2;
           break;
         }
 

@@ -9,6 +9,8 @@ var COUNT_VALID_MINUS = 100;
 var COUNT_MULTI_EQUAL = 100;
 var COUNT_MINUS_VALUE = 50;  //. #43
 var COUNT_SPECIAL_CHECK = 50;  //. #46
+var COUNT_CHANGED_ANSWER = 100;  //. #57
+var COUNT_MINUS_MULTI_ANSWERS = 500;  //. #58
 var COUNT_MINUS_MULTI_DIVIDE = 20;  //. #56
 
 function getParam( name, url ){
@@ -198,6 +200,12 @@ $(function(){
       if( counts.COUNT_SPECIAL_CHECK ){
         COUNT_SPECIAL_CHECK = counts.COUNT_SPECIAL_CHECK;
       }
+      if( counts.COUNT_CHANGED_ANSWER ){
+        COUNT_CHANGED_ANSWER = counts.COUNT_CHANGED_ANSWER;
+      }
+      if( counts.COUNT_MINUS_MULTI_ANSWERS ){
+        COUNT_MINUS_MULTI_ANSWERS = counts.COUNT_MINUS_MULTI_ANSWERS;
+      }
       if( counts.COUNT_MINUS_MULTI_DIVIDE ){
         COUNT_MINUS_MULTI_DIVIDE = counts.COUNT_MINUS_MULTI_DIVIDE;
       }
@@ -329,7 +337,7 @@ function showAnswers( answers, formula ){
       var answer_formula = answer.formula;
       //. この結果が返ってこない？？
       //answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
-      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_MINUS_MULTI_DIVIDE );
+      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
     }
     answers.sort( sortByDifficulty );
 
@@ -678,7 +686,7 @@ async function generate_quiz_from_nums( str_nums ){
 
         for( var i = 0; i < answers.length; i ++ ){
           var quiz_answers = matchbo.fullcheckFormula( answers[i] );
-          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_MINUS_MULTI_DIVIDE );
+          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
           quizs.push( { formula: answers[i], num: dif } );
         }
       }
