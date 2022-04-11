@@ -661,6 +661,9 @@ try{
     case "index":
       if( process.argv.length > 3 ){
         if( process.argv[3].toLowerCase() == "all" ){
+          console.log( 'not implemented yet...' );
+          for( var n = 0; n < quiz_pattern.length; n ++ ){
+          }
         }else{
           var n = -1;
           try{
