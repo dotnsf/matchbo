@@ -54,25 +54,27 @@ You can check **daily** quizs at https://dotnsf.github.io/matchbo?gamma=1
 
 - `$ cd docs`
 
-- `$ node generator [n]`
+- `$ node generator index [n]`
 
   - n: index(0-18)
+
+- `$ node generator index all`
 
 
 ## How to generate daily-quizs
 
 - `$ cd docs`
 
-- `$ node generator -1`
+- `$ node generator daily`
 
 
 ## How to generate compared results
 
 - `$ cd docs`
 
-- `$ node generator [n]`
+- `$ node generator compared [n]`
 
-  - n: < -1
+  - n: index(0-18, default 5)
 
 
 ## Licensing
