@@ -1576,6 +1576,12 @@ class Matchbo{
             current = current.substr( 0, current.length - 1 );
             var code = c.charCodeAt( 0 ) + 1;
             current += String.fromCharCode( code );
+            if( current.length == 1 ){
+              //console.log( current ); 
+              //. １桁目が変化した
+              var ts = ( new Date() ).getTime();
+              console.log( '"' + current + '": ' + ts );
+            }
             return this.recursive_generate_quiz( current, pattern, true );
           }else{
             if( current.length > 0 ){
