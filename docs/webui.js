@@ -25,8 +25,8 @@ function getParam( name, url ){
 
 var alpha_function = getParam( 'alpha' );
 var beta_function = getParam( 'beta' );
-var gamma_function = getParam( 'gamma' );
-var delta_function = getParam( 'delta' );
+var gamma_function = getParam( 'gamma' ); 
+var delta_function = 0; //getParam( 'delta' );
 
 var _matchbodb_url = getParam( 'matchbodb_url' );
 if( _matchbodb_url ){
@@ -173,6 +173,22 @@ $(function(){
         var option = '<option value="' + i + '">' + v + '</option>';
         $('#quiz_pattern').append( option );
       }
+
+      //. #60
+      var dt = new Date();
+      var m = dt.getMonth() + 1;
+      var d = dt.getDate();
+      var mmdd = ( m < 10 ? '0' : '' ) + m + '/' + ( d < 10 ? '0' : '' ) + d;
+      $('#quiz_pattern').append( '<option value="-1">「今日の日付」(' + mmdd + ')の問題</option>' );
+
+      $('#quiz_pattern').change( function( e ){
+        var v = parseInt( $('#quiz_pattern').val() );
+        if( v == -1 ){
+          $('#quiz_priority').css( 'display', 'none' );
+        }else{
+          $('#quiz_priority').css( 'display', 'block' );
+        }
+      });
     },
     error: function( e0, e1, e2 ){
       console.log( e0, e1, e2 );
@@ -273,15 +289,36 @@ function getTodaysFormula(){
 			obj.remove();
 			obj = null;
       if( result && result.status ){
-        var data = JSON.parse( result.result.data );
-        if( data && data.length ){
+        var quizs = JSON.parse( result.result.data );
+        if( quizs && quizs.length ){
           //. 候補の中で最も難易度の高いもの
-          data.sort( sortByNumRev );
-          console.log( data );
-          formula = data[0].formula;
+          quizs.sort( sortByNumRev );
 
-          $('#input_formula').val( formula );
-          onKeyup( 'input' );
+          //. #60
+          $('#generated_quizs').css( 'display', 'block' );
+          if( quizs.length > 0 ){
+            $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
+  
+            for( var i = 0; i < quizs.length; i ++ ){
+              var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
+              $('#generated_quizs').append( o );
+            }
+            $('#generated_quizs').change( function(){
+              var selected_quiz = $(this).val();
+              if( selected_quiz ){
+                $('#input_formula').val( selected_quiz );
+                var imgs = formula2imgs( selected_quiz );
+                if( imgs ){
+                  $('#input_imgs').html( imgs );
+                }
+  
+                //. #25
+                $('#answers_list').html( '' );
+              }
+            });
+          }else{
+            $('#generated_quizs').html( '<option value="">（このタイプの出題はまだ用意できていません）</option>' );
+          }
         }
       }
     },
@@ -538,90 +575,94 @@ async function generate_quiz( idx ){
     var max_num = 0;
     var pattern = quiz_pattern[idx];
     var cnt = 0;
-
-    var priority = $('#quiz_priority').val();
-    $('#generated_quizs').css( 'display', 'none' );
-
-    var pattern_str = pattern.join( '' );
-    var result_data = await getDataFromDB( pattern_str + '-' + priority );
-
-    if( result_data && result_data.length > 0 ){
-      quizs = result_data;
+    
+    if( idx == -1 ){
+      getTodaysFormula();
     }else{
-      /*
-      var quiz = recursive_generate_quiz( '', pattern, true );
-      while( quiz !== null ){
-        if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
-          cnt ++;
+      var priority = $('#quiz_priority').val();
+      $('#generated_quizs').css( 'display', 'none' );
+
+      var pattern_str = pattern.join( '' );
+      var result_data = await getDataFromDB( pattern_str + '-' + priority );
+
+      if( result_data && result_data.length > 0 ){
+        quizs = result_data;
+      }else{
+        /*
+        var quiz = recursive_generate_quiz( '', pattern, true );
+        while( quiz !== null ){
+          if( isValidQuiz( quiz ) ){  //. 出題としての Validation は別にするべき
+            cnt ++;
   
-          //. check
-          var quiz_answers = fullcheckFormula( quiz );
-          if( priority == 'difficulty' ){
-            if( quiz_answers.length == 1 ){
-              for( var i = 0; i < quiz_answers.length; i ++ ){
-                var answer = quiz_answers[i];
-                var dif = countDifficulties( quiz, answer );
-                //console.log( cnt, quiz, answer.formula, dif );
-                if( dif > max_num ){
-                  max_num = dif;
-                  quizs = [ quiz ];
-                }else if( dif == max_num ){
-                  quizs.push( quiz );
+            //. check
+            var quiz_answers = fullcheckFormula( quiz );
+            if( priority == 'difficulty' ){
+              if( quiz_answers.length == 1 ){
+                for( var i = 0; i < quiz_answers.length; i ++ ){
+                  var answer = quiz_answers[i];
+                  var dif = countDifficulties( quiz, answer );
+                  //console.log( cnt, quiz, answer.formula, dif );
+                  if( dif > max_num ){
+                    max_num = dif;
+                    quizs = [ quiz ];
+                  }else if( dif == max_num ){
+                    quizs.push( quiz );
+                  }
                 }
               }
-            }
-          }else if( priority == 'variety' ){
-            if( quiz_answers.length > max_num ){
-              max_num = quiz_answers.length;
-              quizs = [ quiz ];
-            }else if( quiz_answers.length == max_num ){
-              quizs.push( quiz );
+            }else if( priority == 'variety' ){
+              if( quiz_answers.length > max_num ){
+                max_num = quiz_answers.length;
+                quizs = [ quiz ];
+              }else if( quiz_answers.length == max_num ){
+                quizs.push( quiz );
+              }
             }
           }
+
+          quiz = recursive_generate_quiz( quiz, pattern, false );
         }
 
-        quiz = recursive_generate_quiz( quiz, pattern, false );
-      }
-
-      //. 登録
-      console.log( '#quizs = ' + quizs.length );
-      $.ajax({
-        url: matchbodb_url + '/api/db/quiz',
-        type: 'POST',
-        data: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
-        success: function( result ){
-          console.log( { result } );
-        },
-        error: function( e0, e1, e2 ){
-          console.log( e0, e1, e2 );
-        }
-      });
-      */
-    }
-
-    $('#generated_quizs').css( 'display', 'block' );
-    if( quizs.length > 0 ){
-      $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
-
-      for( var i = 0; i < quizs.length; i ++ ){
-        var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
-        $('#generated_quizs').append( o );
-      }
-      $('#generated_quizs').change( function(){
-        var selected_quiz = $(this).val();
-        if( selected_quiz ){
-          $('#input_formula').val( selected_quiz );
-          var imgs = formula2imgs( selected_quiz );
-          if( imgs ){
-            $('#input_imgs').html( imgs );
+        //. 登録
+        console.log( '#quizs = ' + quizs.length );
+        $.ajax({
+          url: matchbodb_url + '/api/db/quiz',
+          type: 'POST',
+          data: { id: pattern_str + '-' + priority, data: JSON.stringify( quizs ) },
+          success: function( result ){
+            console.log( { result } );
+          },
+          error: function( e0, e1, e2 ){
+            console.log( e0, e1, e2 );
           }
+        });
+        */
+      }
+
+      $('#generated_quizs').css( 'display', 'block' );
+      if( quizs.length > 0 ){
+        $('#generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
   
-          //. #25
-          $('#answers_list').html( '' );
+        for( var i = 0; i < quizs.length; i ++ ){
+          var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
+          $('#generated_quizs').append( o );
         }
-      });
-    }else{
-      $('#generated_quizs').html( '<option value="">（このタイプの出題はまだ用意できていません）</option>' );
+        $('#generated_quizs').change( function(){
+          var selected_quiz = $(this).val();
+          if( selected_quiz ){
+            $('#input_formula').val( selected_quiz );
+            var imgs = formula2imgs( selected_quiz );
+            if( imgs ){
+              $('#input_imgs').html( imgs );
+            }
+  
+            //. #25
+            $('#answers_list').html( '' );
+          }
+        });
+      }else{
+        $('#generated_quizs').html( '<option value="">（このタイプの出題はまだ用意できていません）</option>' );
+      }
     }
 
     resolve( true );
