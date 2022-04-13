@@ -1342,10 +1342,10 @@ class Matchbo{
       }
 
       try{
-        var v0 = eval( tmp[0] );
+        var v0 = this.checked_eval( tmp[0] );
         if( v0 != undefined ){
           for( var i = 1; i < tmp.length && b; i ++ ){
-            var v1 = eval( tmp[i] );
+            var v1 = this.checked_eval( tmp[i] );
             b = ( v0 === v1 );
           }
   
@@ -1402,7 +1402,7 @@ class Matchbo{
     //. #34
     if( r ){
       try{
-        var v = eval( f );
+        var v = this.checked_eval( f );
         if( v == undefined || v == Infinity ){
           r = false;
         }
@@ -1428,11 +1428,11 @@ class Matchbo{
       }
 
       try{
-        var v0 = eval( tmp[0] );
+        var v0 = this.checked_eval( tmp[0] );
         if( v0 != undefined ){
           /*
           for( var i = 1; i < tmp.length && b; i ++ ){
-            var v1 = eval( tmp[i] );
+            var v1 = this.checked_eval( tmp[i] );
             b = ( v0 !== v1 );  //. 出題時点で成立していてはいけない場合にのみ必要
           }
           */
@@ -1752,10 +1752,10 @@ class Matchbo{
       if( f_answers.length == 1 ){
         var tmp1 = f_question.split( '=' );
         var tmp2 = f_answers[0].formula.split( '=' );
-        var v0 = eval( tmp2[0] );
+        var v0 = this.checked_eval( tmp2[0] );
         if( v0 != undefined && v0 != 0 ){
-          var v1 = eval( tmp1[0] );
-          var v2 = eval( tmp1[1] );
+          var v1 = this.checked_eval( tmp1[0] );
+          var v2 = this.checked_eval( tmp1[1] );
           if( v0 != v1 && v0 != v2 ){
             cnt += COUNT_CHANGED_ANSWER;
           }
@@ -1778,7 +1778,7 @@ class Matchbo{
         var tmp_f = tmp[0];
         tmp_f.split( '±0' ).join( '+0' );
         try{
-          if( eval( tmp_f ) < 0 ){
+          if( this.checked_eval( tmp_f ) < 0 ){
             cnt += COUNT_MINUS_VALUE;
           }
         }catch( e ){
@@ -1787,6 +1787,26 @@ class Matchbo{
     }
 
     return cnt;
+  }
+
+  //. #61
+  checked_eval( f ){
+    var chars = [ 
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+      '+', '-', '*', '/', '=', '±', ' ' 
+    ];
+
+    var idx = 0;
+    for( var i = 0; i < f.length && idx >= 0; i ++ ){
+      var c = f.charAt( i );
+      idx = chars.indexOf( c );
+    }
+
+    if( idx >= 0 ){
+      return eval( f );
+    }else{
+      return undefined;
+    }
   }
 };
 
