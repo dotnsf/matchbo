@@ -151,7 +151,7 @@ $(function(){
       $('#answer_formula').prop( 'placeholder', '問題を作る時に使う数字（最大４桁、例 1234）' );
     }else if( v == 'counter_generated_quizs' ){
       $('#answer_formula').val( '' );
-      $('#answer_formula').prop( 'placeholder', '正解の式' );
+      $('#answer_formula').prop( 'placeholder', '正解の式（例 6-8=1-3）' );
     }
   });
 
