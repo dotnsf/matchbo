@@ -27,6 +27,8 @@ You can customize minor rules at https://dotnsf.github.io/matchbo?beta=1
 
 You can check **number-specified** quizs at https://dotnsf.github.io/matchbo?gamma=1
 
+You can counter-generate **quizs** from answer formula at https://dotnsf.github.io/matchbo?delta=1
+
 
 ### Numbers
 

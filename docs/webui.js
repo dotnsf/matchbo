@@ -26,7 +26,7 @@ function getParam( name, url ){
 var alpha_function = getParam( 'alpha' );
 var beta_function = getParam( 'beta' );
 var gamma_function = getParam( 'gamma' ); 
-var delta_function = 0; //getParam( 'delta' );
+var delta_function = getParam( 'delta' );
 
 var _matchbodb_url = getParam( 'matchbodb_url' );
 if( _matchbodb_url ){
@@ -349,6 +349,36 @@ function generateFormulaFromNums(){
       }
     });
 
+  }
+}
+
+//. #62
+async function counterGenerateQuizs(){
+  var answer_formula = $('#answer_formula').val();
+  if( answer_formula ){
+    $('#counter_generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
+
+    var quizs = await counter_generate_quizs( answer_formula );
+    for( var i = 0; i < quizs.length; i ++ ){
+      var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
+      $('#counter_generated_quizs').append( o );
+    }
+    
+    $('#counter_generated_quizs').change( function(){
+      var selected_quiz = $(this).val();
+      if( selected_quiz ){
+        $('#input_formula').val( selected_quiz );
+        var imgs = formula2imgs( selected_quiz );
+        if( imgs ){
+          $('#input_imgs').html( imgs );
+        }
+ 
+        //. #25
+        $('#answers_list').html( '' );
+      }
+    });
+
+    $('#counter_generated_quizs').css( 'display', 'block' );
   }
 }
 
@@ -739,11 +769,70 @@ async function generate_quiz_from_nums( str_nums ){
   });
 }
 
+//. #62
+async function counter_generate_quizs( answer_formula ){
+  return new Promise( async function( resolve, reject ){
+    var quizs = [];
+    matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
+
+    //. 最初に解が１つだけの場合で検索し、１つも見つからなければ複数回を認める
+    var tf = [ true, false ];
+    for( var idx = 0; idx < 2 && quizs.length == 0; idx ++ ){
+      //. quizs に問題文を全て代入する
+      var _quizs = matchbo.fullcheckQuizs( answer_formula, tf[idx] );
+    
+      //. この時点では難易度や回答数が考慮されていない順に並んでいる
+      for( var i = 0; i < _quizs.length; i ++ ){
+        if( _quizs[i].formula.split( '=' ).length > 1 ){
+          var answers = matchbo.fullcheckFormula( _quizs[i].formula );
+          if( answers && answers.length > 0 ){
+            var dif = matchbo.countDifficulty( _quizs[i].formula, answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+      
+            _quizs[i].num = answers.length;
+            _quizs[i].dif = dif;
+            quizs.push( _quizs[i] );
+          }
+        }
+      }
+    }
+
+    //. 難易度高い順 -> 回答数少ない順　でソート
+    if( quizs.length > 0 ){
+      quizs.sort( sortByDifficultyRev );
+      quizs.sort( sortByNum );
+    }
+
+    resolve( quizs );
+  });
+}
+
 function sortByDifficulty( a, b ){
   var r = 0;
   if( a.difficulty < b.difficulty ){
     r = -1;
   }else if( a.difficulty > b.difficulty ){
+    r = 1;
+  }
+
+  return r;
+}
+
+function sortByDifficultyRev( a, b ){
+  var r = 0;
+  if( a.difficulty < b.difficulty ){
+    r = 1;
+  }else if( a.difficulty > b.difficulty ){
+    r = -1;
+  }
+
+  return r;
+}
+
+function sortByNum( a, b ){
+  var r = 0;
+  if( a.num < b.num ){
+    r = -1;
+  }else if( a.num > b.num ){
     r = 1;
   }
 

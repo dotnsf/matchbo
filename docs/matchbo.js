@@ -60,6 +60,145 @@ class Matchbo{
     this.answers = [];
   }
 
+  //. #62
+  fullcheckQuizs( answer_formula, only_one_answer ){
+    this.quizs = [];
+
+    if( answer_formula && this.isValidFormula( answer_formula ) ){
+      //. quizs に問題文を全て代入する
+      this.checkQuizs( answer_formula );
+
+      //. 回答数を求めておく
+      var quizs = [];
+      for( var i = 0; i < this.quizs.length; i ++ ){
+        var quiz = this.quizs[i];
+        var answers = this.fullcheckFormula( quiz.formula );
+        quiz.num = answers.length;
+        if( answers.length > 0 ){
+          if( only_one_answer ){
+            if( answers.length == 1 ){
+              quizs.push( quiz );
+            }
+          }else{
+            quizs.push( quiz );
+          }
+        }
+      }
+    }
+
+    //. この時点では難易度や回答数が考慮されていない
+    return quizs;
+  }
+
+  checkQuizs( answer_formula ){
+    var r = null;
+  
+    //. １本動かしてできる式を全て作り出して、配列 this.quizs に追加する
+    if( answer_formula ){
+      //. 式を一文字ずつ、種類に分けて分解
+      var matches = [];
+      for( var i = 0; i < answer_formula.length; i ++ ){
+        var c = answer_formula.charAt( i );
+        if( ['+','-','*','/','='].indexOf( c ) > -1 ){
+          var idx = 0;
+          switch( c ){
+          case '+':
+            idx = 12;
+            break;
+          case '-':
+            idx = 13;
+            break;
+          case '*':
+            idx = 14;
+            break;
+          case '/':
+            idx = 15;
+            break;
+          case '=':
+            idx = 16;
+            break;
+          }
+          matches.push( { type: "calc", kind: c, idx: idx } );
+        }else if( '0' <= c && c <= '9' ){
+          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+        }else{
+          matches.push( { type: "else", kind: c, idx: -1 } );
+        }
+      }
+
+      //. 最初の１文字目から調べる
+      for( var i = 0; i < matches.length; i ++ ){
+        var m = matches[i];
+        if( m.type == 'num' || m.type == 'calc' ){
+          var transition = this.transitions[m.idx];
+  
+          //. 足してできる数
+          for( var j = 0; j < transition[0].length; j ++ ){
+            //. 式の i 文字目を transitions[0][j] に置き換える
+            for( var k = i + 1; k < matches.length; k ++ ){
+              if( i != k && ( matches[k].type == 'num' || matches[k].type == 'calc' ) ){
+                var t = this.transitions[matches[k].idx];
+                for( var l = 0; l < t[1].length; l ++ ){
+                  //. 代わりに式の k 文字目を t[1][l] に置き換える
+                  var new_formula = this.subString( matches, 0, i ) + transition[0][j] + this.subString( matches, i + 1, k ) + t[1][l] + this.subString( matches, k + 1 );
+                  //var found = this.isValidFormula( new_formula );
+                  //if( found ){ this.quizs.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                  this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+                }
+              }
+            }
+          }
+
+          //. 引いてできる数
+          for( var j = 0; j < transition[1].length; j ++ ){
+            //. 式の i 文字目を translation[1][j] に置き換える
+            for( var k = i + 1; k < matches.length; k ++ ){
+              if( i != k && matches[k].type == 'num' || matches[k].type == 'calc' ){
+                var t = this.transitions[matches[k].idx];
+                for( var l = 0; l < t[0].length; l ++ ){
+                  //. 代わりに式の k 文字目を t[0][l] に置き換える
+                  var new_formula = this.subString( matches, 0, i ) + transition[1][j] + this.subString( matches, i + 1, k ) + t[0][l] + this.subString( matches, k + 1 );
+                  //var found = this.isValidFormula( new_formula );
+                  //if( found ){ this.quizs.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                  this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+                }
+              }
+            }
+
+            //. 式の i 文字目を translation[1][j] に置き換える
+            var new_formula_ = this.subString( matches, 0, i ) + transition[1][j] + this.subString( matches, i + 1 );
+  
+            //. 各辺の頭に '-' をつける
+            var tmp = new_formula_.split( '=' );
+            if( tmp.length > 1 ){   //. '=' は２つ以上でも可とする
+              for( var k = 0; k < tmp.length; k ++ ){
+                var f = JSON.parse( JSON.stringify( tmp ) );
+                if( f[k].indexOf( '-' ) != 0 ){
+                  f[k] = '-' + f[k];
+                  var new_formula = f.join( '=' );
+                  //var found = this.isValidFormula( new_formula );
+                  //if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                  this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+                }
+              }
+            }
+          }
+
+          //. 置き換えてできる数
+          for( var j = 0; j < transition[2].length; j ++ ){
+            //. 式の i 文字目を translation[2][j] に置き換える
+            var new_formula = this.subString( matches, 0, i ) + transition[2][j] + this.subString( matches, i + 1 );
+            //var found = this.isValidFormula( new_formula );
+            //if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+            this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+          }
+        }
+      }
+    }
+
+    return r;
+  }
+
   fullcheckFormula( formula ){
     this.answers = [];
   
@@ -1751,13 +1890,15 @@ class Matchbo{
       //. #57 COUNT_CHANGED_ANSWER
       if( f_answers.length == 1 ){
         var tmp1 = f_question.split( '=' );
-        var tmp2 = f_answers[0].formula.split( '=' );
-        var v0 = this.checked_eval( tmp2[0] );
-        if( v0 != undefined && v0 != 0 ){
-          var v1 = this.checked_eval( tmp1[0] );
-          var v2 = this.checked_eval( tmp1[1] );
-          if( v0 != v1 && v0 != v2 ){
-            cnt += COUNT_CHANGED_ANSWER;
+        if( tmp1.length > 1 ){
+          var tmp2 = f_answers[0].formula.split( '=' );
+          var v0 = this.checked_eval( tmp2[0] );
+          if( v0 != undefined && v0 != 0 ){
+            var v1 = this.checked_eval( tmp1[0] );
+            var v2 = this.checked_eval( tmp1[1] );
+            if( v0 != v1 && v0 != v2 ){
+              cnt += COUNT_CHANGED_ANSWER;
+            }
           }
         }
       }

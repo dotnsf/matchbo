@@ -88,6 +88,26 @@
   <button class="btn btn-warning my-2 my-sm-0" onClick="generateFormulaFromNums();">この数字で問題を作る</button>
 </div>
 
+<div class="container" id="options_div_delta" style="position: relative; top: 20px;">
+  <div>
+    <img src="./imgs/ai_robot.png" width="50"/><br/>
+    <table>
+      <tr>
+        <td>
+          <input type="text" id="answer_formula" value="" size="30" placeholder="正解の式"/>
+        </td>
+        <td>
+          <button class="btn btn-warning my-2 my-sm-0" onClick="counterGenerateQuizs();">この式が正解になる問題を作る</button>
+        </td>
+        <td>
+          <select id="counter_generated_quizs" style="display: none;">
+          </select>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
 
 <div class="container" style="position: relative; top: 20px;">
   <div class="jumbotron mt-4">
