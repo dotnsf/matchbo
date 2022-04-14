@@ -359,10 +359,11 @@ function generateFormulaFromNums(){
   var str_nums = $('#answer_formula').val();
   if( str_nums ){
     $('#input_formula').val( '' );
+    $('#counter_generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
+
     generate_quiz_from_nums( str_nums ).then( function( quizs ){
       if( quizs.length > 0 ){
         quizs.sort( sortByNumRev );
-        console.log( quizs );
 
         for( var i = 0; i < quizs.length; i ++ ){
           var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
@@ -396,6 +397,7 @@ function generateFormulaFromNums(){
 async function counterGenerateQuizs(){
   var answer_formula = $('#answer_formula').val();
   if( answer_formula ){
+    $('#input_formula').val( '' );
     $('#counter_generated_quizs').html( '<option value="">（１つ選択してください）</option>' );
 
     var quizs = await counter_generate_quizs( answer_formula );
@@ -794,15 +796,15 @@ async function generate_quiz_from_nums( str_nums ){
             }
           }
         }
-
-        for( var i = 0; i < answers.length; i ++ ){
-          var quiz_answers = matchbo.fullcheckFormula( answers[i] );
-          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
-          quizs.push( { formula: answers[i], num: dif } );
-        }
       }
 
       computes = matchbo.recursive_generate_computes( computes, cs, nums.length - 1, false );
+    }
+
+    for( var i = 0; i < answers.length; i ++ ){
+      var quiz_answers = matchbo.fullcheckFormula( answers[i] );
+      var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+      quizs.push( { formula: answers[i], num: dif } );
     }
 
     resolve( quizs );
