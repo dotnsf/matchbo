@@ -144,10 +144,24 @@ $(function(){
   });
   onKeyup( 'input' );
 
-  $('#input_nums').on( 'keyup', function(){
-    var v = $('#input_nums').val();
-    if( v.length > 4 ){
-      $('#input_nums').val( v.substr( 0, 4 ) );
+  $('#select_function').change( function(){
+    var v = $('#select_function').val();
+    if( v == 'generate_formula_from_nums' ){
+      $('#answer_formula').val( '' );
+      $('#answer_formula').prop( 'placeholder', '問題を作る時に使う数字（最大４桁、例 1234）' );
+    }else if( v == 'counter_generated_quizs' ){
+      $('#answer_formula').val( '' );
+      $('#answer_formula').prop( 'placeholder', '正解の式' );
+    }
+  });
+
+  $('#answer_formula').on( 'keyup', function(){
+    var v0 = $('#select_function').val();
+    if( v0 == 'generate_formula_from_nums' ){
+      var v = $('#answer_formula').val();
+      if( v.length > 4 ){
+        $('#answer_formula').val( v.substr( 0, 4 ) );
+      }
     }
   });
 
@@ -234,6 +248,16 @@ $(function(){
 
   $('#input_formula').focus();
 });
+
+
+function GenerateQuizs(){
+  var v = $('#select_function').val();
+  if( v == 'generate_formula_from_nums' ){
+    generateFormulaFromNums();
+  }else if( v == 'counter_generated_quizs' ){
+    counterGenerateQuizs();
+  }
+}
 
 //. #44
 function getGeneratedFormula(){
@@ -332,7 +356,7 @@ function getTodaysFormula(){
 
 //. #54
 function generateFormulaFromNums(){
-  var str_nums = $('#input_nums').val();
+  var str_nums = $('#answer_formula').val();
   if( str_nums ){
     $('#input_formula').val( '' );
     generate_quiz_from_nums( str_nums ).then( function( quizs ){
@@ -340,10 +364,26 @@ function generateFormulaFromNums(){
         quizs.sort( sortByNumRev );
         console.log( quizs );
 
-        formula = quizs[0].formula;
+        for( var i = 0; i < quizs.length; i ++ ){
+          var o = '<option value="' + quizs[i].formula + '">' + quizs[i].formula + '</option>';
+          $('#counter_generated_quizs').append( o );
+        }
+    
+        $('#counter_generated_quizs').change( function(){
+          var selected_quiz = $(this).val();
+          if( selected_quiz ){
+            $('#input_formula').val( selected_quiz );
+            var imgs = formula2imgs( selected_quiz );
+            if( imgs ){
+              $('#input_imgs').html( imgs );
+            }
+ 
+            //. #25
+            $('#answers_list').html( '' );
+          }
+        });
 
-        $('#input_formula').val( formula );
-        onKeyup( 'input' );
+        $('#counter_generated_quizs').css( 'display', 'block' );
       }else{
         console.log( 'No formulas can be generated for "' + str_nums + '".' );
       }
