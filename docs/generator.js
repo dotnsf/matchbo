@@ -644,7 +644,7 @@ function show_usage(){
   console.log( '      -> generate indexed quizs' );
   console.log( '      n : 0 <= n < ' + quiz_pattern.length );
   console.log( '          or "all"' );
-  console.log( '    - action = "dayly"' );
+  console.log( '    - action = "daily"' );
   console.log( '      -> generate daily quizs' );
   console.log( '    - action = "num"' );
   console.log( '      n : 0 <= n' );
