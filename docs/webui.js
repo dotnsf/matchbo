@@ -1,7 +1,7 @@
 //. webui.js
 var matchbo = null;
 
-var matchbodb_url = "https://matchbodb.herokuapp.com";
+var matchbodb_url = "https://matchbodb.yellowmix.net";
 
 //. #39
 var COUNT_ELEVEN = 2;
