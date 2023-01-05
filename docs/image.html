@@ -12,9 +12,20 @@ function getParam( name, url ){
   name = name.replace(/[\[\]]/g, "\\$&");
   var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
       results = regex.exec(url);
-  if( !results ) return null;
-  if( !results[2] ) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
+  if( !results ){
+    var s = window.location.search;
+    if( s ){
+      s = s.substr( 1 );
+    }
+    if( s ){
+      return s;
+    }else{
+      return null;
+    }
+  }else{
+    if( !results[2] ) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  } 
 }
 
 var formula = getParam( 'formula' );
