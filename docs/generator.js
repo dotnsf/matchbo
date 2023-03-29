@@ -4,7 +4,7 @@ var fs = require( 'fs' );
 
 var Matchbo = require( './matchbo' );
 
-var matchbodb_url = "https://matchbodb.herokuapp.com";
+var matchbodb_url = "https://matchbodb.yellowmix.net";
 
 //. #31
 var isvalid_doublezeros = 'DOUBLEZEROS' in process.env ? process.env.DOUBLEZEROS : false; //. #30
