@@ -54,6 +54,9 @@ var isvalid_fourtominusone = false;
 var quiz_pattern = [];
 
 $(function(){
+  //. #69
+  getGeneratedFormula();
+
   if( !alpha_function ){
     $('#options_div_alpha').addClass( 'display_none' );
   }else{
