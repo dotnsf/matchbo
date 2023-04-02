@@ -268,8 +268,8 @@ function getGeneratedFormula(){
 	var obj = getBusyOverlay( 'viewport', { color: 'black', opacity: 0.5, text: 'ロード中', style: 'text-decoration:blink; font-weight: bold; font-size: 12px; color: white;' } );
   $.ajax({
     //. #70
-    //url: matchbodb_url + '/api/db/generated',
-    url: './generated.json',
+    url: matchbodb_url + '/api/db/generated',
+    //url: './generated.json',
     type: 'GET',
     success: function( result ){
 			obj.remove();
