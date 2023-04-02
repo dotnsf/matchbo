@@ -267,11 +267,14 @@ function getGeneratedFormula(){
   //. #37
 	var obj = getBusyOverlay( 'viewport', { color: 'black', opacity: 0.5, text: 'ロード中', style: 'text-decoration:blink; font-weight: bold; font-size: 12px; color: white;' } );
   $.ajax({
-    url: matchbodb_url + '/api/db/generated',
+    //. #70
+    //url: matchbodb_url + '/api/db/generated',
+    url: '/generated.json',
     type: 'GET',
     success: function( result ){
 			obj.remove();
 			obj = null;
+      console.log({result});
       if( result && result.status ){
         var formula_list = result.results;
 
