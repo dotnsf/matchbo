@@ -269,7 +269,7 @@ function getGeneratedFormula(){
   $.ajax({
     //. #70
     //url: matchbodb_url + '/api/db/generated',
-    url: '/generated.json',
+    url: './generated.json',
     type: 'GET',
     success: function( result ){
 			obj.remove();
