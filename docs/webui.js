@@ -28,6 +28,9 @@ var beta_function = getParam( 'beta' );
 var gamma_function = getParam( 'gamma' ); 
 var delta_function = getParam( 'delta' );
 
+//. #74
+var date_param = getParam( 'date' );
+
 var _matchbodb_url = getParam( 'matchbodb_url' );
 if( _matchbodb_url ){
   matchbodb_url = _matchbodb_url;
@@ -55,7 +58,7 @@ var quiz_pattern = [];
 
 $(function(){
   //. #69
-  getGeneratedFormula();
+  getGeneratedFormula( date_param );
 
   if( !alpha_function ){
     $('#options_div_alpha').addClass( 'display_none' );
@@ -263,7 +266,7 @@ function GenerateQuizs(){
 }
 
 //. #44
-function getGeneratedFormula(){
+function getGeneratedFormula( date_param ){
   //. #37
 	var obj = getBusyOverlay( 'viewport', { color: 'black', opacity: 0.5, text: 'ロード中', style: 'text-decoration:blink; font-weight: bold; font-size: 12px; color: white;' } );
   $.ajax({
@@ -274,17 +277,22 @@ function getGeneratedFormula(){
     success: function( result ){
 			obj.remove();
 			obj = null;
-      console.log({result});
+      //console.log({result});
       if( result && result.status ){
         var formula_list = result.results;
 
         var dt = new Date();
-        var y = dt.getFullYear();
-        var m = dt.getMonth() + 1;
-        m = ( ( m < 10 ) ? '0' : '' ) + m;
-        var d = dt.getDate();
-        d = ( ( d < 10 ) ? '0' : '' ) + d;
-        dt = new Date( y + '-' + m + '-' + d + ' 00:00:00' );
+        if( date_param && isValidDate( date_param ) ){
+          //. #74
+          dt = new Date( date_param + ' 00:00:00' );
+        }else{
+          var y = dt.getFullYear();
+          var m = dt.getMonth() + 1;
+          m = ( ( m < 10 ) ? '0' : '' ) + m;
+          var d = dt.getDate();
+          d = ( ( d < 10 ) ? '0' : '' ) + d;
+          dt = new Date( y + '-' + m + '-' + d + ' 00:00:00' );
+        }
 
         var seed = dt.getTime();
         var random = new Random( seed );
@@ -301,6 +309,40 @@ function getGeneratedFormula(){
       console.log( e0, e1, e2 );
     }
   });
+}
+
+//. #74
+function isValidDate( str ){
+  var r = false;
+  if( str.length == 10 ){
+    var b = true;
+    for( var i = 0; i < str.length && b; i ++ ){
+      var c = str.charAt( i );
+      switch( i ){
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 6:
+      case 9:
+        b = ( '0' <= c && c <= '9' );
+        break;
+      case 4:
+      case 7:
+        b = ( '-' == c );
+        break;
+      case 5:
+        b = ( '0' <= c && c <= '1' );
+        break;
+      case 8:
+        b = ( '0' <= c && c <= '3' );
+        break;
+      }
+    }
+    r = b;
+  }
+
+  return r;
 }
 
 //. #49
