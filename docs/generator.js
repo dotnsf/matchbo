@@ -643,7 +643,7 @@ function show_usage(){
   console.log( '' );
   console.log( '    - action = "index"' );
   console.log( '      -> generate indexed quizs' );
-  console.log( '      n : 0 <= n < ' + quiz_pattern.length );
+  console.log( '      n : 0 <= n <= 14' );
   console.log( '          or "all"' );
   console.log( '    - action = "daily"' );
   console.log( '      -> generate daily quizs' );
@@ -651,7 +651,7 @@ function show_usage(){
   console.log( '      n : 0 <= n' );
   console.log( '    - action = "compared"' );
   console.log( '      -> generate compared quizs' );
-  console.log( '      n : 0 <= n < ' + quiz_pattern.length + '(default:5)' );
+  console.log( '      n : 0 <= n <= 14(default:5)' );
 }
 
 
@@ -754,6 +754,7 @@ try{
         var default_COUNT_CHANGED_ANSWER = COUNT_CHANGED_ANSWER;
         var default_COUNT_MINUS_MULTI_ANSWERS = COUNT_MINUS_MULTI_ANSWERS;
         var default_COUNT_MINUS_MULTI_DIVIDE = COUNT_MINUS_MULTI_DIVIDE;
+        var default_COUNT_8x0 = COUNT_8x0;
 
         var cnt = 0;
         for( var i = 0; i < 19; i ++ ){
@@ -767,6 +768,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 1:
             COUNT_ELEVEN = default_COUNT_ELEVEN / 2;
@@ -777,6 +779,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 2:
             COUNT_ELEVEN = default_COUNT_ELEVEN * 2;
@@ -787,6 +790,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 3:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -797,6 +801,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 4:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -807,6 +812,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 5:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -817,6 +823,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 6:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -827,6 +834,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 7:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -837,6 +845,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 8:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -847,6 +856,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 9:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -857,6 +867,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 10:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -867,6 +878,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 11:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -877,6 +889,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER / 2;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 12:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -887,6 +900,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER * 2;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 13:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -897,6 +911,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS / 2;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 14:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -907,6 +922,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS * 2;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 15:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -917,6 +933,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE / 2;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 16:
             COUNT_ELEVEN = default_COUNT_ELEVEN;
@@ -927,6 +944,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE * 2;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 17:
             COUNT_ELEVEN = default_COUNT_ELEVEN / 2;
@@ -937,6 +955,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER / 2;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS / 2;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE / 2;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           case 18:
             COUNT_ELEVEN = default_COUNT_ELEVEN * 2;
@@ -947,6 +966,7 @@ try{
             COUNT_CHANGED_ANSWER = default_COUNT_CHANGED_ANSWER * 2;
             COUNT_MINUS_MULTI_ANSWERS = default_COUNT_MINUS_MULTI_ANSWERS * 2;
             COUNT_MINUS_MULTI_DIVIDE = default_COUNT_MINUS_MULTI_DIVIDE * 2;
+            COUNT_8x0 = default_COUNT_8x0;
             break;
           }
 
