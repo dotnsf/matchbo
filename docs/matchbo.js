@@ -1797,7 +1797,7 @@ class Matchbo{
 
 
   //. #23, #56
-  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE ){
+  countDifficulty( f_question, f_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 ){
     var cnt = 0;
     for( var i = 0; i < f_question.length; i ++ ){
       var c = f_question.charAt( i );
@@ -1929,7 +1929,6 @@ class Matchbo{
 
     //. #75
     if( f_answers.length == 1 ){
-      var COUNT_8x0 = 10;
       var i0 = f_question.indexOf( '8*0' );
       var i1 = f_question.indexOf( '0*8' );
       if( i0 > -1 ){

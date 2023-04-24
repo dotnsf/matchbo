@@ -4,14 +4,15 @@ var matchbo = null;
 var matchbodb_url = "https://matchbodb.yellowmix.net";
 
 //. #39
-var COUNT_ELEVEN = 2;
-var COUNT_VALID_MINUS = 100;
-var COUNT_MULTI_EQUAL = 100;
-var COUNT_MINUS_VALUE = 50;  //. #43
-var COUNT_SPECIAL_CHECK = 50;  //. #46
-var COUNT_CHANGED_ANSWER = 100;  //. #57
-var COUNT_MINUS_MULTI_ANSWERS = 500;  //. #58
-var COUNT_MINUS_MULTI_DIVIDE = 20;  //. #56
+var COUNT_ELEVEN = 4;
+var COUNT_VALID_MINUS = 5;
+var COUNT_MULTI_EQUAL = 1;
+var COUNT_MINUS_VALUE = 2;
+var COUNT_SPECIAL_CHECK = 1;
+var COUNT_CHANGED_ANSWER = 5;
+var COUNT_MINUS_MULTI_ANSWERS = 5;
+var COUNT_MINUS_MULTI_DIVIDE = 2;
+var COUNT_8x0 = 10;  //. #75
 
 function getParam( name, url ){
   if( !url ) url = window.location.href;
@@ -494,7 +495,7 @@ function showAnswers( answers, formula ){
       var answer_formula = answer.formula;
       //. この結果が返ってこない？？
       //answers[i].difficulty = countDifficulties( formula, answer_formula );  //. #19
-      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+      answers[i].difficulty = matchbo.countDifficulty( formula, [ answer ], COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
     }
     answers.sort( sortByDifficulty );
 
@@ -851,7 +852,7 @@ async function generate_quiz_from_nums( str_nums ){
 
     for( var i = 0; i < answers.length; i ++ ){
       var quiz_answers = matchbo.fullcheckFormula( answers[i] );
-      var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+      var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
       quizs.push( { formula: answers[i], num: dif } );
     }
 
@@ -876,7 +877,7 @@ async function counter_generate_quizs( answer_formula ){
         if( _quizs[i].formula.split( '=' ).length > 1 ){
           var answers = matchbo.fullcheckFormula( _quizs[i].formula );
           if( answers && answers.length > 0 ){
-            var dif = matchbo.countDifficulty( _quizs[i].formula, answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( _quizs[i].formula, answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
       
             _quizs[i].num = answers.length;
             _quizs[i].dif = dif;

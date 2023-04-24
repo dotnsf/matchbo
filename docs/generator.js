@@ -31,6 +31,7 @@ var COUNT_SPECIAL_CHECK = 'COUNT_SPECIAL_CHECK' in process.env ? parseInt( proce
 var COUNT_CHANGED_ANSWER = 'COUNT_CHANGED_ANSWER' in process.env ? parseInt( process.env.COUNT_CHANGED_ANSWER ) : counts.COUNT_CHANGED_ANSWER;  //. #57
 var COUNT_MINUS_MULTI_ANSWERS = 'COUNT_MINUS_MULTI_ANSWERS' in process.env ? parseInt( process.env.COUNT_MINUS_MULTI_ANSWERS ) : counts.COUNT_MINUS_MULTI_ANSWERS;  //. #58
 var COUNT_MINUS_MULTI_DIVIDE = 'COUNT_MINUS_MULTI_DIVIDE' in process.env ? parseInt( process.env.COUNT_MINUS_MULTI_DIVIDE ) : counts.COUNT_MINUS_MULTI_DIVIDE;  //. #56
+var COUNT_8x0 = 'COUNT_8x0' in process.env ? parseInt( process.env.COUNT_8x0 ) : counts.COUNT_8x0; //. #75
 
 var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
 
@@ -91,7 +92,7 @@ async function generate_quiz( idx ){
 
         //. difficulty
         if( quiz_answers.length == 1 ){
-          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+          var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
           if( quizs_d.length < min_formulas ){
             quizs_d.push( { formula: quiz, num: dif } );
           }else if( dif >= quizs_d[min_formulas-1].num ){
@@ -279,7 +280,7 @@ async function generate_daily_quiz(){
               var quiz_answers = matchbo.fullcheckFormula( quiz );
 
               if( quiz_answers.length > 0 ){
-                var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+                var dif = matchbo.countDifficulty( quiz, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
                 quizs.push( { formula: quiz, num: dif } );
               }
             }
@@ -375,7 +376,7 @@ async function generate_daily_quiz_49_1(){
             var quiz_answers = matchbo.fullcheckFormula( quiz1 );
 
             if( quiz_answers.length > 0 ){
-              var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+              var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
               quizs.push( { formula: quiz1, num: dif } );
             }
           }
@@ -388,7 +389,7 @@ async function generate_daily_quiz_49_1(){
             var quiz_answers = matchbo.fullcheckFormula( quiz2 );
 
             if( quiz_answers.length > 0 ){
-              var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+              var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
               quizs.push( { formula: quiz2, num: dif } );
             }
           }
@@ -481,7 +482,7 @@ async function generate_daily_quiz_49_2(){
           var quiz_answers = matchbo.fullcheckFormula( quiz1 );
 
           if( quiz_answers.length > 0 ){
-            var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( quiz1, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
             quizs.push( { formula: quiz1, num: dif } );
           }
         }
@@ -493,7 +494,7 @@ async function generate_daily_quiz_49_2(){
           var quiz_answers = matchbo.fullcheckFormula( quiz2 );
 
           if( quiz_answers.length > 0 ){
-            var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( quiz2, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
             quizs.push( { formula: quiz2, num: dif } );
           }
         }
@@ -505,7 +506,7 @@ async function generate_daily_quiz_49_2(){
           var quiz_answers = matchbo.fullcheckFormula( quiz3 );
 
           if( quiz_answers.length > 0 ){
-            var dif = matchbo.countDifficulty( quiz3, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+            var dif = matchbo.countDifficulty( quiz3, quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
             quizs.push( { formula: quiz3, num: dif } );
           }
         }
@@ -623,7 +624,7 @@ async function generate_quiz_from_nums( str_nums ){
 
         for( var i = 0; i < answers.length; i ++ ){
           var quiz_answers = matchbo.fullcheckFormula( answers[i] );
-          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE );
+          var dif = matchbo.countDifficulty( answers[i], quiz_answers, COUNT_ELEVEN, COUNT_VALID_MINUS, COUNT_MULTI_EQUAL, COUNT_MINUS_VALUE, COUNT_SPECIAL_CHECK, COUNT_CHANGED_ANSWER, COUNT_MINUS_MULTI_ANSWERS, COUNT_MINUS_MULTI_DIVIDE, COUNT_8x0 );
           quizs.push( { formula: answers[i], num: dif } );
         }
       }
