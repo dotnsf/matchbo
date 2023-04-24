@@ -1927,6 +1927,29 @@ class Matchbo{
       }
     }
 
+    //. #75
+    if( f_answers.length == 1 ){
+      var COUNT_8x0 = 10;
+      var i0 = f_question.indexOf( '8*0' );
+      var i1 = f_question.indexOf( '0*8' );
+      if( i0 > -1 ){
+        for( var i = 0; i < f_answers.length; i ++ ){
+          if( f_answers[i].formula.indexOf( '0*8' ) > -1 ){
+            //. 「対象外にする」だと答が見つからなかったかのように見えてしまうので、評価値のみ下げる
+            cnt = COUNT_8x0;
+          }
+        }
+      }
+      if( i1 > -1 ){
+        for( var i = 0; i < this.f_answers.length; i ++ ){
+          if( f_answers[i].formula.indexOf( '8*0' ) > -1 ){
+            //. 「対象外にする」だと答が見つからなかったかのように見えてしまうので、評価値のみ下げる
+            cnt = COUNT_8x0;
+          }
+        }
+      }
+    }
+
     return cnt;
   }
 
