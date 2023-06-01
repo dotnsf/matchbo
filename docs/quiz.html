@@ -98,7 +98,7 @@ $(function(){
 function drawRules(){
   var text = 'マッチ棒を１本だけ動かして、式を成立させてください<br/>ただし使える数字および記号は以下のものだけとします<br/>';
   for( var i = 0; i < 18; i ++ ){
-    if( i != 10 && i != 11 ){
+    if( i != 10 && i != 11 && i != 17 ){
       var img = '<img src="./imgs/' + i + '.png" height="50"/>';
       if( i == 9 ){ img += '<br/>'; }
       text += img;
