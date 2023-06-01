@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+<meta charset="utf8"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
+<script src="./cvi_busy_lib.js"></script>
+<script src="./matchbo.js"></script>
+
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Match Bo"/>
+
+<!-- // OGP tags -->
+<meta property="og:title" content="マッチ棒を１本だけ動かして正しい式にする"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://dotnsf.github.io/matchbo/quiz.html"/>
+<meta property="og:image" content="https://dotnsf.github.io/matchbo/imgs/logo.png"/>
+<meta property="og:site_name" content="Match Bo"/>
+<meta property="og:description" content="マッチ棒を１本だけ動かして正しい式にする : 自動出題クイズ"/>
+<!-- OGP tags // -->
+
+<!-- // Twitter Card -->
+<meta name="robots" content="max-image-preview:large" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:site" content="@dotnsf"/>
+<meta name="twitter:creator" content="@dotnsf"/>
+<meta name="twitter:url" content="https://dotnsf.github.io/matchbo/quiz.html"/>
+<meta name="twitter:image:src" content="https://dotnsf.github.io/matchbo/imgs/logo.png"/>
+<meta name="twitter:title" content="マッチ棒を１本だけ動かして正しい式にする"/>
+<meta name="twitter:description" content="マッチ棒を１本だけ動かして正しい式にする : 自動出題クイズ"/>
+<link rel="alternate" media="handheld" type="application/xhtml+xml" href="https://dotnsf.github.io/matchbo/" />
+<!-- Twitter Card // -->
+
+<script>
+var isvalid_doublezeros = true;
+var isvalid_doublecalcs = false;
+var isvalid_doubleequals = true;
+var isvalid_onetoplus = false;
+var isvalid_plustoone = false;
+var isvalid_reverse = false;
+var isvalid_plusminus = false;
+var isvalid_fourtooneminusone = false;
+var isvalid_fourtominusone = false;
+var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
+
+
+function getParam( name, url ){
+  if( !url ) url = window.location.href;
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if( !results ){
+    var s = window.location.search;
+    if( s ){
+      s = s.substr( 1 );
+    }
+    if( s ){
+      return s;
+    }else{
+      return null;
+    }
+  }else{
+    if( !results[2] ) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  } 
+}
+
+var quizs = [];
+var num = getParam( 'num' );
+if( num ){
+  num = parseInt( num );
+}else{
+  num = 5;
+}
+var date = getParam( 'date' );
+
+var imgs = Array(18);
+
+$(function(){
+  var cnt = 0;
+  for( var i = 0; i < 18; i ++ ){
+    imgs[i] = new Image();
+    imgs[i].onload = function( e ){
+      cnt ++;
+      if( cnt == 16 ){
+        drawRules();
+        drawQuiz();
+      }
+    };
+    imgs[i].src = './imgs/' + i + '.png';
+  }
+});
+
+function drawRules(){
+  var text = 'マッチ棒を１本だけ動かして、式を成立させてください<br/>ただし使える数字および記号は以下のものだけとします<br/>';
+  for( var i = 0; i < 18; i ++ ){
+    if( i != 10 && i != 11 ){
+      var img = '<img src="./imgs/' + i + '.png" height="50"/>';
+      if( i == 9 ){ img += '<br/>'; }
+      text += img;
+    }
+  }
+  $('#rules-div').html( text );
+};
+
+function drawQuiz(){
+  if( num ){
+    for( var i = 0; i < num; i ++ ){
+      var div = '<div id="quiz-' + i + '" class="div-quiz"></div>';
+      $('#quizs-div').append( div );
+    }
+
+    getGeneratedFormula( date );
+  }
+}
+
+function getGeneratedFormula( date_param ){
+  //. #37
+	var obj = getBusyOverlay( 'viewport', { color: 'black', opacity: 0.5, text: 'ロード中', style: 'text-decoration:blink; font-weight: bold; font-size: 12px; color: white;' } );
+  $.ajax({
+    //. #70
+    //url: matchbodb_url + '/api/db/generated',
+    url: './generated.json',
+    type: 'GET',
+    success: function( result ){
+			obj.remove();
+			obj = null;
+      //console.log({result});
+      if( result && result.status ){
+        var formula_list = result.results;
+
+        var dt = new Date();
+        if( date_param && isValidDate( date_param ) ){
+          //. #74
+          dt = new Date( date_param + ' 00:00:00' );
+        }else{
+          var y = dt.getFullYear();
+          var m = dt.getMonth() + 1;
+          m = ( ( m < 10 ) ? '0' : '' ) + m;
+          var d = dt.getDate();
+          d = ( ( d < 10 ) ? '0' : '' ) + d;
+          dt = new Date( y + '-' + m + '-' + d + ' 00:00:00' );
+        }
+
+        var seed = dt.getTime();
+        var random = new Random( seed );
+        for( var i = 0; i < num; i ++ ){
+          var m = random.nextInt( 0, formula_list.length );
+          if( quizs.indexOf( m ) == -1 ){
+            quizs.push( m );
+          }else{
+            i --;
+          }
+        }
+
+        for( var i = 0; i < num; i ++ ){
+          var formula = formula_list[quizs[i]].formula;
+          var img_src = 'https://matchbodb.yellowmix.net/api/db/image?formula=' + formula;
+
+          var answers = matchbo.fullcheckFormula( formula );
+          answers = unique( answers );
+
+          var answer = answers[0];  //. 答が複数ある場合は最初の１つのみ表示
+          var answer_formula = answer.formula;
+          var answer_img_src = 'https://matchbodb.yellowmix.net/api/db/image?formula=' + answer_formula;
+
+          var img = '<img src="' + img_src + '" onMouseDown="this.src=\'' + answer_img_src + '\'" onMouseUp="this.src=\'' + img_src + '\'"/>';
+          $('#quiz-'+i).append( (i+1) + '. ' + img );
+        }
+      }
+    },
+    error: function( e0, e1, e2 ){
+			obj.remove();
+			obj = null;
+      console.log( e0, e1, e2 );
+    }
+  });
+}
+
+function isValidDate( str ){
+  var r = false;
+  if( str.length == 10 ){
+    var b = true;
+    for( var i = 0; i < str.length && b; i ++ ){
+      var c = str.charAt( i );
+      switch( i ){
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 6:
+      case 9:
+        b = ( '0' <= c && c <= '9' );
+        break;
+      case 4:
+      case 7:
+        b = ( '-' == c );
+        break;
+      case 5:
+        b = ( '0' <= c && c <= '1' );
+        break;
+      case 8:
+        b = ( '0' <= c && c <= '3' );
+        break;
+      }
+    }
+    r = b;
+  }
+
+  return r;
+}
+
+function unique( arr ){
+  var new_arr = [];
+  var new_arr_formula = [];
+  var new_arr_rev = [];
+  for( var i = 0; i < arr.length; i ++ ){
+    var idx = new_arr_formula.indexOf( arr[i].formula );
+    if( idx > -1 ){
+      if( new_arr_rev[idx] != arr[i].rev ){
+        new_arr_formula.push( arr[i].formula );
+        new_arr_rev.push( arr[i].rev );
+      }
+    }else{
+      new_arr_formula.push( arr[i].formula );
+      new_arr_rev.push( arr[i].rev );
+    }
+  }
+
+  for( var i = 0; i < new_arr_formula.length; i ++ ){
+    new_arr.push( { formula: new_arr_formula[i], rev: new_arr_rev[i] } );
+  }
+
+  return new_arr;
+}
+
+class Random {
+  constructor(seed = 19681106) {
+    this.x = 31415926535;
+    this.y = 8979323846;
+    this.z = 2643383279;
+    this.w = seed;
+  }
+  
+  // XorShift
+  next() {
+    let t;
+ 
+    t = this.x ^ (this.x << 11);
+    this.x = this.y; this.y = this.z; this.z = this.w;
+    return this.w = (this.w ^ (this.w >>> 19)) ^ (t ^ (t >>> 8)); 
+  }
+  
+  // min以上max以下の乱数を生成する
+  nextInt(min, max) {
+    const r = Math.abs(this.next());
+    return min + (r % (max + 1 - min));
+  }
+}
+</script>
+
+<link rel="shortcut icon" href="./imgs/logo.png" type="image/png"/>
+<link rel="icon" href="./imgs/logo.png" type="image/png"/>
+<link rel="apple-touch-icon" href="./imgs/logo.png"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="apple-mobile-web-app-title" content="Match Bo - Image"/>
+
+<title>Match Bo - Quiz</title>
+<style>
+.div-quiz{
+  border: 10px ridge #7c6962;
+}
+#rules-div{
+  text-align: right;
+  background-color: #ccffcc;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="./">マッチ棒を１本だけ動かして正しい式にする</a>
+</nav>
+
+<div class="container">
+
+<div id="rules-div">
+</div>
+
+<div id="quizs-div">
+</div>
+
+</div>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C1M99BBGGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-C1M99BBGGM');
+</script>
+
+</body>
+</html>
