@@ -165,7 +165,7 @@ function getGeneratedFormula( date_param ){
           var answer_formula = answer.formula;
           var answer_img_src = 'https://matchbodb.yellowmix.net/api/db/image?formula=' + answer_formula;
 
-          var img = '<img src="' + img_src + '" onMouseDown="this.src=\'' + answer_img_src + '\'" onMouseUp="this.src=\'' + img_src + '\'"/>';
+          var img = '<img src="' + img_src + '" onMouseDown="this.src=\'' + answer_img_src + '\'" onTouchStart="this.src=\'' + answer_img_src + '\'" onMouseUp="this.src=\'' + img_src + '\'" onTouchEnd="this.src=\'' + img_src + '\'"/>';
           $('#quiz-'+i).append( (i+1) + '. ' + img );
         }
       }
