@@ -49,24 +49,21 @@ var matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_dou
 
 
 function getParam( name, url ){
+  var r = '';
   if( !url ) url = window.location.href;
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-  if( !results ){
-    var s = window.location.search;
-    if( s ){
-      s = s.substr( 1 );
+  var tmp1 = url.split( '?' );
+  if( tmp1.length > 1 ){
+    var params = tmp1[1];
+    tmp1 = params.split( '&' );
+    for( var i = 0; i < tmp1.length && r == ''; i ++ ){
+      var tmp2 = tmp1[i].split( '=' );
+      if( tmp2[0] == name ){
+        r = tmp2[1];
+      }
     }
-    if( s ){
-      return s;
-    }else{
-      return null;
-    }
-  }else{
-    if( !results[2] ) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-  } 
+  }
+
+  return r;
 }
 
 var quizs = [];
