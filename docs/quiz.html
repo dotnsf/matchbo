@@ -124,8 +124,6 @@ function getGeneratedFormula( date_param ){
     url: './generated.json',
     type: 'GET',
     success: function( result ){
-			obj.remove();
-			obj = null;
       //console.log({result});
       if( result && result.status ){
         var formula_list = result.results;
@@ -168,6 +166,12 @@ function getGeneratedFormula( date_param ){
           var img = '<img src="' + img_src + '" onMouseDown="this.src=\'' + answer_img_src + '\'" onTouchStart="this.src=\'' + answer_img_src + '\'" onMouseUp="this.src=\'' + img_src + '\'" onTouchEnd="this.src=\'' + img_src + '\'"/>';
           $('#quiz-'+i).append( (i+1) + '. ' + img );
         }
+
+  			obj.remove();
+	  		obj = null;
+      }else{
+  			obj.remove();
+	  		obj = null;
       }
     },
     error: function( e0, e1, e2 ){
