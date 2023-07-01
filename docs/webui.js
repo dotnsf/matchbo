@@ -275,6 +275,8 @@ $(function(){
       }else{
         alert( 'ヒント: 答は ' + len + ' 通りで、正しい式の値は ' + values.join( ',' ) + ' です。' );
       }
+    }else{
+      alert( 'ヒント: マッチ棒１本だけ動かして成立する答は存在していません。' );
     }
 
     return false;
