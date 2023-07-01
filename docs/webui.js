@@ -252,6 +252,33 @@ $(function(){
     }
   });
 
+  //. #79
+  $('#hint_button').click( function(){
+    var formula = $('#input_formula').val();
+    formula = formula.split(' ').join('');
+    matchbo = new Matchbo( isvalid_doublezeros, isvalid_doublecalcs, isvalid_doubleequals, isvalid_onetoplus, isvalid_plustoone, isvalid_reverse, isvalid_plusminus, isvalid_fourtooneminusone, isvalid_fourtominusone );
+    var answers = matchbo.fullcheckFormula( formula );
+    //console.log( {answers} );  //. [ { formula: 'xxxx=yyyy', .. }, .. ]
+    
+    var len = answers.length;
+    if( len > 0 ){
+      var values = [];
+      for( var i = 0; i < len; i ++ ){
+        var f = answers[i].formula;
+        var tmp = f.split( '=' );
+        var v = eval( tmp[0] );
+        values.push( v );
+      }
+
+      if( len == 1 ){
+        alert( 'ヒント: 答は１通りで、正しい式の値は ' + values[0] + ' です。' );
+      }else{
+        alert( 'ヒント: 答は ' + len + ' 通りで、正しい式の値は ' + values.join( ',' ) + ' です。' );
+      }
+    }
+
+    return false;
+  });
 
   $('#input_formula').focus();
 });
