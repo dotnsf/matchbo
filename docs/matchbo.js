@@ -143,7 +143,7 @@ class Matchbo{
                   var new_formula = this.subString( matches, 0, i ) + transition[0][j] + this.subString( matches, i + 1, k ) + t[1][l] + this.subString( matches, k + 1 );
                   //var found = this.isValidFormula( new_formula );
                   //if( found ){ this.quizs.push( { formula: new_formula, rev: false, special_check: '' } ); }
-                  this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+                  this.quizs.push( { formula: new_formula, rev: false, special_check: '', position: k } );
                 }
               }
             }
@@ -160,7 +160,7 @@ class Matchbo{
                   var new_formula = this.subString( matches, 0, i ) + transition[1][j] + this.subString( matches, i + 1, k ) + t[0][l] + this.subString( matches, k + 1 );
                   //var found = this.isValidFormula( new_formula );
                   //if( found ){ this.quizs.push( { formula: new_formula, rev: false, special_check: '' } ); }
-                  this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+                  this.quizs.push( { formula: new_formula, rev: false, special_check: '', position: i } );
                 }
               }
             }
@@ -190,7 +190,7 @@ class Matchbo{
             var new_formula = this.subString( matches, 0, i ) + transition[2][j] + this.subString( matches, i + 1 );
             //var found = this.isValidFormula( new_formula );
             //if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
-            this.quizs.push( { formula: new_formula, rev: false, special_check: '' } );
+            this.quizs.push( { formula: new_formula, rev: false, special_check: '', position: i } );
           }
         }
       }
@@ -270,7 +270,7 @@ class Matchbo{
           var new_formula = formula.substr( 0, n1 ) + '±0' + formula.substr( n1 + 2 );
   
           var found = this.isValidFormula( new_formula );
-          if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus' } ); }
+          if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus', position: n1 + 1 } ); }
         }
       }
 
@@ -327,7 +327,7 @@ class Matchbo{
                     var new_formula = formula2.substr( 0, n1 ) + '±0' + formula2.substr( n1 + 2 ); 
   
                     var found = this.isValidFormula( new_formula );
-                    if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus', position: i } ); }
                   }
                 }
               }
@@ -341,7 +341,7 @@ class Matchbo{
               var new_formula = formula2.substr( 0, n2 ) + formula2.substr( n2 + 1 ); 
   
               var found = this.isValidFormula( new_formula );
-              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus' } ); }
+              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'plusminus', position: n2 } ); }
 
               n2 = formula.indexOf( '-', n2 + 1 );
             }
@@ -398,7 +398,7 @@ class Matchbo{
                   }
                 }
                 var found = this.isValidFormula( new_formula );
-                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }  //. position 合ってる？
               }
             }
             
@@ -418,7 +418,7 @@ class Matchbo{
                   }
                 }
                 var found = this.isValidFormula( new_formula );
-                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx2 } ); }  //. position 合ってる？
               }
             }
           }
@@ -449,7 +449,7 @@ class Matchbo{
                       }
                     }
                     var found = this.isValidFormula( new_formula );
-                    if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
                   }
                 }
               }
@@ -468,7 +468,7 @@ class Matchbo{
                 }
               }
               var found = this.isValidFormula( new_formula );
-              if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+              if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
             }
   
             //. idx1 から１本引いて、どこかにマイナス記号を１本足す
@@ -487,7 +487,7 @@ class Matchbo{
               for( var k = 0; k <= new_formula1.length; k ++ ){
                 var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                 var found = this.isValidFormula( new_formula2 );
-                if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: idx1 } ); }
               }
             }
   
@@ -511,7 +511,7 @@ class Matchbo{
                       }
                     }
                     var found = this.isValidFormula( new_formula );
-                    if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx2 } ); }
                   }
                 }
               }
@@ -531,7 +531,7 @@ class Matchbo{
                 }
               }
               var found = this.isValidFormula( new_formula );
-              if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+              if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx2 } ); }
             }
             */
   
@@ -555,7 +555,7 @@ class Matchbo{
                   if( start > -1 ){
                     var new_formula2 = new_formula1.substr( 0, start ) + new_formula1.substr( start + 1 );
                     var found = this.isValidFormula( new_formula2 );
-                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
    
                     start ++;
                   }
@@ -589,7 +589,7 @@ class Matchbo{
                       }
                     }
                     var found = this.isValidFormula( new_formula );
-                    if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
                   }
                 }
               }
@@ -608,7 +608,7 @@ class Matchbo{
                 }
               }
               var found = this.isValidFormula( new_formula );
-              if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+              if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
             }
           }
   
@@ -631,7 +631,7 @@ class Matchbo{
               for( var k = 0; k <= new_formula1.length; k ++ ){
                 var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                 var found = this.isValidFormula( new_formula2 );
-                if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: idx1 } ); }
               }
             }
           }
@@ -659,7 +659,7 @@ class Matchbo{
                   if( start > -1 ){
                     var new_formula2 = new_formula1.substr( 0, start ) + new_formula1.substr( start + 1 );
                     var found = this.isValidFormula( new_formula2 );
-                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
   
                     start ++;
                   }
@@ -684,7 +684,7 @@ class Matchbo{
                 for( var k = 0; k <= new_formula1.length; k ++ ){
                   var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                   var found = this.isValidFormula( new_formula2 );
-                  if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
                 }
     
                 start ++;
@@ -720,7 +720,7 @@ class Matchbo{
                         }
                       }
                       var found = this.isValidFormula( new_formula );
-                      if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                      if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
                     }
                   }
                 }
@@ -739,7 +739,7 @@ class Matchbo{
                   }
                 }
                 var found = this.isValidFormula( new_formula );
-                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
               }
             }
     
@@ -762,7 +762,7 @@ class Matchbo{
                 for( var k = 0; k <= new_formula1.length; k ++ ){
                   var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                   var found = this.isValidFormula( new_formula2 );
-                  if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: idx1 } ); }
                 }
               }
             }
@@ -790,7 +790,7 @@ class Matchbo{
                     if( start > -1 ){
                       var new_formula2 = new_formula1.substr( 0, start ) + new_formula1.substr( start + 1 );
                       var found = this.isValidFormula( new_formula2 );
-                      if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                      if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
     
                       start ++;
                     }
@@ -815,7 +815,7 @@ class Matchbo{
                   for( var k = 0; k <= new_formula1.length; k ++ ){
                     var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                     var found = this.isValidFormula( new_formula2 );
-                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
                   }
     
                   start ++;
@@ -852,7 +852,7 @@ class Matchbo{
                         }
                       }
                       var found = this.isValidFormula( new_formula );
-                      if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                      if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
                     }
                   }
                 }
@@ -871,7 +871,7 @@ class Matchbo{
                   }
                 }
                 var found = this.isValidFormula( new_formula );
-                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse' } ); }
+                if( found ){ this.answers.push( { formula: new_formula, rev: true, special_check: 'reverse', position: idx1 } ); }
               }
             }
     
@@ -894,7 +894,7 @@ class Matchbo{
                 for( var k = 0; k <= new_formula1.length; k ++ ){
                   var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                   var found = this.isValidFormula( new_formula2 );
-                  if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: idx1 } ); }
                 }
               }
             }
@@ -922,7 +922,7 @@ class Matchbo{
                     if( start > -1 ){
                       var new_formula2 = new_formula1.substr( 0, start ) + new_formula1.substr( start + 1 );
                       var found = this.isValidFormula( new_formula2 );
-                      if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                      if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
     
                       start ++;
                     }
@@ -947,7 +947,7 @@ class Matchbo{
                   for( var k = 0; k <= new_formula1.length; k ++ ){
                     var new_formula2 = new_formula1.substr( 0, k ) + '-' + new_formula1.substr( k );
                     var found = this.isValidFormula( new_formula2 );
-                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula2, rev: true, special_check: 'reverse', position: start } ); }
                   }
     
                   start ++;
@@ -976,21 +976,21 @@ class Matchbo{
         var c = formula.charAt( i );
         if( c == '+' ){
           var idx = 12;
-          matches.push( { type: "calc", kind: c, idx: idx } );
+          matches.push( { type: "calc", kind: c, idx: idx, position: i } );
         }else if( '0' <= c && c <= '9' ){
           if( eleven2 && c == '1' && i - 2 < formula.length && formula.charAt( i + 1 ) == '1' && formula.charAt( i + 2 ) == '1' ){
             //. #15
-            matches.push( { type: "num", kind: 1, idx: 1 } );
-            matches.push( { type: "num", kind: 11, idx: 11 } );
+            matches.push( { type: "num", kind: 1, idx: 1, position: i } );
+            matches.push( { type: "num", kind: 11, idx: 11, position: i } );
             i += 2;
           }else if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
-            matches.push( { type: "num", kind: 11, idx: 11 } );
+            matches.push( { type: "num", kind: 11, idx: 11, position: i } );
             i ++;
           }else{
-            matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+            matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ), position: i } );
           }
         }else{
-          matches.push( { type: "else", kind: c, idx: -1 } );
+          matches.push( { type: "else", kind: c, idx: -1, position: i } );
         }
       }
 
@@ -1010,7 +1010,7 @@ class Matchbo{
             while( idx >= 0 ){
               var new_formula = formula2.substr( 0, idx + 1 ) + '-' +  formula2.substr( idx + 1 );
               var found = this.isValidFormula( new_formula );
-              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'eleven' } ); }
+              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'eleven', position: m.position } ); }
   
               idx = this.has2DigitNumber( formula2, idx + 1 );
             }
@@ -1037,7 +1037,7 @@ class Matchbo{
           while( idx >= 0 ){
             var new_formula = formula2.substr( 0, idx + 1 ) + '-' +  formula2.substr( idx + 1 );
             var found = this.isValidFormula( new_formula );
-            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'eleven' } ); }
+            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'eleven', position: i } ); }
   
             idx = this.has2DigitNumber( formula2, idx + 1 );
           }
@@ -1110,7 +1110,7 @@ class Matchbo{
                 //. 式の ii 文字目を transitions[0][j] に置き換える
                 var new_formula = this.subString( matches, 0, ii ) + transition[0][j] + this.subString( matches, ii + 1 );
                 var found = this.isValidFormula( new_formula );
-                if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus' } ); }
+                if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus', position: i } ); }
               }
             }
           }
@@ -1131,7 +1131,7 @@ class Matchbo{
               }
               var new_formula = this.subString( matches4, 0 );
               var found = this.isValidFormula( new_formula );
-              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus' } ); }
+              if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus', position: i } ); }
             }
           }else{
             //. 左辺および右辺の最初の数字をマイナスにする
@@ -1142,7 +1142,7 @@ class Matchbo{
             }
             var new_formula = this.subString( matches4, 0 );
             var found = this.isValidFormula( new_formula );
-            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus' } ); }
+            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus', position: i } ); }
   
             //. 右辺
             matches4 = [];
@@ -1154,7 +1154,7 @@ class Matchbo{
             }
             new_formula = this.subString( matches4, 0 );
             found = this.isValidFormula( new_formula );
-            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus' } ); }
+            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'minus', position: i } ); }
           }
         }
       }
@@ -1191,14 +1191,14 @@ class Matchbo{
             idx = 16;
             break;
           }
-          matches.push( { type: "calc", kind: c, idx: idx } );
+          matches.push( { type: "calc", kind: c, idx: idx, position: i } );
         }else if( '0' <= c && c <= '9' ){
-          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ), position: i } );
           if( c == '4' ){
             fours.push( i );
           }
         }else{
-          matches.push( { type: "else", kind: c, idx: -1 } );
+          matches.push( { type: "else", kind: c, idx: -1, position: i } );
         }
       }
 
@@ -1216,7 +1216,7 @@ class Matchbo{
                   var new_formula = this.subString( matches, 0, i ) + transition[1][j] + this.subString( matches, i + 1 );
                   new_formula = new_formula.substr( 0, fours[f] ) + '1-1' + new_formula.substr( fours[f] + 1 );
                   var found = this.isValidFormula( new_formula );
-                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'fourto' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'fourto', position: m.position } ); }
                 }
               }
             }
@@ -1256,14 +1256,14 @@ class Matchbo{
             idx = 16;
             break;
           }
-          matches.push( { type: "calc", kind: c, idx: idx } );
+          matches.push( { type: "calc", kind: c, idx: idx, position: i } );
         }else if( '0' <= c && c <= '9' ){
-          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+          matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ), position: i } );
           if( c == '4' ){
             fours.push( i );
           }
         }else{
-          matches.push( { type: "else", kind: c, idx: -1 } );
+          matches.push( { type: "else", kind: c, idx: -1, position: i } );
         }
       }
   
@@ -1281,7 +1281,7 @@ class Matchbo{
                   var new_formula = this.subString( matches, 0, i ) + transition[0][j] + this.subString( matches, i + 1 );
                   new_formula = new_formula.substr( 0, fours[f] ) + '-1' + new_formula.substr( fours[f] + 1 );
                   var found = this.isValidFormula( new_formula );
-                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'fourto' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: 'fourto', position: m.position } ); }
                 }
               }
             }
@@ -1320,21 +1320,21 @@ class Matchbo{
             idx = 16;
             break;
           }
-          matches.push( { type: "calc", kind: c, idx: idx } );
+          matches.push( { type: "calc", kind: c, idx: idx, position: i } );
         }else if( '0' <= c && c <= '9' ){
           if( eleven2 && c == '1' && i - 2 < formula.length && formula.charAt( i + 1 ) == '1' && formula.charAt( i + 2 ) == '1' ){
             //. #15
-            matches.push( { type: "num", kind: 1, idx: 1 } );
-            matches.push( { type: "num", kind: 11, idx: 11 } );
+            matches.push( { type: "num", kind: 1, idx: 1, position: i } );
+            matches.push( { type: "num", kind: 11, idx: 11, position: i } );
             i += 2;
           }else if( eleven && c == '1' && i - 1 < formula.length && formula.charAt( i + 1 ) == '1' ){
-            matches.push( { type: "num", kind: 11, idx: 11 } );
+            matches.push( { type: "num", kind: 11, idx: 11, position: i } );
             i ++;
           }else{
-            matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ) } );
+            matches.push( { type: "num", kind: parseInt( c ), idx: parseInt( c ), position: i } );
           }
         }else{
-          matches.push( { type: "else", kind: c, idx: -1 } );
+          matches.push( { type: "else", kind: c, idx: -1, position: i } );
         }
       }
 
@@ -1354,7 +1354,7 @@ class Matchbo{
                   //. 代わりに式の k 文字目を t[1][l] に置き換える
                   var new_formula = this.subString( matches, 0, i ) + transition[0][j] + this.subString( matches, i + 1, k ) + t[1][l] + this.subString( matches, k + 1 );
                   var found = this.isValidFormula( new_formula );
-                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '', position: k } ); }
                 }
               }
             }
@@ -1370,7 +1370,7 @@ class Matchbo{
                   //. 代わりに式の k 文字目を t[0][l] に置き換える
                   var new_formula = this.subString( matches, 0, i ) + transition[1][j] + this.subString( matches, i + 1, k ) + t[0][l] + this.subString( matches, k + 1 );
                   var found = this.isValidFormula( new_formula );
-                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                  if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '', position: m.position } ); }
                 }
               }
             }
@@ -1384,7 +1384,7 @@ class Matchbo{
               for( var k = 0; k <= new_formula_.length; k ++ ){
                 var new_formula = new_formula_.substr( 0, k ) + '-' + new_formula_.substr( k );
                 var found = this.isValidFormula( new_formula );
-                if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '', position: m.position } ); }
               }
             }else{
               //. 各辺の頭に '-' をつける
@@ -1396,7 +1396,7 @@ class Matchbo{
                     f[k] = '-' + f[k];
                     var new_formula = f.join( '=' );
                     var found = this.isValidFormula( new_formula );
-                    if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+                    if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '', position: m.position } ); }
                   }
                 }
               }
@@ -1408,7 +1408,7 @@ class Matchbo{
             //. 式の i 文字目を translation[2][j] に置き換える
             var new_formula = this.subString( matches, 0, i ) + transition[2][j] + this.subString( matches, i + 1 );
             var found = this.isValidFormula( new_formula );
-            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '' } ); }
+            if( found ){ this.answers.push( { formula: new_formula, rev: false, special_check: '', position: m.position } ); }
           }
         }
       }

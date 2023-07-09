@@ -262,21 +262,45 @@ $(function(){
     
     var len = answers.length;
     if( len > 0 ){
-      var values = [];
-      for( var i = 0; i < len; i ++ ){
-        var f = answers[i].formula;
-        var tmp = f.split( '=' );
-        var v = eval( tmp[0] );
-        values.push( v );
-      }
+      var hint1 = 'ヒント１: ' 
+        + ( len == 1 ? '答は１通りしかありません。' : '答は ' + len + ' 通りあります。' )
+        + '　次のヒントを開きますか？';
+      if( confirm( hint1 ) ){
+        var hint2 = 'ヒント２: ';
+        if( len == 1 ){
+          var position = answers[0].position;
+          var c = formula.charAt( position );
+          hint2 += '左から' + ( position + 1 ) + '番目の「' + c + '」から１本取ります。';
+        }else{
+          var tmp2 = [];
+          for( var i = 0; i < len; i ++ ){
+            var position = answers[i].position;
+            var c = formula.charAt( position );
+            tmp2.push( ( position + 1 ) + '番目の「' + c + '」' );
+          }
+          hint2 += '左から' + tmp2.join( '、又は' ) + 'から１本取ります。';
+        }
+        hint2 += '　最終ヒントを開きますか？';
+        if( confirm( hint2 ) ){
+          var hint3 = '最終ヒント: ';
+          var values = [];
+          for( var i = 0; i < len; i ++ ){
+            var f = answers[i].formula;
+            var tmp = f.split( '=' );
+            var v = eval( tmp[0] );
+            values.push( v );
+          }
 
-      if( len == 1 ){
-        alert( 'ヒント: 答は１通りしかありません。正しい式の値は ' + values[0] + ' です。' );
-      }else{
-        alert( 'ヒント: 答は ' + len + ' 通りあります。正しい式の値はそれぞれ ' + values.join( ',' ) + ' です。' );
+          if( len == 1 ){
+            hint3 += '正しい式の値は ' + values[0] + ' です。';
+          }else{
+            hint3 += '正しい式の値はそれぞれ ' + values.join( '、' ) + ' です。';
+          }
+          alert( hint3 );
+        }
       }
     }else{
-      alert( 'ヒント: マッチ棒１本だけ動かして成立する答は存在していません。' );
+      alert( 'マッチ棒１本だけ動かして成立する答は存在していません。' );
     }
 
     return false;
