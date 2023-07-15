@@ -44,3 +44,7 @@ html, body {
 .rev_img{
   transform: rotate(180deg);
 }
+
+#rules-div{
+  text-align: right;
+}

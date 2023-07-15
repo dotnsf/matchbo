@@ -58,6 +58,9 @@ var isvalid_fourtominusone = false;
 var quiz_pattern = [];
 
 $(function(){
+  //. #81
+  drawRules();
+
   //. #69
   getGeneratedFormula( date_param );
 
@@ -993,6 +996,19 @@ function sortByNumRev( a, b ){
 
   return r;
 }
+
+//. #81
+function drawRules(){
+  var text = 'マッチ棒を１本だけ動かして、式を成立させてください<br/>ただし使える数字および記号は以下のものだけとします<br/>';
+  for( var i = 0; i < 18; i ++ ){
+    if( i != 10 && i != 11 && i != 17 ){
+      var img = '<img src="./imgs/' + i + '.png" height="50"/>';
+      if( i == 9 ){ img += '<br/>'; }
+      text += img;
+    }
+  }
+  $('#rules-div').html( text );
+};
 
 //. #37 : https://sbfl.net/blog/2017/06/01/javascript-reproducible-random/
 class Random {
