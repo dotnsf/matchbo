@@ -42,7 +42,7 @@ while( matchbodb_url.endsWith( '/' ) ){
 
 var formula = getParam( 'formula' );
 if( formula && formula.indexOf( ' ' ) > -1 ){
-  formula = formula.split( ' ' ).join( '+' );
+  formula = formula.split( ' ' ).join( '' );
 }
 
 var isvalid_doublezeros = true;
@@ -152,7 +152,7 @@ $(function(){
   $('#input_formula').on( 'keyup', function(){
     onKeyup( 'input' );
   });
-  onKeyup( 'input' );
+  //onKeyup( 'input' );
 
   $('#select_function').change( function(){
     var v = $('#select_function').val();
@@ -435,6 +435,8 @@ function getTodaysFormula(){
             $('#generated_quizs').change( function(){
               var selected_quiz = $(this).val();
               if( selected_quiz ){
+                drawFormula( selected_quiz ); //. #82
+
                 $('#input_formula').val( selected_quiz );
                 var imgs = formula2imgs( selected_quiz );
                 if( imgs ){
@@ -478,6 +480,8 @@ function generateFormulaFromNums(){
         $('#counter_generated_quizs').change( function(){
           var selected_quiz = $(this).val();
           if( selected_quiz ){
+            drawFormula( selected_quiz ); //. #82
+
             $('#input_formula').val( selected_quiz );
             var imgs = formula2imgs( selected_quiz );
             if( imgs ){
@@ -514,6 +518,8 @@ async function counterGenerateQuizs(){
     $('#counter_generated_quizs').change( function(){
       var selected_quiz = $(this).val();
       if( selected_quiz ){
+        drawFormula( selected_quiz ); //. #82
+
         $('#input_formula').val( selected_quiz );
         var imgs = formula2imgs( selected_quiz );
         if( imgs ){
@@ -533,10 +539,14 @@ function onKeyup( x ){
   var formula = $('#' + x + '_formula').val();
   formula = formula.split(' ').join('');
   if( formula ){
+    drawFormula( formula ); //. #82
+
+    /*
     var imgs = formula2imgs( formula );
     if( imgs ){
       $('#' + x + '_imgs').html( imgs );
     }
+    */
   }
 }
 
@@ -562,13 +572,16 @@ function showAnswers( answers, formula ){
 
       var answer_rev = answer.rev;
 
-      var img = ( answer_rev ? formula2imgs_rev( answer_formula ) : formula2imgs( answer_formula ) );
+      //var img = ( answer_rev ? formula2imgs_rev( answer_formula ) : formula2imgs( answer_formula ) );
+      var img = '<img id="answer_img_' + i + '" width="100%"/>';
       var li = '<li>'
         + ( answer_rev ? '（逆さに見る）' : '' )
         + '<form><input type="text" class="blue" id="output_formula_' + i + '" value="' + answer_formula + '" readonly/></form>' 
         + '<span id="output_imgs_' + i + '" title="' + difficulty + '">' + img + '</span>'  //. #19
         + '</li>';
       $('#answers_list_ol').append( li );
+      //. #82
+      drawFormula( answer_formula, "#answer_img_" + i );
     }
   }else{
     var ul = '<ul><li>無理っす</li><ul>';
@@ -827,6 +840,8 @@ async function generate_quiz( idx ){
         $('#generated_quizs').change( function(){
           var selected_quiz = $(this).val();
           if( selected_quiz ){
+            drawFormula( selected_quiz ); //. #82
+
             $('#input_formula').val( selected_quiz );
             var imgs = formula2imgs( selected_quiz );
             if( imgs ){
@@ -1034,3 +1049,80 @@ class Random {
     return min + (r % (max + 1 - min));
   }
 }
+
+//. #82
+function drawFormula( fml, element_id = '#result' ){
+  if( fml ){
+    var canvas = document.getElementById( 'mycanvas' );
+    if( !canvas || !canvas.getContext ){
+      return false;
+    }
+
+    canvas.width = 50 * fml.length;
+    canvas.height = 112;
+
+    var ctx = canvas.getContext( '2d' );
+    ctx.clearRect( 0, 0, canvas.width, canvas.height );
+
+    var x = 0;
+    for( var i = 0; i < fml.length; i ++ ){
+      var c = fml.charAt( i );
+      var idx = -1;
+      if( ['+','-','*','/','=','±'].indexOf( c ) > -1 ){
+        switch( c ){
+        case '+':
+          idx = 12;
+          break;
+        case '-':
+          idx = 13;
+          break;
+        case '*':
+          idx = 14;
+          break;
+        case '/':
+          idx = 15;
+          break;
+        case '=':
+          idx = 16;
+          break;
+        case '±':
+          idx = 17;
+          break;
+        }
+      }else{
+        try{
+          idx = parseInt( c );
+        }catch( e ){
+        }
+      }
+
+      if( idx > -1 ){
+        ctx.drawImage( _imgs[idx], x, 0 );
+        x += 50;
+      }
+    }
+
+    var img = new Image();
+    img.src = canvas.toDataURL( "image/png" );
+    img.onload = function(){
+      $(element_id).attr( 'src', img.src );
+    }
+  }
+}
+
+var _imgs = Array(18);
+$(function(){
+  var cnt = 0;
+  for( var i = 0; i < 18; i ++ ){
+    _imgs[i] = new Image();
+    _imgs[i].onload = function( e ){
+      cnt ++;
+      if( cnt == 16 ){
+        if( formula ){
+          drawFormula( formula ); //. #82
+        }
+      }
+    };
+    _imgs[i].src = './imgs/' + i + '.png';
+  }
+});
