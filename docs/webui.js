@@ -581,7 +581,7 @@ function showAnswers( answers, formula ){
         + '</li>';
       $('#answers_list_ol').append( li );
       //. #82
-      drawFormula( answer_formula, "#answer_img_" + i );
+      drawFormula( answer_formula, "answer_img_" + i );
     }
   }else{
     var ul = '<ul><li>無理っす</li><ul>';
@@ -1051,7 +1051,7 @@ class Random {
 }
 
 //. #82
-function drawFormula( fml, element_id = '#result' ){
+function drawFormula( fml, element_id = 'result' ){
   if( fml ){
     var canvas = document.getElementById( 'mycanvas' );
     if( !canvas || !canvas.getContext ){
@@ -1105,7 +1105,7 @@ function drawFormula( fml, element_id = '#result' ){
     var img = new Image();
     img.src = canvas.toDataURL( "image/png" );
     img.onload = function(){
-      $(element_id).attr( 'src', img.src );
+      $('#'+element_id).attr( 'src', img.src );
     }
   }
 }
